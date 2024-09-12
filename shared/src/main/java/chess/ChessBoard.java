@@ -11,8 +11,9 @@ import java.util.Objects;
  */
 public class ChessBoard {
     private ChessPiece[][] board = new ChessPiece[8][8];
+
     public ChessBoard() {
-        
+
     }
 
     @Override
@@ -35,7 +36,7 @@ public class ChessBoard {
      * @param piece    the piece to add
      */
     public void addPiece(ChessPosition position, ChessPiece piece) {
-        board[position.getRow()-1][position.getColumn()-1] = piece;
+        board[position.getRow() - 1][position.getColumn() - 1] = piece;
     }
 
     /**
@@ -46,7 +47,7 @@ public class ChessBoard {
      * position
      */
     public ChessPiece getPiece(ChessPosition position) {
-        return board[position.getRow()-1][position.getColumn()-1];
+        return board[position.getRow() - 1][position.getColumn() - 1];
     }
 
     /**
@@ -99,8 +100,7 @@ public class ChessBoard {
                 if (board[i][j] != null) {
 
                     string.append(board[i][j]);
-                }
-                else {
+                } else {
                     string.append(' ');
                 }
             }

@@ -31,7 +31,9 @@ public class ChessPosition {
         return Objects.hash(row, col);
     }
 
-    /** bvb r
+    /**
+     * bvb r
+     *
      * @return which row this position is in
      * 1 codes for the bottom row
      */

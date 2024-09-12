@@ -1,8 +1,6 @@
 package chess;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Objects;
+import java.util.*;
 
 /**
  * Represents a single chess piece
@@ -24,12 +22,7 @@ public class ChessPiece {
      * The various different chess piece options
      */
     public enum PieceType {
-        KING,
-        QUEEN,
-        BISHOP,
-        KNIGHT,
-        ROOK,
-        PAWN
+        KING, QUEEN, BISHOP, KNIGHT, ROOK, PAWN
     }
 
     /**
@@ -54,7 +47,50 @@ public class ChessPiece {
      * @return Collection of valid moves
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        return new ArrayList<ChessMove>();
+        ArrayList<ChessMove> moves = new ArrayList<>();
+        ChessPiece myPiece = board.getPiece(myPosition);
+        if (myPiece.type == PieceType.KING) {
+            ChessPosition leftPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1);
+            ChessPosition diagonalUpLeftPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
+            ChessPosition upPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
+            ChessPosition diagonalUpRightPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
+            ChessPosition rightPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1);
+            ChessPosition diagonalDownRightPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
+            ChessPosition downPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
+            ChessPosition diagonalDownLeftPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
+            List<ChessPosition> lst = Arrays.asList(leftPosition, diagonalUpLeftPosition, upPosition, diagonalUpRightPosition, rightPosition, diagonalDownRightPosition, downPosition, diagonalDownLeftPosition);
+
+
+            for (int i = 0; i < 8; i++) {
+                ChessPosition uniquePosition = lst.get(i);
+                if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0) {
+                    if (board.getPiece(uniquePosition) == null) {
+                        moves.add(new ChessMove(myPosition, uniquePosition, null));
+                    } else if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()) {
+                        moves.add(new ChessMove(myPosition, uniquePosition, null));
+                    }
+
+                }
+            }
+
+
+        }
+        if (myPiece.type == PieceType.QUEEN) {
+
+        }
+        if (myPiece.type == PieceType.BISHOP) {
+
+        }
+        if (myPiece.type == PieceType.KNIGHT) {
+
+        }
+        if (myPiece.type == PieceType.ROOK) {
+
+        }
+        if (myPiece.type == PieceType.PAWN) {
+
+        }
+        return moves;
     }
 
     @Override
