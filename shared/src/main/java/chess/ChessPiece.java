@@ -2,6 +2,7 @@ package chess;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 /**
  * Represents a single chess piece
@@ -11,7 +12,12 @@ import java.util.Collection;
  */
 public class ChessPiece {
 
+    private final PieceType type;
+    private final ChessGame.TeamColor teamColor;
+
     public ChessPiece(ChessGame.TeamColor pieceColor, ChessPiece.PieceType type) {
+        this.type = type;
+        this.teamColor = pieceColor;
     }
 
     /**
@@ -30,14 +36,14 @@ public class ChessPiece {
      * @return Which team this chess piece belongs to
      */
     public ChessGame.TeamColor getTeamColor() {
-        throw new RuntimeException("Not implemented");
+        return teamColor;
     }
 
     /**
      * @return which type of chess piece this piece is
      */
     public PieceType getPieceType() {
-        throw new RuntimeException("Not implemented");
+        return type;
     }
 
     /**
@@ -49,5 +55,47 @@ public class ChessPiece {
      */
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         return new ArrayList<ChessMove>();
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ChessPiece that = (ChessPiece) o;
+        return type == that.type && teamColor == that.teamColor;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(type, teamColor);
+    }
+
+    @Override
+    public String toString() {
+        String string = "";
+        switch (type) {
+            case KING:
+                string = "K";
+                break;
+            case QUEEN:
+                string = "Q";
+                break;
+            case BISHOP:
+                string = "B";
+                break;
+            case KNIGHT:
+                string = "N";
+                break;
+            case ROOK:
+                string = "R";
+                break;
+            case PAWN:
+                string = "P";
+                break;
+        }
+        if (teamColor == ChessGame.TeamColor.BLACK) {
+            string = string.toLowerCase();
+        }
+        return string;
     }
 }
