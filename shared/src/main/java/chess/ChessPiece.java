@@ -49,30 +49,32 @@ public class ChessPiece {
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> moves = new ArrayList<>();
         ChessPiece myPiece = board.getPiece(myPosition);
+
+        ChessPosition leftPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1);
+        ChessPosition diagonalUpLeftPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
+        ChessPosition upPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
+        ChessPosition diagonalUpRightPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
+        ChessPosition rightPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1);
+        ChessPosition diagonalDownRightPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
+        ChessPosition downPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
+        ChessPosition diagonalDownLeftPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
+
         if (myPiece.type == PieceType.KING) {
-            ChessPosition leftPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1);
-            ChessPosition diagonalUpLeftPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
-            ChessPosition upPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
-            ChessPosition diagonalUpRightPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
-            ChessPosition rightPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn() + 1);
-            ChessPosition diagonalDownRightPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
-            ChessPosition downPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
-            ChessPosition diagonalDownLeftPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
+
             List<ChessPosition> lst = Arrays.asList(leftPosition, diagonalUpLeftPosition, upPosition, diagonalUpRightPosition, rightPosition, diagonalDownRightPosition, downPosition, diagonalDownLeftPosition);
 
 
-            for (int i = 0; i < 8; i++) {
+            for (int i = 0; i < 2; i++) {
                 ChessPosition uniquePosition = lst.get(i);
                 if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0) {
-                    if (board.getPiece(uniquePosition) == null) {
-                        moves.add(new ChessMove(myPosition, uniquePosition, null));
-                    } else if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()) {
-                        moves.add(new ChessMove(myPosition, uniquePosition, null));
+                    if (board.getPiece(uniquePosition) != null) {
+                        if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()) {
+                            moves.add(new ChessMove(myPosition, uniquePosition, null));
+                        }
                     }
-
                 }
             }
-
+// add for when straight in front of pawn.
 
         }
         if (myPiece.type == PieceType.QUEEN) {
@@ -88,6 +90,8 @@ public class ChessPiece {
 
         }
         if (myPiece.type == PieceType.PAWN) {
+            List<ChessPosition> diagonallst = Arrays.asList(diagonalUpLeftPosition, diagonalUpRightPosition);
+
 
         }
         return moves;
