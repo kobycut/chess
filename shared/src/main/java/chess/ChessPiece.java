@@ -519,7 +519,7 @@ public class ChessPiece {
 
             }
             // Promotion
-            if (board.getPiece(myPosition).teamColor == ChessGame.TeamColor.BLACK) {
+            else {
                 for (int i = 0; i < 2; i++) {
                     ChessPosition uniquePosition = blackdiagonallst.get(i);
                     if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0) {
