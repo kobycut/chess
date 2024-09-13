@@ -59,14 +59,6 @@ public class ChessPiece {
         ChessPosition downPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
         ChessPosition diagonalDownLeftPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
 
-        ChessPosition knightPosition = new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() + 1);
-        ChessPosition knightPosition2 = new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() - 1);
-        ChessPosition knightPosition3 = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 2);
-        ChessPosition knightPosition4 = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 2);
-        ChessPosition knightPosition5 = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() - 1);
-        ChessPosition knightPosition6 = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() + 1);
-        ChessPosition knightPosition7 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 2);
-        ChessPosition knightPosition8 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 2);
 
         if (myPiece.type == PieceType.KING) {
 
@@ -364,6 +356,16 @@ public class ChessPiece {
 
         }
         if (myPiece.type == PieceType.KNIGHT) {
+
+            ChessPosition knightPosition = new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() + 1);
+            ChessPosition knightPosition2 = new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn() - 1);
+            ChessPosition knightPosition3 = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 2);
+            ChessPosition knightPosition4 = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 2);
+            ChessPosition knightPosition5 = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() - 1);
+            ChessPosition knightPosition6 = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() + 1);
+            ChessPosition knightPosition7 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 2);
+            ChessPosition knightPosition8 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 2);
+
             List<ChessPosition> lst = Arrays.asList(knightPosition, knightPosition2, knightPosition3, knightPosition4, knightPosition5, knightPosition6, knightPosition7, knightPosition8);
             for (ChessPosition position : lst) {
                 if (position.getColumn() < 1 || position.getColumn() > 8 || position.getRow() < 1 || position.getRow() > 8) {
