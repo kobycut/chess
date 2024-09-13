@@ -64,17 +64,18 @@ public class ChessPiece {
             List<ChessPosition> lst = Arrays.asList(leftPosition, diagonalUpLeftPosition, upPosition, diagonalUpRightPosition, rightPosition, diagonalDownRightPosition, downPosition, diagonalDownLeftPosition);
 
 
-            for (int i = 0; i < 2; i++) {
+            for (int i = 0; i < 8; i++) {
                 ChessPosition uniquePosition = lst.get(i);
                 if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0) {
-                    if (board.getPiece(uniquePosition) != null) {
-                        if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()) {
-                            moves.add(new ChessMove(myPosition, uniquePosition, null));
-                        }
+                    if (board.getPiece(uniquePosition) == null) {
+                        moves.add(new ChessMove(myPosition, uniquePosition, null));
+                    } else if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()) {
+                        moves.add(new ChessMove(myPosition, uniquePosition, null));
                     }
+
                 }
             }
-// add for when straight in front of pawn.
+
 
         }
         if (myPiece.type == PieceType.QUEEN) {
@@ -92,6 +93,32 @@ public class ChessPiece {
         if (myPiece.type == PieceType.PAWN) {
             List<ChessPosition> diagonallst = Arrays.asList(diagonalUpLeftPosition, diagonalUpRightPosition);
 
+            if (board.getPiece(myPosition).teamColor == ChessGame.TeamColor.WHITE) {
+                for (int i = 0; i < 2; i++) {
+                    ChessPosition uniquePosition = diagonallst.get(i);
+                    if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0) {
+                        if (board.getPiece(uniquePosition) != null) {
+                            if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()) {
+                                moves.add(new ChessMove(myPosition, uniquePosition, null));
+                            }
+                        }
+                    }
+                }
+                if (board.getPiece((upPosition)) == null) {
+                    moves.add(new ChessMove(myPosition, upPosition, null));
+                }
+                ChessPosition doublePosition = new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn());
+
+                if (myPosition.getRow() == 2 && board.getPiece(doublePosition) == null && board.getPiece(upPosition) == null) {
+
+                    moves.add(new ChessMove(myPosition, doublePosition, null));
+                }
+                if (myPosition.getRow() == 8) {
+                    
+                }
+// add for when straight in front of pawn.
+
+            }
 
         }
         return moves;
