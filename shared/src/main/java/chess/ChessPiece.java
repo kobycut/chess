@@ -486,13 +486,27 @@ public class ChessPiece {
                     if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0) {
                         if (board.getPiece(uniquePosition) != null) {
                             if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()) {
-                                moves.add(new ChessMove(myPosition, uniquePosition, null));
+                                if (myPosition.getRow() == 7) {
+                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.KNIGHT));
+                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.ROOK));
+                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.QUEEN));
+                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.BISHOP));
+                                } else {
+                                    moves.add(new ChessMove(myPosition, uniquePosition, null));
+                                }
                             }
                         }
                     }
                 }
                 if (board.getPiece((upPosition)) == null) {
-                    moves.add(new ChessMove(myPosition, upPosition, null));
+                    if (myPosition.getRow() == 7) {
+                        moves.add(new ChessMove(myPosition, upPosition, PieceType.QUEEN));
+                        moves.add(new ChessMove(myPosition, upPosition, PieceType.KNIGHT));
+                        moves.add(new ChessMove(myPosition, upPosition, PieceType.ROOK));
+                        moves.add(new ChessMove(myPosition, upPosition, PieceType.BISHOP));
+                    } else {
+                        moves.add(new ChessMove(myPosition, upPosition, null));
+                    }
                 }
                 ChessPosition doublePosition = new ChessPosition(myPosition.getRow() + 2, myPosition.getColumn());
 
@@ -500,6 +514,7 @@ public class ChessPiece {
 
                     moves.add(new ChessMove(myPosition, doublePosition, null));
                 }
+
             }
             // Promotion
             if (board.getPiece(myPosition).teamColor == ChessGame.TeamColor.BLACK) {
@@ -508,13 +523,27 @@ public class ChessPiece {
                     if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0) {
                         if (board.getPiece(uniquePosition) != null) {
                             if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()) {
-                                moves.add(new ChessMove(myPosition, uniquePosition, null));
+                                if (myPosition.getRow() == 2) {
+                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.KNIGHT));
+                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.ROOK));
+                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.QUEEN));
+                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.BISHOP));
+                                } else {
+                                    moves.add(new ChessMove(myPosition, uniquePosition, null));
+                                }
                             }
                         }
 
                     }
                     if (board.getPiece((downPosition)) == null) {
-                        moves.add(new ChessMove(myPosition, downPosition, null));
+                        if (myPosition.getRow() == 2) {
+                            moves.add(new ChessMove(myPosition, downPosition, PieceType.QUEEN));
+                            moves.add(new ChessMove(myPosition, downPosition, PieceType.KNIGHT));
+                            moves.add(new ChessMove(myPosition, downPosition, PieceType.ROOK));
+                            moves.add(new ChessMove(myPosition, downPosition, PieceType.BISHOP));
+                        } else {
+                            moves.add(new ChessMove(myPosition, downPosition, null));
+                        }
                     }
                     ChessPosition doubleDownPosition = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn());
 
