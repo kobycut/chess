@@ -183,21 +183,6 @@ public class ChessGame {
         ChessPosition kingPosition = this.chessBoard.findKing(teamColor);
         var oppColor = getOppColor(teamColor);
         var lst = getAllMoves(oppColor);
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-
-                ChessPosition position = new ChessPosition(i + 1, j + 1);
-//                var color = getTeamTurn();
-
-                if (chessBoard.getPiece(position) == null) {
-                    continue;
-                }
-                if (chessBoard.getPiece(position).getTeamColor() == teamColor) {
-                    lst.addAll(chessBoard.getPiece(position).pieceMoves(chessBoard, position));
-
-                }
-            }
-        }
         for (ChessMove chessMove : lst) {
             if (chessMove.getEndPosition().equals(kingPosition)) {
                 return true;
