@@ -55,45 +55,6 @@ public class ChessGame {
         var validMoves = new ArrayList<ChessMove>();
         if (this.chessBoard.getPiece(startPosition) == null) {
             return null;
-        }
-        var lst = this.chessBoard.getPiece(startPosition).pieceMoves(this.chessBoard, startPosition);
-        for (ChessMove move : lst) {
-            var color = this.chessBoard.getPiece(startPosition).getTeamColor();
-            boolean pieceTaken = false;
-            ChessPiece undoPiece = null;
-            if (this.chessBoard.getPiece(move.getEndPosition()) != null) {
-                undoPiece = this.chessBoard.getPiece(move.getEndPosition());
-                pieceTaken = true;
-            }
-            this.makeFakeMove(move);
-
-            if (!this.isInCheck(color)) {
-                validMoves.add(move);
-            }
-            this.makeReverseMove(move);
-            if (pieceTaken) {
-                chessBoard.addPiece(move.getEndPosition(), undoPiece);
-            }
-        }
-        return validMoves;
-
-
-    }
-
-    public void makeReverseMove(ChessMove move) {
-        var start = move.getEndPosition();
-        var end = move.getStartPosition();
-        chessBoard.addPiece(end, chessBoard.getPiece(start));
-        chessBoard.removePiece(start);
-    }
-
-    public void makeFakeMove(ChessMove move) {
-        var start = move.getStartPosition();
-        var end = move.getEndPosition();
-
-        chessBoard.addPiece(end, chessBoard.getPiece(start));
-        chessBoard.removePiece(start);
-    }
 
     /**
      * Makes a move in a chess game
