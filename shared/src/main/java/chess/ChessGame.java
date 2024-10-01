@@ -234,19 +234,32 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-
-        var teamMoveLst = new ArrayList<ChessMove>();
+        var validTeamMoveLst = new ArrayList<ChessMove>();
+        var allTeamMoves = new ArrayList<ChessMove>();
+        var teamPiecesLeftCount = 0;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
 
                 ChessPosition position = new ChessPosition(i + 1, j + 1);
-//                var color = getTeamTurn();
-                    
+                ChessPiece piece = chessBoard.getPiece(position);
+                if (piece != null) {
+                    if (piece.getTeamColor() == teamColor) {
+                        teamPiecesLeftCount++;
+                        validTeamMoveLst.addAll(validMoves(position));
+                        allTeamMoves.addAll(piece.pieceMoves(chessBoard, position));
+                    }
+
+                }
 
             }
         }
-
-        return teamMoveLst.isEmpty();
+        if (teamPiecesLeftCount == 1 && validTeamMoveLst.isEmpty()) {
+            return true;
+        }
+        if (validTeamMoveLst.isEmpty() && allTeamMoves.isEmpty()) {
+            return true;
+        }
+        return false;
     }
 
     /**
