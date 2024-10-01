@@ -253,9 +253,7 @@ public class ChessGame {
 
             }
         }
-        if (teamPiecesLeftCount == 1 && validTeamMoveLst.isEmpty()) {
-            return true;
-        }
+
         if (validTeamMoveLst.isEmpty() && allTeamMoves.isEmpty()) {
             return true;
         }
