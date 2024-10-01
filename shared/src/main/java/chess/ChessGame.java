@@ -236,7 +236,7 @@ public class ChessGame {
     public boolean isInStalemate(TeamColor teamColor) {
         var validTeamMoveLst = new ArrayList<ChessMove>();
         var allTeamMoves = new ArrayList<ChessMove>();
-
+        var teamPiecesLeftCount = 0;
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
 
@@ -244,7 +244,7 @@ public class ChessGame {
                 ChessPiece piece = chessBoard.getPiece(position);
                 if (piece != null) {
                     if (piece.getTeamColor() == teamColor) {
-
+                        teamPiecesLeftCount++;
                         validTeamMoveLst.addAll(validMoves(position));
                         allTeamMoves.addAll(piece.pieceMoves(chessBoard, position));
                     }
@@ -253,7 +253,9 @@ public class ChessGame {
 
             }
         }
-
+        if (teamPiecesLeftCount == 1 && validTeamMoveLst.isEmpty()) {
+            return true;
+        }
         if (validTeamMoveLst.isEmpty() && allTeamMoves.isEmpty()) {
             return true;
         }
