@@ -55,6 +55,45 @@ public class ChessGame {
         var validMoves = new ArrayList<ChessMove>();
         if (this.chessBoard.getPiece(startPosition) == null) {
             return null;
+        }
+        var lst = this.chessBoard.getPiece(startPosition).pieceMoves(this.chessBoard, startPosition);
+        for (ChessMove move : lst) {
+            var color = this.chessBoard.getPiece(startPosition).getTeamColor();
+            boolean pieceTaken = false;
+            ChessPiece undoPiece = null;
+            if (this.chessBoard.getPiece(move.getEndPosition()) != null) {
+                undoPiece = this.chessBoard.getPiece(move.getEndPosition());
+                pieceTaken = true;
+            }
+            this.makeFakeMove(move);
+
+            if (!this.isInCheck(color)) {
+                validMoves.add(move);
+            }
+            this.makeReverseMove(move);
+            if (pieceTaken) {
+                chessBoard.addPiece(move.getEndPosition(), undoPiece);
+            }
+        }
+        return validMoves;
+
+
+    }
+
+    public void makeReverseMove(ChessMove move) {
+        var start = move.getEndPosition();
+        var end = move.getStartPosition();
+        chessBoard.addPiece(end, chessBoard.getPiece(start));
+        chessBoard.removePiece(start);
+    }
+
+    public void makeFakeMove(ChessMove move) {
+        var start = move.getStartPosition();
+        var end = move.getEndPosition();
+
+        chessBoard.addPiece(end, chessBoard.getPiece(start));
+        chessBoard.removePiece(start);
+    }
 
     /**
      * Makes a move in a chess game
@@ -144,6 +183,21 @@ public class ChessGame {
         ChessPosition kingPosition = this.chessBoard.findKing(teamColor);
         var oppColor = getOppColor(teamColor);
         var lst = getAllMoves(oppColor);
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+
+                ChessPosition position = new ChessPosition(i + 1, j + 1);
+//                var color = getTeamTurn();
+
+                if (chessBoard.getPiece(position) == null) {
+                    continue;
+                }
+                if (chessBoard.getPiece(position).getTeamColor() == teamColor) {
+                    lst.addAll(chessBoard.getPiece(position).pieceMoves(chessBoard, position));
+
+                }
+            }
+        }
         for (ChessMove chessMove : lst) {
             if (chessMove.getEndPosition().equals(kingPosition)) {
                 return true;
