@@ -1,6 +1,7 @@
 package chess;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 /**
@@ -102,6 +103,9 @@ public class ChessGame {
      * @throws InvalidMoveException if move is invalid
      */
     public void makeMove(ChessMove move) throws InvalidMoveException {
+        if (chessBoard.getPiece(move.getStartPosition()) == null) {
+            throw new InvalidMoveException("No Piece here");
+        }
         TeamColor color = chessBoard.getPiece(move.getStartPosition()).getTeamColor();
         if (chessBoard.getPiece(move.getStartPosition()) == null) {
             throw new InvalidMoveException("No valid moves");
@@ -203,12 +207,20 @@ public class ChessGame {
         var teamMoveLst = getAllMoves(teamColor);
 
         for (ChessMove move : teamMoveLst) {
-
+            boolean pieceTaken = false;
+            ChessPiece undoPiece = null;
+            if (this.chessBoard.getPiece(move.getEndPosition()) != null) {
+                undoPiece = this.chessBoard.getPiece(move.getEndPosition());
+                pieceTaken = true;
+            }
             this.makeFakeMove(move);
             if (!this.isInCheck(teamColor)) {
                 return false;
             }
             this.makeReverseMove(move);
+            if (pieceTaken) {
+                chessBoard.addPiece(move.getEndPosition(), undoPiece);
+            }
 
         }
         return true;
@@ -222,10 +234,18 @@ public class ChessGame {
      * @return True if the specified team is in stalemate, otherwise false
      */
     public boolean isInStalemate(TeamColor teamColor) {
-        if (!isInCheck(teamColor)) {
-            return false;
+
+        var teamMoveLst = new ArrayList<ChessMove>();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+
+                ChessPosition position = new ChessPosition(i + 1, j + 1);
+//                var color = getTeamTurn();
+                    
+
+            }
         }
-        var teamMoveLst = getAllMoves(teamColor);
+
         return teamMoveLst.isEmpty();
     }
 
