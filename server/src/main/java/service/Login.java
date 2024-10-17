@@ -18,7 +18,7 @@ public class Login {
     }
 
     public AuthData createAuth(String username) throws DataAccessException {
-        return authDAO.createAuth(username);
+        return authDAO.createAuthWithString(username);
     }
 
 
