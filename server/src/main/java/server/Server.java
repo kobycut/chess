@@ -1,20 +1,22 @@
 package server;
 
-import dataaccess.DataAccess;
-import dataaccess.MemoryDataAccess;
+import dataaccess.*;
 import model.UserData;
 import spark.*;
 import service.*;
 
 public class Server {
     private final MemoryDataAccess memoryDataAccess = new MemoryDataAccess();
+    private final GameDAO gameDAO = new GameMemoryDataAccess();
+    private final AuthDAO authDAO = new AuthMemoryDataAccess();
+    private final UserDAO userDAO = new UserMemoryDataAccess();
 
-    private final CreateGame createGameService = new CreateGame();
-    private final JoinGame joinGameService = new JoinGame();
-    private final ListGames listGamesService = new ListGames();
-    private final Login loginService = new Login();
-    private final Logout logoutService = new Logout();
-    private final ClearApplication clearService = new ClearApplication();
+    private final CreateGame createGameService = new CreateGame(authDAO, gameDAO);
+    private final JoinGame joinGameService = new JoinGame(authDAO, gameDAO);
+    private final ListGames listGamesService = new ListGames(authDAO, gameDAO);
+    private final Login loginService = new Login(userDAO, authDAO);
+    private final Logout logoutService = new Logout(authDAO);
+    private final ClearApplication clearService = new ClearApplication(userDAO, gameDAO, authDAO);
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);

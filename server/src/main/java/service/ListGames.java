@@ -12,7 +12,7 @@ public class ListGames {
     private final AuthDAO authDAO;
     private final GameDAO gameDAO;
 
-    public ListGames(AuthDAO authDAO, GameDAO gameDAO) throws Exception {
+    public ListGames(AuthDAO authDAO, GameDAO gameDAO) throws DataAccessException {
         this.authDAO = authDAO;
         this.gameDAO = gameDAO;
     }
