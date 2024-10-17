@@ -6,7 +6,7 @@ import spark.*;
 import service.*;
 
 public class Server {
-    private final MemoryDataAccess memoryDataAccess = new MemoryDataAccess();
+
     private final GameDAO gameDAO = new GameMemoryDataAccess();
     private final AuthDAO authDAO = new AuthMemoryDataAccess();
     private final UserDAO userDAO = new UserMemoryDataAccess();

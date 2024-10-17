@@ -8,7 +8,7 @@ public class Login {
     private final UserDAO userDAO;
     private final AuthDAO authDAO;
 
-    public Login(UserDAO userDAO, AuthDAO authDAO) throws DataAccessException {
+    public Login(UserDAO userDAO, AuthDAO authDAO)  {
         this.userDAO = userDAO;
         this.authDAO = authDAO;
     }

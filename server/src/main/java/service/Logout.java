@@ -6,7 +6,7 @@ public class Logout {
 
     private final AuthDAO authDAO;
 
-    public Logout(AuthDAO authDAO) throws DataAccessException {
+    public Logout(AuthDAO authDAO){
         this.authDAO = authDAO;
     }
 
