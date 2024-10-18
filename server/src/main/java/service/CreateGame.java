@@ -16,12 +16,15 @@ public class CreateGame {
         this.gameDAO = gameDAO;
     }
 
-    public AuthData getAuthData(String authToken)  {
-        return authDAO.getAuthData(authToken);
+    public GameData createGame(GameData gameData, String authToken) throws DataAccessException {
+        AuthData authData = authDAO.getAuthData(authToken);
+        if (authData == null) {
+            // throw error
+        }
+        // Another error somewhere, bad request
 
-    }
-    public GameData createGame(String gameName) throws DataAccessException {
-        return gameDAO.createGame(gameName);
+        return gameDAO.createGame(gameData.gameName());
+
     }
 
 

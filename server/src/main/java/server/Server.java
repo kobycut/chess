@@ -84,8 +84,16 @@ public class Server {
         res.status(200);
         res.body(new Gson().toJson(allGames));
     }
-    private String createGame(Request req, Response res) {
-        return null;
+    private void createGame(Request req, Response res) throws DataAccessException {
+        String authToken = req.headers("authorization");
+        GameData gameData = new Gson().fromJson(req.body(), GameData.class);
+
+        GameData game = createGameService.createGame(gameData, authToken);
+
+        res.status(200);
+        res.body(new Gson().toJson(game));
+
+
     }
     private String joinGame(Request req, Response res){
         return null;
