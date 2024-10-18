@@ -48,28 +48,18 @@ public class Server {
         Spark.awaitStop();
     }
     private void registerUser(Request req, Response res) throws Exception {
-        UserData user = new Gson().fromJson(req.body(), UserData.class);
-        String username = user.username();
-        UserData userData = registerService.getUser(username);
-
-        AuthData auth = new Gson().fromJson(req.body(), AuthData.class);
-        AuthData authData = registerService.createAuth(auth);
+        UserData userData = new Gson().fromJson(req.body(), UserData.class);
+        AuthData authData = registerService.register(userData);
 
         res.status(200);
-        res.body(new Gson().toJson(userData));
         res.body(new Gson().toJson(authData));
 
     }
     private void login(Request req, Response res) throws Exception {
-        UserData user = new Gson().fromJson(req.body(), UserData.class);
-        String username = user.username();
-        UserData userData = loginService.getUserData(username);
-
-        AuthData auth = new Gson().fromJson(req.body(), AuthData.class);
-        AuthData authData = loginService.createAuth(auth.username());
+        UserData userData = new Gson().fromJson(req.body(), UserData.class);
+        AuthData authData = loginService.login(userData);
 
         res.status(200);
-        res.body(new Gson().toJson(userData));
         res.body(new Gson().toJson(authData));
     }
     private String logout(Request req, Response res) throws Exception {

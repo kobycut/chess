@@ -3,6 +3,8 @@ package service;
 import dataaccess.*;
 import model.*;
 
+import java.util.UUID;
+
 public class Register {
 
     private final UserDAO userDAO;
@@ -13,17 +15,14 @@ public class Register {
         this.authDAO = authDAO;
     }
 
-    public UserData getUser(String username) throws DataAccessException {
-        UserData userData = userDAO.getUser(username);
-        if (userData == null) {
+    public AuthData register(UserData userData) throws DataAccessException {
+        if (userDAO.getUser(userData.username()) != null) {
             // throw error
         }
         userDAO.createUser(userData);
-        return userData;
-    }
-
-    public AuthData createAuth(AuthData authData) throws DataAccessException {
-        return authDAO.createAuthWithData(authData);
+        AuthData authData = new AuthData(UUID.randomUUID().toString(), userData.username());
+        authDAO.createAuth(authData);
+        return authData;
     }
 
 }

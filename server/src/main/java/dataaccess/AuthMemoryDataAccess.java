@@ -8,14 +8,9 @@ public class AuthMemoryDataAccess implements AuthDAO {
     final private HashMap<String, AuthData> auths = new HashMap<>();
 
     @Override
-    public AuthData createAuthWithData(AuthData authData) throws DataAccessException {
+    public AuthData createAuth(AuthData authData) throws DataAccessException {
         auths.put(authData.authToken(), authData);
-        return
-    }
-
-    @Override
-    public AuthData createAuthWithString(String username) throws DataAccessException {
-        return null;
+        return authData;
     }
 
     @Override
