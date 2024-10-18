@@ -10,10 +10,11 @@ public class Logout {
         this.authDAO = authDAO;
     }
 
-    public AuthData getAuthData(String authToken) throws DataAccessException {
-        return authDAO.getAuthData(authToken);
-    }
-    public void deleteAuthData(AuthData authData) throws DataAccessException {
+    public void logout(String authToken) throws DataAccessException {
+        AuthData authData = authDAO.getAuthData(authToken);
+        if (authData == null) {
+            // throw error
+        }
         authDAO.deleteAuth(authData);
     }
 }

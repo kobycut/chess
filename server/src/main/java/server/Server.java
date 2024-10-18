@@ -3,9 +3,12 @@ package server;
 import com.google.gson.Gson;
 import dataaccess.*;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import spark.*;
 import service.*;
+
+import java.util.Collection;
 
 public class Server {
 
@@ -47,7 +50,7 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
-    private void registerUser(Request req, Response res) throws Exception {
+    private void registerUser(Request req, Response res) throws DataAccessException {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         AuthData authData = registerService.register(userData);
 
@@ -55,23 +58,36 @@ public class Server {
         res.body(new Gson().toJson(authData));
 
     }
-    private void login(Request req, Response res) throws Exception {
+    private void login(Request req, Response res) throws DataAccessException {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         AuthData authData = loginService.login(userData);
 
         res.status(200);
         res.body(new Gson().toJson(authData));
     }
-    private String logout(Request req, Response res) throws Exception {
+    private void logout(Request req, Response res) throws DataAccessException {
+        String authToken = req.headers("authorization");
+
+        AuthData authData = new Gson().fromJson(req.headers("authorization"), AuthData.class);
+        authToken = authData.authToken();
+
+        logoutService.logout(authToken);
+
+        res.status(200);
+        res.body("{}");
+    }
+    private void listGames(Request req, Response res) throws DataAccessException {
+        String authToken = req.headers("authorization");
+
+        Collection<GameData> allGames = listGamesService.listGames(authToken);
+
+        res.status(200);
+        res.body(new Gson().toJson(allGames));
+    }
+    private String createGame(Request req, Response res) {
         return null;
     }
-    private String listGames(Request req, Response res) throws Exception {
-        return null;
-    }
-    private String createGame(Request req, Response res) throws Exception {
-        return null;
-    }
-    private String joinGame(Request req, Response res) throws Exception {
+    private String joinGame(Request req, Response res){
         return null;
     }
     private void clearApplication(Request req, Response res){

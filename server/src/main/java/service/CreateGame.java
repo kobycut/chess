@@ -16,7 +16,7 @@ public class CreateGame {
         this.gameDAO = gameDAO;
     }
 
-    public AuthData getAuthData(String authToken) throws DataAccessException {
+    public AuthData getAuthData(String authToken)  {
         return authDAO.getAuthData(authToken);
 
     }

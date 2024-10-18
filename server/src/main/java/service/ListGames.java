@@ -17,11 +17,12 @@ public class ListGames {
         this.gameDAO = gameDAO;
     }
 
-    public AuthData getAuthData(String authToken) throws DataAccessException {
-        return authDAO.getAuthData(authToken);
-    }
-
-    public Collection<GameData> getAllGameData() throws DataAccessException {
+    public Collection<GameData> listGames(String authToken) throws DataAccessException {
+        AuthData authData = authDAO.getAuthData(authToken);
+        if (authData == null) {
+            // throw error
+        }
         return gameDAO.getAllGames();
     }
+
 }

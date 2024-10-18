@@ -4,6 +4,8 @@ import dataaccess.*;
 import model.AuthData;
 import model.UserData;
 
+import java.util.UUID;
+
 public class Login {
 
     private final UserDAO userDAO;
@@ -21,10 +23,9 @@ public class Login {
         if (!userData.password().equals(userDAO.getUser(userData.username()).password())) {
             // throw error
         }
-
-        return authDAO.createAuth();
-
-
+        AuthData authData = new AuthData(UUID.randomUUID().toString(), userData.username());
+        authDAO.createAuth(authData);
+        return authData;
     }
 
 }

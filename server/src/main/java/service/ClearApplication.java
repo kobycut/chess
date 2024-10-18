@@ -16,7 +16,7 @@ public class ClearApplication {
         this.gameDAO = gameDAO;
         this.userDAO = userDAO;
     }
-    public void clearAll() throws DataAccessException {
+    public void clearAll()  {
         userDAO.clearAllUsers();
         gameDAO.clearAllGames();
         authDAO.clearAllAuthTokens();
