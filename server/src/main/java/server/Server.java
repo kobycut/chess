@@ -60,8 +60,17 @@ public class Server {
         res.body(new Gson().toJson(authData));
 
     }
-    private String login(Request req, Response res) throws Exception {
-        return null;
+    private void login(Request req, Response res) throws Exception {
+        UserData user = new Gson().fromJson(req.body(), UserData.class);
+        String username = user.username();
+        UserData userData = loginService.getUserData(username);
+
+        AuthData auth = new Gson().fromJson(req.body(), AuthData.class);
+        AuthData authData = loginService.createAuth(auth.username());
+
+        res.status(200);
+        res.body(new Gson().toJson(userData));
+        res.body(new Gson().toJson(authData));
     }
     private String logout(Request req, Response res) throws Exception {
         return null;
