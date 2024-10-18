@@ -63,9 +63,7 @@ public class Server {
         return null;
     }
     private String clearApplication(Request req, Response res) throws Exception {
-        clearService.clearUsers();
-        clearService.clearAuth();
-        clearService.clearGames();
+        clearService.clearAll();
 
         return "";
     }

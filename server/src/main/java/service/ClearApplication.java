@@ -16,16 +16,9 @@ public class ClearApplication {
         this.gameDAO = gameDAO;
         this.userDAO = userDAO;
     }
-
-    public void clearUsers() throws DataAccessException {
+    public void clearAll() throws DataAccessException {
         userDAO.clearAllUsers();
-
-    }
-    public void clearGames() throws DataAccessException {
         gameDAO.clearAllGames();
-    }
-    public void clearAuth() throws DataAccessException {
         authDAO.clearAllAuthTokens();
     }
-
 }
