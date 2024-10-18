@@ -14,11 +14,12 @@ public class Register {
     }
 
     public UserData getUser(String username) throws DataAccessException {
-        return userDAO.getUser(username);
-    }
-
-    public void createUser(UserData userData) throws DataAccessException {
+        UserData userData = userDAO.getUser(username);
+        if (userData == null) {
+            // throw error
+        }
         userDAO.createUser(userData);
+        return userData;
     }
 
     public AuthData createAuth(AuthData authData) throws DataAccessException {

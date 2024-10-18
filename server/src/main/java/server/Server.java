@@ -1,6 +1,8 @@
 package server;
 
+import com.google.gson.Gson;
 import dataaccess.*;
+import model.AuthData;
 import model.UserData;
 import spark.*;
 import service.*;
@@ -11,11 +13,12 @@ public class Server {
     private final AuthDAO authDAO = new AuthMemoryDataAccess();
     private final UserDAO userDAO = new UserMemoryDataAccess();
 
-    private final CreateGame createGameService = new CreateGame(authDAO, gameDAO);
-    private final JoinGame joinGameService = new JoinGame(authDAO, gameDAO);
-    private final ListGames listGamesService = new ListGames(authDAO, gameDAO);
+    private final Register registerService = new Register(userDAO, authDAO);
     private final Login loginService = new Login(userDAO, authDAO);
     private final Logout logoutService = new Logout(authDAO);
+    private final ListGames listGamesService = new ListGames(authDAO, gameDAO);
+    private final CreateGame createGameService = new CreateGame(authDAO, gameDAO);
+    private final JoinGame joinGameService = new JoinGame(authDAO, gameDAO);
     private final ClearApplication clearService = new ClearApplication(userDAO, gameDAO, authDAO);
 
     public int run(int desiredPort) {
@@ -23,7 +26,7 @@ public class Server {
 
         Spark.staticFiles.location("web");
 
-        Spark.post("/user", this::createUser);
+        Spark.post("/user", this::registerUser);
         Spark.post("/session", this::login);
         Spark.delete("/session", this::logout);
         Spark.get("/game", this::listGames);
@@ -44,8 +47,18 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
-    private String createUser(Request req, Response res) throws Exception {
-        return null;
+    private void registerUser(Request req, Response res) throws Exception {
+        UserData user = new Gson().fromJson(req.body(), UserData.class);
+        String username = user.username();
+        UserData userData = registerService.getUser(username);
+
+        AuthData auth = new Gson().fromJson(req.body(), AuthData.class);
+        AuthData authData = registerService.createAuth(auth);
+
+        res.status(200);
+        res.body(new Gson().toJson(userData));
+        res.body(new Gson().toJson(authData));
+
     }
     private String login(Request req, Response res) throws Exception {
         return null;
@@ -62,9 +75,9 @@ public class Server {
     private String joinGame(Request req, Response res) throws Exception {
         return null;
     }
-    private String clearApplication(Request req, Response res) throws Exception {
+    private void clearApplication(Request req, Response res){
         clearService.clearAll();
-
-        return "";
+        res.status(200);
+        res.body("{}");
     }
 }
