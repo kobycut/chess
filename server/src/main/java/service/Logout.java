@@ -1,5 +1,6 @@
 package service;
 import dataaccess.*;
+import dataaccess.exceptions.DataAccessException;
 import model.AuthData;
 
 public class Logout {

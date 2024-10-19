@@ -2,6 +2,10 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
+import dataaccess.exceptions.AlreadyTakenException;
+import dataaccess.exceptions.BadRequestException;
+import dataaccess.exceptions.DataAccessException;
+import dataaccess.exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
@@ -36,6 +40,10 @@ public class Server {
         Spark.post("/game", this::createGame);
         Spark.put("/game", this::joinGame);
         Spark.delete("/db", this::clearApplication);
+        Spark.exception(DataAccessException.class, this::dataAccessExceptionHandler);
+        Spark.exception(AlreadyTakenException.class, this::alreadyTakenExceptionHandler);
+        Spark.exception(BadRequestException.class, this::badRequestExceptionHandler);
+        Spark.exception(UnauthorizedException.class, this::unauthorizedExceptionHandler);
 
         // Register your endpoints and handle exceptions here.
 
@@ -50,7 +58,20 @@ public class Server {
         Spark.stop();
         Spark.awaitStop();
     }
-    private String registerUser(Request req, Response res) throws DataAccessException {
+
+    private void dataAccessExceptionHandler(DataAccessException ex, Request req, Response res) {
+        res.status(ex.StatusCode());
+    }
+    private void alreadyTakenExceptionHandler(AlreadyTakenException ex, Request req, Response res) {
+        res.status(ex.StatusCode());
+    }
+    private void badRequestExceptionHandler(BadRequestException ex, Request req, Response res) {
+        res.status(ex.StatusCode());
+    }
+    private void unauthorizedExceptionHandler(UnauthorizedException ex, Request req, Response res) {
+        res.status(ex.StatusCode());
+    }
+    private String registerUser(Request req, Response res) throws AlreadyTakenException {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         AuthData authData = registerService.register(userData);
 
@@ -60,7 +81,7 @@ public class Server {
         return new Gson().toJson(authData);
 
     }
-    private String login(Request req, Response res) throws DataAccessException {
+    private String login(Request req, Response res) throws UnauthorizedException {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         AuthData authData = loginService.login(userData);
 
@@ -71,9 +92,6 @@ public class Server {
     }
     private String logout(Request req, Response res) throws DataAccessException {
         String authToken = req.headers("authorization");
-
-//        AuthData authData = new Gson().fromJson(req.headers("authorization"), AuthData.class);
-//        authToken = authData.authToken();
 
         logoutService.logout(authToken);
 

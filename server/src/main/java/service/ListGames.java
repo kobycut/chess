@@ -1,5 +1,5 @@
 package service;
-import dataaccess.DataAccessException;
+import dataaccess.exceptions.DataAccessException;
 import model.AuthData;
 import dataaccess.*;
 import model.GameData;

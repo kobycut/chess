@@ -1,6 +1,8 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.exceptions.AlreadyTakenException;
+import dataaccess.exceptions.DataAccessException;
 import model.*;
 
 import java.util.UUID;
@@ -15,9 +17,9 @@ public class Register {
         this.authDAO = authDAO;
     }
 
-    public AuthData register(UserData userData) throws DataAccessException {
+    public AuthData register(UserData userData) throws AlreadyTakenException {
         if (userDAO.getUser(userData.username()) != null) {
-            // throw error
+            throw new AlreadyTakenException(403, "Error: already taken");
         }
         userDAO.createUser(userData);
         AuthData authData = new AuthData(UUID.randomUUID().toString(), userData.username());
@@ -26,3 +28,6 @@ public class Register {
     }
 
 }
+
+// throw bad request
+// throw 500 error

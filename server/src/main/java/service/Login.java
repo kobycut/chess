@@ -1,6 +1,8 @@
 package service;
 
 import dataaccess.*;
+import dataaccess.exceptions.DataAccessException;
+import dataaccess.exceptions.UnauthorizedException;
 import model.AuthData;
 import model.UserData;
 
@@ -16,12 +18,9 @@ public class Login {
         this.authDAO = authDAO;
     }
 
-    public AuthData login(UserData userData) throws DataAccessException {
-        if (userDAO.getUser(userData.username()) == null) {
-            // throw error
-        }
+    public AuthData login(UserData userData) throws UnauthorizedException {
         if (!userData.password().equals(userDAO.getUser(userData.username()).password())) {
-            // throw error
+            throw new UnauthorizedException(401, "Error: unauthorized");
         }
         AuthData authData = new AuthData(UUID.randomUUID().toString(), userData.username());
         authDAO.createAuth(authData);
@@ -29,3 +28,4 @@ public class Login {
     }
 
 }
+// throw 500 error

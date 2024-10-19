@@ -1,11 +1,11 @@
 package dataaccess;
 
 import chess.ChessGame;
+import dataaccess.exceptions.DataAccessException;
 import model.GameData;
 
 import java.util.Collection;
 import java.util.HashMap;
-import java.util.List;
 
 public class GameMemoryDataAccess implements GameDAO {
     private int nextId = 1;
