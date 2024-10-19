@@ -22,10 +22,12 @@ public class Register {
         if (userDAO.getUser(userData.username()) != null) {
             throw new AlreadyTakenException(403);
         }
-        userDAO.createUser(userData);
-        if (userData.username() == null) {
+        if (userData.password() == null || userData.username() == null || userData.email()==null) {
             throw new BadRequestException(400);
         }
+        userDAO.createUser(userData);
+
+
         AuthData authData = new AuthData(UUID.randomUUID().toString(), userData.username());
         authDAO.createAuth(authData);
         return authData;
