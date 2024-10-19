@@ -18,7 +18,7 @@ public class ListGames {
         this.gameDAO = gameDAO;
     }
 
-    public Collection<GameData> listGames(String authToken) throws UnauthorizedException {
+    public Collection<GameData> listGames(String authToken) throws UnauthorizedException, DataAccessException {
         AuthData authData = authDAO.getAuthData(authToken);
         if (authData == null) {
             throw new UnauthorizedException(401);
@@ -28,4 +28,3 @@ public class ListGames {
 
 }
 
-// TODO throw 500 error

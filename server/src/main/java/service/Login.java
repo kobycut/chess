@@ -18,7 +18,7 @@ public class Login {
         this.authDAO = authDAO;
     }
 
-    public AuthData login(UserData userData) throws UnauthorizedException {
+    public AuthData login(UserData userData) throws UnauthorizedException, DataAccessException {
         if (!userData.password().equals(userDAO.getUser(userData.username()).password())) {
             throw new UnauthorizedException(401);
         }
@@ -28,4 +28,3 @@ public class Login {
     }
 
 }
-// TODO throw 500 error

@@ -89,7 +89,7 @@ public class Server {
         res.body(body);
         return body;
     }
-    private String registerUser(Request req, Response res) throws AlreadyTakenException {
+    private String registerUser(Request req, Response res) throws AlreadyTakenException, DataAccessException, BadRequestException {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         AuthData authData = registerService.register(userData);
 
@@ -99,7 +99,7 @@ public class Server {
         return new Gson().toJson(authData);
 
     }
-    private String login(Request req, Response res) throws UnauthorizedException {
+    private String login(Request req, Response res) throws UnauthorizedException, DataAccessException {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         AuthData authData = loginService.login(userData);
 
@@ -108,7 +108,7 @@ public class Server {
 
         return new Gson().toJson(authData);
     }
-    private String logout(Request req, Response res) throws UnauthorizedException {
+    private String logout(Request req, Response res) throws UnauthorizedException, DataAccessException {
         String authToken = req.headers("authorization");
 
         logoutService.logout(authToken);
@@ -118,7 +118,7 @@ public class Server {
 
         return("{}");
     }
-    private String listGames(Request req, Response res) throws UnauthorizedException {
+    private String listGames(Request req, Response res) throws UnauthorizedException, DataAccessException {
         String authToken = req.headers("authorization");
 
         Collection<GameData> allGames = listGamesService.listGames(authToken);
@@ -128,7 +128,7 @@ public class Server {
 
         return new Gson().toJson(allGames);
     }
-    private String createGame(Request req, Response res) throws UnauthorizedException {
+    private String createGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException {
         String authToken = req.headers("authorization");
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
 
@@ -139,7 +139,7 @@ public class Server {
 
         return (new Gson().toJson(game));
     }
-    private String joinGame(Request req, Response res) throws UnauthorizedException {
+    private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException {
         String authToken = req.headers("authorization");
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
 
@@ -150,7 +150,7 @@ public class Server {
 
         return("{}");
     }
-    private String clearApplication(Request req, Response res) {
+    private String clearApplication(Request req, Response res) throws DataAccessException{
         clearService.clearAll();
         res.status(200);
         res.body("{}");

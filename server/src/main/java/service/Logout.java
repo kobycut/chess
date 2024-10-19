@@ -12,7 +12,7 @@ public class Logout {
         this.authDAO = authDAO;
     }
 
-    public void logout(String authToken) throws UnauthorizedException {
+    public void logout(String authToken) throws UnauthorizedException, DataAccessException {
         AuthData authData = authDAO.getAuthData(authToken);
         if (authData == null) {
             throw new UnauthorizedException(401);
@@ -20,5 +20,3 @@ public class Logout {
         authDAO.deleteAuth(authData);
     }
 }
-
-// TODO throw 500 error

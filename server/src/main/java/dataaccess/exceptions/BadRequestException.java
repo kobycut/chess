@@ -3,8 +3,7 @@ package dataaccess.exceptions;
 
 public class BadRequestException extends Exception{
     final private int statusCode;
-    public BadRequestException(int statusCode, String message) {
-        super(message);
+    public BadRequestException(int statusCode) {
         this.statusCode = statusCode;
     }
     public String getMessage() {

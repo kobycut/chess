@@ -2,6 +2,7 @@ package service;
 
 import dataaccess.*;
 import dataaccess.exceptions.AlreadyTakenException;
+import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 import model.*;
 
@@ -17,11 +18,14 @@ public class Register {
         this.authDAO = authDAO;
     }
 
-    public AuthData register(UserData userData) throws AlreadyTakenException {
+    public AuthData register(UserData userData) throws AlreadyTakenException, DataAccessException, BadRequestException {
         if (userDAO.getUser(userData.username()) != null) {
             throw new AlreadyTakenException(403);
         }
         userDAO.createUser(userData);
+        if (userData.username() == null) {
+            throw new BadRequestException(400);
+        }
         AuthData authData = new AuthData(UUID.randomUUID().toString(), userData.username());
         authDAO.createAuth(authData);
         return authData;
@@ -29,4 +33,3 @@ public class Register {
 
 }
 
-// TODO throw 500, 400 error

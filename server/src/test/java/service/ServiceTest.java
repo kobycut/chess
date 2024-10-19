@@ -1,17 +1,20 @@
 package service;
 
-import dataaccess.DataAccess;
+import dataaccess.*;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 public class ServiceTest {
-    static private DataAccess dataAccess;
-    static private Service service;
+    static private UserDAO userDAO;
+    static private AuthDAO authDAO;
+    static private GameDAO gameDAO;
 
     @BeforeAll
     public static void init() {
-        dataAccess = new MemoryDataAccess();
-        service = new Service(dataAccess);
+        userDAO = new UserMemoryDataAccess();
+        authDAO = new AuthMemoryDataAccess();
+        gameDAO = new GameMemoryDataAccess();
+
     }
     @Test
     public void registerUser() {
