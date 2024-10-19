@@ -3,6 +3,7 @@ package service;
 import dataaccess.AuthDAO;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.GameDAO;
+import dataaccess.exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 
@@ -16,12 +17,12 @@ public class CreateGame {
         this.gameDAO = gameDAO;
     }
 
-    public GameData createGame(GameData gameData, String authToken) throws DataAccessException {
+    public GameData createGame(GameData gameData, String authToken) throws UnauthorizedException {
         AuthData authData = authDAO.getAuthData(authToken);
         if (authData == null) {
-            // throw error
+            throw new UnauthorizedException(401);
         }
-        // Another error somewhere, bad request
+
 
         return gameDAO.createGame(gameData.gameName());
 
@@ -29,3 +30,5 @@ public class CreateGame {
 
 
 }
+
+// TODO throw 500, 400 error

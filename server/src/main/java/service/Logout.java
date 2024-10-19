@@ -1,6 +1,7 @@
 package service;
 import dataaccess.*;
 import dataaccess.exceptions.DataAccessException;
+import dataaccess.exceptions.UnauthorizedException;
 import model.AuthData;
 
 public class Logout {
@@ -11,11 +12,13 @@ public class Logout {
         this.authDAO = authDAO;
     }
 
-    public void logout(String authToken) throws DataAccessException {
+    public void logout(String authToken) throws UnauthorizedException {
         AuthData authData = authDAO.getAuthData(authToken);
         if (authData == null) {
-            // throw error
+            throw new UnauthorizedException(401);
         }
         authDAO.deleteAuth(authData);
     }
 }
+
+// TODO throw 500 error

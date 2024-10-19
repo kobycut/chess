@@ -5,21 +5,21 @@ import model.UserData;
 
 import java.util.HashMap;
 
-public class UserMemoryDataAccess implements UserDAO {
+public class UserMemoryDataAccess implements UserDAO  {
     final private HashMap<String, UserData> users = new HashMap<>();
 
     @Override
-    public UserData getUser(String username) {
+    public UserData getUser(String username) throws DataAccessException{
         return users.get(username);
     }
 
     @Override
-    public void createUser(UserData userData) {
+    public void createUser(UserData userData) throws DataAccessException{
         users.put(userData.username(), userData);
     }
 
     @Override
-    public void clearAllUsers() {
+    public void clearAllUsers() throws DataAccessException{
         users.clear();
     }
 }

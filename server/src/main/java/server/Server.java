@@ -13,6 +13,7 @@ import spark.*;
 import service.*;
 
 import java.util.Collection;
+import java.util.Map;
 
 public class Server {
 
@@ -59,17 +60,34 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private void dataAccessExceptionHandler(DataAccessException ex, Request req, Response res) {
-        res.status(ex.StatusCode());
+    private Object dataAccessExceptionHandler(DataAccessException ex, Request req, Response res) {
+        String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
+        res.type("application/json"); // not sure
+        res.status(500); // not sure
+        res.body(body);
+        return body;
+
     }
-    private void alreadyTakenExceptionHandler(AlreadyTakenException ex, Request req, Response res) {
+    private Object alreadyTakenExceptionHandler(AlreadyTakenException ex, Request req, Response res) {
+        String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
+        res.type("application/json");
         res.status(ex.StatusCode());
+        res.body(body);
+        return body;
     }
-    private void badRequestExceptionHandler(BadRequestException ex, Request req, Response res) {
+    private Object badRequestExceptionHandler(BadRequestException ex, Request req, Response res) {
+        String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
+        res.type("application/json");
         res.status(ex.StatusCode());
+        res.body(body);
+        return body;
     }
-    private void unauthorizedExceptionHandler(UnauthorizedException ex, Request req, Response res) {
+    private Object unauthorizedExceptionHandler(UnauthorizedException ex, Request req, Response res) {
+        String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
+        res.type("application/json");
         res.status(ex.StatusCode());
+        res.body(body);
+        return body;
     }
     private String registerUser(Request req, Response res) throws AlreadyTakenException {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
@@ -90,7 +108,7 @@ public class Server {
 
         return new Gson().toJson(authData);
     }
-    private String logout(Request req, Response res) throws DataAccessException {
+    private String logout(Request req, Response res) throws UnauthorizedException {
         String authToken = req.headers("authorization");
 
         logoutService.logout(authToken);
@@ -100,7 +118,7 @@ public class Server {
 
         return("{}");
     }
-    private String listGames(Request req, Response res) throws DataAccessException {
+    private String listGames(Request req, Response res) throws UnauthorizedException {
         String authToken = req.headers("authorization");
 
         Collection<GameData> allGames = listGamesService.listGames(authToken);
@@ -110,7 +128,7 @@ public class Server {
 
         return new Gson().toJson(allGames);
     }
-    private String createGame(Request req, Response res) throws DataAccessException {
+    private String createGame(Request req, Response res) throws UnauthorizedException {
         String authToken = req.headers("authorization");
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
 
@@ -121,7 +139,7 @@ public class Server {
 
         return (new Gson().toJson(game));
     }
-    private String joinGame(Request req, Response res) throws DataAccessException {
+    private String joinGame(Request req, Response res) throws UnauthorizedException {
         String authToken = req.headers("authorization");
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
 
@@ -132,7 +150,7 @@ public class Server {
 
         return("{}");
     }
-    private String clearApplication(Request req, Response res) throws DataAccessException {
+    private String clearApplication(Request req, Response res) {
         clearService.clearAll();
         res.status(200);
         res.body("{}");

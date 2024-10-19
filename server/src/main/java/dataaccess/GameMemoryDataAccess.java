@@ -12,7 +12,7 @@ public class GameMemoryDataAccess implements GameDAO {
     final private HashMap<Integer, GameData> games = new HashMap<>();
 
     @Override
-    public Collection<GameData> getAllGames() throws DataAccessException {
+    public Collection<GameData> getAllGames() throws DataAccessException{
 
         return games.values();
     }
@@ -27,12 +27,12 @@ public class GameMemoryDataAccess implements GameDAO {
     }
 
     @Override
-    public GameData getGame(int gameID) throws DataAccessException {
+    public GameData getGame(int gameID)throws DataAccessException {
         return games.get(gameID);
     }
 
     @Override
-    public void updateGame(GameData gameData) throws DataAccessException {
+    public void updateGame(GameData gameData) throws DataAccessException  {
         games.put(gameData.gameID(), gameData);
     }
 

@@ -20,7 +20,7 @@ public class Login {
 
     public AuthData login(UserData userData) throws UnauthorizedException {
         if (!userData.password().equals(userDAO.getUser(userData.username()).password())) {
-            throw new UnauthorizedException(401, "Error: unauthorized");
+            throw new UnauthorizedException(401);
         }
         AuthData authData = new AuthData(UUID.randomUUID().toString(), userData.username());
         authDAO.createAuth(authData);
@@ -28,4 +28,4 @@ public class Login {
     }
 
 }
-// throw 500 error
+// TODO throw 500 error

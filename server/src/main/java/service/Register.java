@@ -19,7 +19,7 @@ public class Register {
 
     public AuthData register(UserData userData) throws AlreadyTakenException {
         if (userDAO.getUser(userData.username()) != null) {
-            throw new AlreadyTakenException(403, "Error: already taken");
+            throw new AlreadyTakenException(403);
         }
         userDAO.createUser(userData);
         AuthData authData = new AuthData(UUID.randomUUID().toString(), userData.username());
@@ -29,5 +29,4 @@ public class Register {
 
 }
 
-// throw bad request
-// throw 500 error
+// TODO throw 500, 400 error

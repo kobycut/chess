@@ -9,6 +9,9 @@ public class DataAccessException extends Exception{
         super(message);
         this.statusCode = statusCode;
     }
+    public String getMessage() {
+        return "data access failed";
+    }
 
     public int StatusCode() {
         return statusCode;

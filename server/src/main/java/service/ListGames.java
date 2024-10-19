@@ -1,5 +1,6 @@
 package service;
 import dataaccess.exceptions.DataAccessException;
+import dataaccess.exceptions.UnauthorizedException;
 import model.AuthData;
 import dataaccess.*;
 import model.GameData;
@@ -17,12 +18,14 @@ public class ListGames {
         this.gameDAO = gameDAO;
     }
 
-    public Collection<GameData> listGames(String authToken) throws DataAccessException {
+    public Collection<GameData> listGames(String authToken) throws UnauthorizedException {
         AuthData authData = authDAO.getAuthData(authToken);
         if (authData == null) {
-            // throw error
+            throw new UnauthorizedException(401);
         }
         return gameDAO.getAllGames();
     }
 
 }
+
+// TODO throw 500 error

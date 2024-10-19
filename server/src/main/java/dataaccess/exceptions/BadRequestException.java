@@ -7,6 +7,9 @@ public class BadRequestException extends Exception{
         super(message);
         this.statusCode = statusCode;
     }
+    public String getMessage() {
+        return "bad request";
+    }
 
     public int StatusCode() {
         return statusCode;
