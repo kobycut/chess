@@ -19,6 +19,10 @@ public class Login {
     }
 
     public AuthData login(UserData userData) throws UnauthorizedException, DataAccessException {
+
+        if (userDAO.getUser(userData.username()) == null) {
+            throw new UnauthorizedException(401);
+        }
         if (!userData.password().equals(userDAO.getUser(userData.username()).password())) {
             throw new UnauthorizedException(401);
         }

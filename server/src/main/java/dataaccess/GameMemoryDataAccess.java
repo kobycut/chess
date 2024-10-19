@@ -13,7 +13,6 @@ public class GameMemoryDataAccess implements GameDAO {
 
     @Override
     public Collection<GameData> getAllGames() throws DataAccessException{
-
         return games.values();
     }
 

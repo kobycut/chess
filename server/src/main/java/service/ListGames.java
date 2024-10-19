@@ -20,6 +20,7 @@ public class ListGames {
 
     public Collection<GameData> listGames(String authToken) throws UnauthorizedException, DataAccessException {
         AuthData authData = authDAO.getAuthData(authToken);
+
         if (authData == null) {
             throw new UnauthorizedException(401);
         }

@@ -2,16 +2,12 @@ package server;
 
 import com.google.gson.Gson;
 import dataaccess.*;
-import dataaccess.exceptions.AlreadyTakenException;
-import dataaccess.exceptions.BadRequestException;
-import dataaccess.exceptions.DataAccessException;
-import dataaccess.exceptions.UnauthorizedException;
+import dataaccess.exceptions.*;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import spark.*;
 import service.*;
-
 import java.util.Collection;
 import java.util.Map;
 
@@ -89,6 +85,8 @@ public class Server {
         res.body(body);
         return body;
     }
+
+
     private String registerUser(Request req, Response res) throws AlreadyTakenException, DataAccessException, BadRequestException {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         AuthData authData = registerService.register(userData);
@@ -112,7 +110,6 @@ public class Server {
         String authToken = req.headers("authorization");
 
         logoutService.logout(authToken);
-
         res.status(200);
         res.body("{}");
 
@@ -122,11 +119,10 @@ public class Server {
         String authToken = req.headers("authorization");
 
         Collection<GameData> allGames = listGamesService.listGames(authToken);
-
+        String body = new Gson().toJson(allGames);
         res.status(200);
-        res.body(new Gson().toJson(allGames));
-
-        return new Gson().toJson(allGames);
+        res.body(body);
+        return body;
     }
     private String createGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException {
         String authToken = req.headers("authorization");
@@ -139,7 +135,7 @@ public class Server {
 
         return (new Gson().toJson(game));
     }
-    private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException {
+    private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException {
         String authToken = req.headers("authorization");
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
 

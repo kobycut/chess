@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
@@ -17,15 +18,16 @@ public class JoinGame {
         this.gameDAO = gameDAO;
     }
 
-    public void join(String authToken, GameData gameData) throws UnauthorizedException, DataAccessException {
+    public void join(String authToken, GameData gameData) throws UnauthorizedException, DataAccessException, BadRequestException {
         AuthData authData = authDAO.getAuthData(authToken);
         if (authData == null) {
             throw new UnauthorizedException(401);
         }
         GameData game = gameDAO.getGame(gameData.gameID());
         if (game == null) {
-            // throw error
+            throw new BadRequestException(400);
         }
+
         gameDAO.updateGame(game);
     }
 }
