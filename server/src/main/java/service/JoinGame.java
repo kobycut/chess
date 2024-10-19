@@ -16,13 +16,15 @@ public class JoinGame {
         this.gameDAO = gameDAO;
     }
 
-    public AuthData getAuthData(String authToken) throws DataAccessException {
-        return authDAO.getAuthData(authToken);
-    }
-    public GameData getGameData(int gameID) throws DataAccessException {
-        return gameDAO.getGame(gameID);
-    }
-    public void updateGame(GameData gameData) throws DataAccessException {
-        gameDAO.updateGame(gameData);
+    public void join(String authToken, GameData gameData) throws DataAccessException {
+        AuthData authData = authDAO.getAuthData(authToken);
+        if (authData == null) {
+            // throw error
+        }
+        GameData game = gameDAO.getGame(gameData.gameID());
+        if (game == null) {
+            // throw error
+        }
+        gameDAO.updateGame(game);
     }
 }

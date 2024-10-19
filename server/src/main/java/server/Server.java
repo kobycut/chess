@@ -96,7 +96,10 @@ public class Server {
 
     }
     private String joinGame(Request req, Response res){
-        return null;
+        String authToken = req.headers("authorization");
+        GameData gameData = new Gson().fromJson(req.body(), GameData.class);
+
+        joinGameService.join(authToken, gameData);
     }
     private void clearApplication(Request req, Response res){
         clearService.clearAll();
