@@ -24,6 +24,7 @@ public class ListGames {
         if (authData == null) {
             throw new UnauthorizedException(401);
         }
+
         return gameDAO.getAllGames();
     }
 

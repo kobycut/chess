@@ -14,6 +14,9 @@ public class GameMemoryDataAccess implements GameDAO {
 
     @Override
     public Collection<GameData> getAllGames() throws DataAccessException{
+        if (games.values().isEmpty()) {
+            return null;
+        }
         return games.values();
     }
 
