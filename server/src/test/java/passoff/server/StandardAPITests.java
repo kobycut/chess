@@ -421,8 +421,8 @@ public class StandardAPITests {
         assertHttpOk(registerResult);
         listResult = serverFacade.listGames(registerResult.getAuthToken());
         assertHttpOk(listResult);
-
         //check listResult
+
         Assertions.assertEquals(0, listResult.getGames().length, "list result did not return 0 games after clear");
     }
 

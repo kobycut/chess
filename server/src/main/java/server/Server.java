@@ -45,7 +45,7 @@ public class Server {
 
         // Register your endpoints and handle exceptions here.
 
-        //This line initializes the server and can be removed once you have a functioning endpoint 
+        //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
 
         Spark.awaitInitialization();
@@ -116,14 +116,14 @@ public class Server {
 
         return("{}");
     }
-    private String listGames(Request req, Response res) throws UnauthorizedException, DataAccessException {
+    private Object listGames(Request req, Response res) throws UnauthorizedException, DataAccessException {
         String authToken = req.headers("authorization");
 
         Collection<GameData> allGames = listGamesService.listGames(authToken);
-        String body = new Gson().toJson(allGames);
+
         res.status(200);
-        res.body(body);
-        return body;
+        res.body(new Gson().toJson(allGames));
+        return new Gson().toJson(allGames);
     }
     private String createGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException {
         String authToken = req.headers("authorization");

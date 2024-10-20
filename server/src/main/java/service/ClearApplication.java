@@ -22,5 +22,3 @@ public class ClearApplication {
         authDAO.clearAllAuthTokens();
     }
 }
-
-// TODO throw 500 error
