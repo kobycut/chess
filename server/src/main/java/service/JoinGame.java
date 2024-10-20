@@ -31,10 +31,10 @@ public class JoinGame {
         if (game == null) {
             throw new BadRequestException(400);
         }
-        if (Objects.equals(playerColor, "WHITE") && gameData.whiteUsername() != null) {
+        if (Objects.equals(playerColor, "WHITE") && game.whiteUsername() != null) {
             throw new AlreadyTakenException(403);
         }
-        if (Objects.equals(playerColor, "BLACK") && gameData.blackUsername() != null) {
+        if (Objects.equals(playerColor, "BLACK") && game.blackUsername() != null) {
             throw new AlreadyTakenException(403);
         }
 
