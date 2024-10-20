@@ -1,5 +1,6 @@
 package service;
 
+import dataaccess.exceptions.AlreadyTakenException;
 import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.UnauthorizedException;
 import model.AuthData;
@@ -7,6 +8,8 @@ import model.GameData;
 import dataaccess.AuthDAO;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.GameDAO;
+
+import java.util.Objects;
 
 public class JoinGame {
 
@@ -18,7 +21,8 @@ public class JoinGame {
         this.gameDAO = gameDAO;
     }
 
-    public void join(String authToken, GameData gameData) throws UnauthorizedException, DataAccessException, BadRequestException {
+    public void join(String authToken, GameData gameData, String playerColor) throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
+
         AuthData authData = authDAO.getAuthData(authToken);
         if (authData == null) {
             throw new UnauthorizedException(401);
@@ -27,8 +31,13 @@ public class JoinGame {
         if (game == null) {
             throw new BadRequestException(400);
         }
+        if (Objects.equals(playerColor, "WHITE") && gameData.whiteUsername() != null) {
+            throw new AlreadyTakenException(403);
+        }
+        if (Objects.equals(playerColor, "BLACK") && gameData.blackUsername() != null) {
+            throw new AlreadyTakenException(403);
+        }
 
-        gameDAO.updateGame(game);
+        gameDAO.updateGame(game, playerColor, authData.username());
     }
 }
-// TODO throw 500 error, 403 error, and check for white or black player

@@ -6,6 +6,7 @@ import model.GameData;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class GameMemoryDataAccess implements GameDAO {
     private int nextId = 1;
@@ -31,8 +32,15 @@ public class GameMemoryDataAccess implements GameDAO {
     }
 
     @Override
-    public void updateGame(GameData gameData) throws DataAccessException  {
-        games.put(gameData.gameID(), gameData);
+    public void updateGame(GameData gameData, String playerColor, String username) throws DataAccessException  {
+        GameData updatedGameData = null;
+        if (Objects.equals(playerColor, "WHITE")) {
+            updatedGameData = new GameData(gameData.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.ChessGame());
+        }
+        if (Objects.equals(playerColor, "BLACK")) {
+            updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.ChessGame());
+        }
+        games.put(gameData.gameID(), updatedGameData);
     }
 
     @Override

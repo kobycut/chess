@@ -1,6 +1,7 @@
 package server;
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import dataaccess.*;
 import dataaccess.exceptions.*;
 import model.AuthData;
@@ -135,11 +136,16 @@ public class Server {
 
         return (new Gson().toJson(game));
     }
-    private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException {
+    private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
         String authToken = req.headers("authorization");
+
+        JsonObject obj = new Gson().fromJson(req.body(), JsonObject.class);
+        String playerColor = obj.get("playerColor").getAsString();
+
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
 
-        joinGameService.join(authToken, gameData);
+
+        joinGameService.join(authToken, gameData, playerColor);
 
         res.status(200);
         res.body("{}");
