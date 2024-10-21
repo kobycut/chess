@@ -19,8 +19,7 @@ import javax.crypto.SecretKey;
 import java.util.Collection;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class ServiceTest {
     static private UserDAO userDAO;
@@ -73,7 +72,7 @@ public class ServiceTest {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
-        assertEquals(null, userDAO.getUser("BrandNewUser"));
+        assertNull(userDAO.getUser("BrandNewUser"));
     }
 
     @Test
@@ -117,7 +116,7 @@ public class ServiceTest {
 
         logout.logout(authData.authToken());
 
-        assertEquals(null ,authDAO.getAuthData(authData.authToken()));
+        assertNull(authDAO.getAuthData(authData.authToken()));
     }
 
     @Test

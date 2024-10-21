@@ -36,10 +36,10 @@ public class GameMemoryDataAccess implements GameDAO {
     public void updateGame(GameData gameData, String playerColor, String username) throws DataAccessException  {
         GameData updatedGameData = null;
         if (Objects.equals(playerColor, "WHITE")) {
-            updatedGameData = new GameData(gameData.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.ChessGame());
+            updatedGameData = new GameData(gameData.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.chessGame());
         }
         if (Objects.equals(playerColor, "BLACK")) {
-            updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.ChessGame());
+            updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.chessGame());
         }
         games.put(gameData.gameID(), updatedGameData);
     }

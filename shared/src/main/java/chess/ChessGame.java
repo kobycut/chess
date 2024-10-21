@@ -119,8 +119,8 @@ public class ChessGame {
         if (validMoves == null) {
             throw new InvalidMoveException("No valid moves");
         }
-        for (ChessMove valid_move : validMoves) {
-            if (valid_move.equals(move)) {
+        for (ChessMove validMove : validMoves) {
+            if (validMove.equals(move)) {
                 var start = move.getStartPosition();
                 var end = move.getEndPosition();
                 if (move.getPromotionPiece() != null) {
