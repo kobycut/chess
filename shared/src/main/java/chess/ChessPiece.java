@@ -168,7 +168,8 @@ public class ChessPiece {
             } else {
                 for (int i = 0; i < 2; i++) {
                     ChessPosition uniquePosition = blackdiagonallst.get(i);
-                    if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0) {
+                    if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 &&
+                            uniquePosition.getRow() > 0) {
                         if (board.getPiece(uniquePosition) != null) {
                             if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()) {
                                 if (myPosition.getRow() == 2) {
