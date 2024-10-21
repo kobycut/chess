@@ -35,7 +35,7 @@ public class ServiceTest {
 
     }
     @Test
-    public void GoodRegisterUser() throws BadRequestException, AlreadyTakenException, DataAccessException {
+    public void goodRegisterUser() throws BadRequestException, AlreadyTakenException, DataAccessException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
@@ -50,7 +50,7 @@ public class ServiceTest {
 
     }
     @Test
-    public void BadRegisterUser() throws BadRequestException, AlreadyTakenException, DataAccessException {
+    public void badRegisterUser() throws BadRequestException, AlreadyTakenException, DataAccessException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
@@ -65,7 +65,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void GoodClearAll() throws DataAccessException, BadRequestException, AlreadyTakenException {
+    public void goodClearAll() throws DataAccessException, BadRequestException, AlreadyTakenException {
         Register register = new Register(userDAO, authDAO);
         register.register(new UserData("BrandNewUser", "CoolPassword", "SickEmail@email.com"));
         register.register(new UserData("AnotherUser", "SweetPassword", "Email@Email.com"));
@@ -77,7 +77,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void GoodLogin() throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
+    public void goodLogin() throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
@@ -93,7 +93,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void BadLogin() throws DataAccessException {
+    public void badLogin() throws DataAccessException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
@@ -103,7 +103,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void GoodLogout() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
+    public void goodLogout() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
@@ -121,7 +121,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void BadLogout() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
+    public void badLogout() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
@@ -138,7 +138,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void GoodCreateGame() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
+    public void goodCreateGame() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
@@ -159,7 +159,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void BadCreateGame() throws DataAccessException, UnauthorizedException, BadRequestException {
+    public void badCreateGame() throws DataAccessException, UnauthorizedException, BadRequestException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
@@ -172,7 +172,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void GoodListGames() throws DataAccessException, UnauthorizedException, BadRequestException, AlreadyTakenException {
+    public void goodListGames() throws DataAccessException, UnauthorizedException, BadRequestException, AlreadyTakenException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
@@ -196,7 +196,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void BadListGames() throws DataAccessException, UnauthorizedException {
+    public void badListGames() throws DataAccessException, UnauthorizedException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
@@ -207,7 +207,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void GoodJoin() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
+    public void goodJoin() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
@@ -230,7 +230,7 @@ public class ServiceTest {
     }
 
     @Test
-    public void BadJoin() throws DataAccessException, UnauthorizedException, BadRequestException, AlreadyTakenException {
+    public void badJoin() throws DataAccessException, UnauthorizedException, BadRequestException, AlreadyTakenException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
 
