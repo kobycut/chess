@@ -9,7 +9,7 @@ public class UnauthorizedException extends Exception{
         return "unauthorized";
     }
 
-    public int StatusCode() {
+    public int statusCode() {
         return statusCode;
     }
 }

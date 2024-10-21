@@ -68,19 +68,19 @@ public class Server {
     private void alreadyTakenExceptionHandler(AlreadyTakenException ex, Request req, Response res) {
         String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
         res.type("application/json");
-        res.status(ex.StatusCode());
+        res.status(ex.statusCode());
         res.body(body);
     }
     private void badRequestExceptionHandler(BadRequestException ex, Request req, Response res) {
         String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
         res.type("application/json");
-        res.status(ex.StatusCode());
+        res.status(ex.statusCode());
         res.body(body);
     }
     private void unauthorizedExceptionHandler(UnauthorizedException ex, Request req, Response res) {
         String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
         res.type("application/json");
-        res.status(ex.StatusCode());
+        res.status(ex.statusCode());
         res.body(body);
     }
 

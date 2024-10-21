@@ -10,7 +10,7 @@ public class BadRequestException extends Exception{
         return "bad request";
     }
 
-    public int StatusCode() {
+    public int statusCode() {
         return statusCode;
     }
 }

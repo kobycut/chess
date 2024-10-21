@@ -9,7 +9,7 @@ public class AlreadyTakenException extends Exception{
         return "already taken";
     }
 
-    public int StatusCode() {
+    public int statusCode() {
         return statusCode;
     }
 }
