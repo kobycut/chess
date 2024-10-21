@@ -24,6 +24,9 @@ public class JoinGame {
     public void join(String authToken, GameData gameData, String playerColor) throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
 
         AuthData authData = authDAO.getAuthData(authToken);
+        if (playerColor == null) {
+            throw new BadRequestException(400);
+        }
         if (authData == null) {
             throw new UnauthorizedException(401);
         }

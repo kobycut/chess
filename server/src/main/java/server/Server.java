@@ -11,6 +11,7 @@ import spark.*;
 import service.*;
 import java.util.Collection;
 import java.util.Map;
+import java.util.HashMap;
 
 public class Server {
 
@@ -120,10 +121,12 @@ public class Server {
         String authToken = req.headers("authorization");
 
         Collection<GameData> allGames = listGamesService.listGames(authToken);
+        Map<String, Object> gamesObject = new HashMap<>();
+        gamesObject.put("games", allGames);
 
         res.status(200);
-        res.body(new Gson().toJson(allGames));
-        return new Gson().toJson(allGames);
+        res.body(new Gson().toJson(gamesObject));
+        return new Gson().toJson(gamesObject);
     }
     private String createGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException {
         String authToken = req.headers("authorization");
@@ -137,10 +140,13 @@ public class Server {
         return (new Gson().toJson(game));
     }
     private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
+        String playerColor = null;
         String authToken = req.headers("authorization");
 
         JsonObject obj = new Gson().fromJson(req.body(), JsonObject.class);
-        String playerColor = obj.get("playerColor").getAsString();
+        if (obj.get("playerColor") != null) {
+            playerColor = obj.get("playerColor").getAsString();
+        }
 
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
 
