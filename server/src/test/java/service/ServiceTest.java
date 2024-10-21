@@ -15,6 +15,10 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import service.*;
 
+import javax.crypto.SecretKey;
+import java.util.Collection;
+import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 
@@ -134,27 +138,72 @@ public class ServiceTest {
     }
 
     @Test
-    public void GoodCreateGame() throws DataAccessException {
+    public void GoodCreateGame() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
+
+        Register register = new Register(userDAO, authDAO);
+        Login login = new Login(userDAO, authDAO);
+        CreateGame createGame = new CreateGame(authDAO, gameDAO);
+
+        ChessGame chessGame = new ChessGame();
+        GameData gameData = new GameData(0, null, null, "TimmysGame", chessGame);
+        UserData userData = new UserData("Timmy", "yes", "tim@email.com");
+
+        register.register(userData);
+        AuthData authData = login.login(userData);
+
+        GameData game = createGame.createGame(gameData, authData.authToken());
+
+        assertEquals("TimmysGame", game.gameName());
     }
 
     @Test
-    public void BadCreateGame() throws DataAccessException {
+    public void BadCreateGame() throws DataAccessException, UnauthorizedException, BadRequestException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
+
+        CreateGame createGame = new CreateGame(authDAO, gameDAO);
+
+        GameData gameData = new GameData(0, null, null, "1000$Game", null);
+        AuthData authData = new AuthData("fakeToken", "TimmysBeingFramed");
+
+        assertThrows(UnauthorizedException.class, () -> createGame.createGame(gameData, authData.authToken()));
     }
 
     @Test
-    public void GoodListGames() throws DataAccessException {
+    public void GoodListGames() throws DataAccessException, UnauthorizedException, BadRequestException, AlreadyTakenException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
+
+        Register register = new Register(userDAO, authDAO);
+        Login login = new Login(userDAO, authDAO);
+        ListGames listGames = new ListGames(authDAO, gameDAO);
+        CreateGame createGame = new CreateGame(authDAO, gameDAO);
+
+        UserData userData = new UserData("Timmy", "yes", "tim@email.com");
+
+        register.register(userData);
+        AuthData authData = login.login(userData);
+        createGame.createGame(new GameData(0, null, null, "TimmysGame", null), authData.authToken());
+        createGame.createGame(new GameData(4, null, null, "HulksGame", null), authData.authToken());
+
+        Collection<GameData> games = listGames.listGames(authData.authToken());
+
+        assertEquals(2 , games.size());
+
+
     }
 
     @Test
-    public void BadListGames() throws DataAccessException {
+    public void BadListGames() throws DataAccessException, UnauthorizedException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
+
+        ListGames listGames = new ListGames(authDAO, gameDAO);
+
+        assertThrows(UnauthorizedException.class, () -> listGames.listGames(null));
+
     }
 
     @Test
