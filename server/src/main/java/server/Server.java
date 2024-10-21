@@ -58,36 +58,31 @@ public class Server {
         Spark.awaitStop();
     }
 
-    private Object dataAccessExceptionHandler(DataAccessException ex, Request req, Response res) {
+    private void dataAccessExceptionHandler(DataAccessException ex, Request req, Response res) {
         String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
-        res.type("application/json"); // not sure
-        res.status(500); // not sure
+        res.type("application/json");
+        res.status(500);
         res.body(body);
-        return body;
 
     }
-    private Object alreadyTakenExceptionHandler(AlreadyTakenException ex, Request req, Response res) {
+    private void alreadyTakenExceptionHandler(AlreadyTakenException ex, Request req, Response res) {
         String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
         res.type("application/json");
         res.status(ex.StatusCode());
         res.body(body);
-        return body;
     }
-    private Object badRequestExceptionHandler(BadRequestException ex, Request req, Response res) {
+    private void badRequestExceptionHandler(BadRequestException ex, Request req, Response res) {
         String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
         res.type("application/json");
         res.status(ex.StatusCode());
         res.body(body);
-        return body;
     }
-    private Object unauthorizedExceptionHandler(UnauthorizedException ex, Request req, Response res) {
+    private void unauthorizedExceptionHandler(UnauthorizedException ex, Request req, Response res) {
         String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
         res.type("application/json");
         res.status(ex.StatusCode());
         res.body(body);
-        return body;
     }
-
 
     private String registerUser(Request req, Response res) throws AlreadyTakenException, DataAccessException, BadRequestException {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
