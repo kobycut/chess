@@ -1,5 +1,7 @@
 package chess;
 
+import model.GameData;
+
 import java.lang.reflect.Array;
 import java.util.*;
 
@@ -47,6 +49,13 @@ public class ChessPiece {
      *
      * @return Collection of valid moves
      */
+
+    private void addMoves(ArrayList<ChessMove> moves, ChessPosition uniquePosition, ChessPosition myPosition) {
+        moves.add(new ChessMove(myPosition, uniquePosition, PieceType.KNIGHT));
+        moves.add(new ChessMove(myPosition, uniquePosition, PieceType.ROOK));
+        moves.add(new ChessMove(myPosition, uniquePosition, PieceType.QUEEN));
+        moves.add(new ChessMove(myPosition, uniquePosition, PieceType.BISHOP));
+    }
     public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
         ArrayList<ChessMove> moves = new ArrayList<>();
         ChessPiece myPiece = board.getPiece(myPosition);
@@ -146,10 +155,7 @@ public class ChessPiece {
                         if (board.getPiece(uniquePosition) != null) {
                             if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()) {
                                 if (myPosition.getRow() == 7) {
-                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.KNIGHT));
-                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.ROOK));
-                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.QUEEN));
-                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.BISHOP));
+                                    addMoves(moves, uniquePosition, myPosition);
                                 } else {
                                     moves.add(new ChessMove(myPosition, uniquePosition, null));
                                 }
@@ -159,10 +165,7 @@ public class ChessPiece {
                 }
                 if (board.getPiece((upPosition)) == null) {
                     if (myPosition.getRow() == 7) {
-                        moves.add(new ChessMove(myPosition, upPosition, PieceType.QUEEN));
-                        moves.add(new ChessMove(myPosition, upPosition, PieceType.KNIGHT));
-                        moves.add(new ChessMove(myPosition, upPosition, PieceType.ROOK));
-                        moves.add(new ChessMove(myPosition, upPosition, PieceType.BISHOP));
+                        addMoves(moves, upPosition, myPosition);
                     } else {
                         moves.add(new ChessMove(myPosition, upPosition, null));
                     }
@@ -184,10 +187,7 @@ public class ChessPiece {
                         if (board.getPiece(uniquePosition) != null) {
                             if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()) {
                                 if (myPosition.getRow() == 2) {
-                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.KNIGHT));
-                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.ROOK));
-                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.QUEEN));
-                                    moves.add(new ChessMove(myPosition, uniquePosition, PieceType.BISHOP));
+                                    addMoves(moves, uniquePosition, myPosition);
                                 } else {
                                     moves.add(new ChessMove(myPosition, uniquePosition, null));
                                 }
@@ -197,10 +197,7 @@ public class ChessPiece {
                     }
                     if (board.getPiece((downPosition)) == null) {
                         if (myPosition.getRow() == 2) {
-                            moves.add(new ChessMove(myPosition, downPosition, PieceType.QUEEN));
-                            moves.add(new ChessMove(myPosition, downPosition, PieceType.KNIGHT));
-                            moves.add(new ChessMove(myPosition, downPosition, PieceType.ROOK));
-                            moves.add(new ChessMove(myPosition, downPosition, PieceType.BISHOP));
+                            addMoves(moves, downPosition, myPosition);
                         } else {
                             moves.add(new ChessMove(myPosition, downPosition, null));
                         }
