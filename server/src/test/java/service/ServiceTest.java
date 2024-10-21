@@ -99,37 +99,75 @@ public class ServiceTest {
     }
 
     @Test
-    public void GoodLogout() {
+    public void GoodLogout() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
+        ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
+        clear.clearAll();
+
+        Logout logout = new Logout(authDAO);
+        Login login = new Login(userDAO, authDAO);
+        Register register = new Register(userDAO, authDAO);
+
+        UserData userData = new UserData("Timmy", "TimmyLovesCarrots", "TimmyEmail@Email.com");
+        register.register(userData);
+        AuthData authData = login.login(userData);
+
+        logout.logout(authData.authToken());
+
+        assertEquals(null ,authDAO.getAuthData(authData.authToken()));
+    }
+
+    @Test
+    public void BadLogout() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
+        ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
+        clear.clearAll();
+
+        Logout logout = new Logout(authDAO);
+        Login login = new Login(userDAO, authDAO);
+        Register register = new Register(userDAO, authDAO);
+
+        UserData userData = new UserData("Timmy", "TimmyLovesCarrots", "TimmyEmail@Email.com");
+        register.register(userData);
+        login.login(userData);
+        AuthData authData = new AuthData("", "Scotty");
+
+        assertThrows(UnauthorizedException.class, () -> logout.logout(authData.authToken()));
+    }
+
+    @Test
+    public void GoodCreateGame() throws DataAccessException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
     }
 
     @Test
-    public void BadLogout() {
+    public void BadCreateGame() throws DataAccessException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
     }
 
     @Test
-    public void GoodCreateGame() {
+    public void GoodListGames() throws DataAccessException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
     }
 
     @Test
-    public void BadCreateGame() {}
+    public void BadListGames() throws DataAccessException {
+        ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
+        clear.clearAll();
+    }
 
     @Test
-    public void GoodListGames() {}
+    public void GoodJoin() throws DataAccessException {
+        ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
+        clear.clearAll();
+    }
 
     @Test
-    public void BadListGames() {}
-
-    @Test
-    public void GoodJoin() {}
-
-    @Test
-    public void BadJoin() {}
+    public void BadJoin() throws DataAccessException {
+        ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
+        clear.clearAll();
+    }
 
 
 
