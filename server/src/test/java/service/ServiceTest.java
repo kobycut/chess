@@ -99,7 +99,7 @@ public class ServiceTest {
 
         Login login = new Login(userDAO, authDAO);
 
-        assertThrows(BadRequestException.class, () -> login.login(new UserData("Scott", "ScottTheBoss", "Scott@Scotty.com")));
+        assertThrows(UnauthorizedException.class, () -> login.login(new UserData("Scott", "ScottTheBoss", "Scott@Scotty.com")));
     }
 
     @Test
@@ -207,15 +207,36 @@ public class ServiceTest {
     }
 
     @Test
-    public void GoodJoin() throws DataAccessException {
+    public void GoodJoin() throws DataAccessException, BadRequestException, AlreadyTakenException, UnauthorizedException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
+
+        CreateGame createGame = new CreateGame(authDAO, gameDAO);
+        Register register = new Register(userDAO, authDAO);
+        Login login = new Login(userDAO, authDAO);
+        JoinGame joinGame = new JoinGame(authDAO, gameDAO);
+
+        UserData userData = new UserData("Franky", "FrankyIsTheBest", "FrankysSecretEmail@Secret.com");
+
+        register.register(userData);
+        AuthData authData = login.login(userData);
+        GameData gameData = new GameData(0, null, null, "TimmysGame", null);
+        var game = createGame.createGame(gameData, authData.authToken());
+
+
+        joinGame.join(authData.authToken(), game, "WHITE");
+
+        assertEquals("Franky", gameDAO.getGame(1).whiteUsername());
     }
 
     @Test
-    public void BadJoin() throws DataAccessException {
+    public void BadJoin() throws DataAccessException, UnauthorizedException, BadRequestException, AlreadyTakenException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
         clear.clearAll();
+
+        JoinGame joinGame = new JoinGame(authDAO, gameDAO);
+
+        assertThrows(BadRequestException.class, () ->  joinGame.join(null, null, null));
     }
 
 
