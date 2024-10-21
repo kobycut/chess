@@ -21,7 +21,8 @@ public class JoinGame {
         this.gameDAO = gameDAO;
     }
 
-    public void join(String authToken, GameData gameData, String playerColor) throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
+    public void join(String authToken, GameData gameData, String playerColor)
+            throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
 
         AuthData authData = authDAO.getAuthData(authToken);
         if (playerColor == null) {
