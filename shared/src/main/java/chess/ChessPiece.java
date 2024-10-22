@@ -57,36 +57,32 @@ public class ChessPiece {
         moves.add(new ChessMove(myPosition, uniquePosition, PieceType.BISHOP));
     }
 
-    private void checkAdd(ChessPosition uniquePosition, ChessBoard board, ChessPosition myPosition,
-                          ArrayList<ChessMove> moves, int sevenOrTwo) {
-        if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 &&
-                uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0 &&
-                board.getPiece(uniquePosition) != null &&
-                board.getPiece(myPosition).getTeamColor() !=
-                        board.getPiece(uniquePosition).getTeamColor() &&
-                (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()
-                        && myPosition.getRow() == sevenOrTwo)) {
+    private void checkAdd(ChessPosition uniquePosition, ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> moves, int sevenOrTwo) {
+        if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0 && board.getPiece(uniquePosition) != null && board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() && (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() && myPosition.getRow() == sevenOrTwo)) {
             addMoves(moves, uniquePosition, myPosition);
 
-            if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()
-                    && myPosition.getRow() != sevenOrTwo) {
+            if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() && myPosition.getRow() != sevenOrTwo) {
                 moves.add(new ChessMove(myPosition, uniquePosition, null));
 
             }
         }
-        if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 &&
-                uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0 &&
-                board.getPiece(uniquePosition) != null &&
-                board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor()
-                && (board.getPiece(myPosition).getTeamColor() !=
-                board.getPiece(uniquePosition).getTeamColor() && myPosition.getRow() != sevenOrTwo)) {
+        if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0 && board.getPiece(uniquePosition) != null && board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() && (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() && myPosition.getRow() != sevenOrTwo)) {
             moves.add(new ChessMove(myPosition, uniquePosition, null));
         }
     }
+    private List<ChessPosition> positionOfWhiteBishop(ChessPosition myPosition) {
+        ChessPosition diagonalUpLeftPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
+        ChessPosition diagonalUpRightPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() + 1);
+        return Arrays.asList(diagonalUpLeftPosition, diagonalUpRightPosition);
+    }
 
-    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
-        ArrayList<ChessMove> moves = new ArrayList<>();
-        ChessPiece myPiece = board.getPiece(myPosition);
+    private List<ChessPosition> positionOfBlackBishop(ChessPosition myPosition) {
+        ChessPosition diagonalDownRightPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
+        ChessPosition diagonalDownLeftPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
+        return Arrays.asList(diagonalDownLeftPosition,diagonalDownRightPosition);
+    }
+
+    private List<ChessPosition> positionsOfPieces(ChessPosition myPosition) {
         ChessPosition leftPosition = new ChessPosition(myPosition.getRow(), myPosition.getColumn() - 1);
         ChessPosition diagonalUpLeftPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn() - 1);
         ChessPosition upPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
@@ -95,9 +91,17 @@ public class ChessPiece {
         ChessPosition diagonalDownRightPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 1);
         ChessPosition downPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
         ChessPosition diagonalDownLeftPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
+
+        List<ChessPosition> lst = Arrays.asList(leftPosition, diagonalUpLeftPosition, upPosition, diagonalUpRightPosition, rightPosition, diagonalDownRightPosition, downPosition, diagonalDownLeftPosition);
+
+        return lst;
+    }
+
+    public Collection<ChessMove> pieceMoves(ChessBoard board, ChessPosition myPosition) {
+        ArrayList<ChessMove> moves = new ArrayList<>();
+        ChessPiece myPiece = board.getPiece(myPosition);
         if (myPiece.type == PieceType.KING) {
-            List<ChessPosition> lst = Arrays.asList(leftPosition, diagonalUpLeftPosition, upPosition, diagonalUpRightPosition,
-                    rightPosition, diagonalDownRightPosition, downPosition, diagonalDownLeftPosition);
+            var lst = positionsOfPieces(myPosition);
             for (int i = 0; i < 8; i++) {
                 ChessPosition uniquePosition = lst.get(i);
                 if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0) {
@@ -127,8 +131,7 @@ public class ChessPiece {
             ChessPosition knightPosition6 = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() + 1);
             ChessPosition knightPosition7 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 2);
             ChessPosition knightPosition8 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 2);
-            List<ChessPosition> lst = Arrays.asList(knightPosition, knightPosition2, knightPosition3, knightPosition4,
-                    knightPosition5, knightPosition6, knightPosition7, knightPosition8);
+            List<ChessPosition> lst = Arrays.asList(knightPosition, knightPosition2, knightPosition3, knightPosition4, knightPosition5, knightPosition6, knightPosition7, knightPosition8);
             for (ChessPosition position : lst) {
                 if (position.getColumn() < 1 || position.getColumn() > 8 || position.getRow() < 1 || position.getRow() > 8) {
                     continue;
@@ -152,11 +155,14 @@ public class ChessPiece {
             queenMoves(board, myPosition, moves, i);
         }
         if (myPiece.type == PieceType.PAWN) {
-            List<ChessPosition> whitediagonallst = Arrays.asList(diagonalUpLeftPosition, diagonalUpRightPosition);
-            List<ChessPosition> blackdiagonallst = Arrays.asList(diagonalDownLeftPosition, diagonalDownRightPosition);
+            var whiteDiagonalLst = positionOfWhiteBishop(myPosition);
+            var blackDiagonalLst = positionOfBlackBishop(myPosition);
+            ChessPosition upPosition = new ChessPosition(myPosition.getRow() + 1, myPosition.getColumn());
+            ChessPosition downPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
+
             if (board.getPiece(myPosition).teamColor == ChessGame.TeamColor.WHITE) {
                 for (int i = 0; i < 2; i++) {
-                    ChessPosition uniquePosition = whitediagonallst.get(i);
+                    ChessPosition uniquePosition = whiteDiagonalLst.get(i);
                     checkAdd(uniquePosition, board, myPosition, moves, 7);
                 }
                 if (board.getPiece((upPosition)) == null) {
@@ -172,14 +178,13 @@ public class ChessPiece {
                 }
             } else {
                 for (int i = 0; i < 2; i++) {
-                    ChessPosition uniquePosition = blackdiagonallst.get(i);
+                    ChessPosition uniquePosition = blackDiagonalLst.get(i);
                     checkAdd(uniquePosition, board, myPosition, moves, 2);
-                    if (board.getPiece((downPosition)) == null) {
-                        if (myPosition.getRow() == 2) {
-                            addMoves(moves, downPosition, myPosition);
-                        } else {
-                            moves.add(new ChessMove(myPosition, downPosition, null));
-                        }
+                    if (board.getPiece((downPosition)) == null && myPosition.getRow() == 2) {
+                        addMoves(moves, downPosition, myPosition);
+                    }
+                    if (board.getPiece((downPosition)) == null && myPosition.getRow() != 2) {
+                        moves.add(new ChessMove(myPosition, downPosition, null));
                     }
                     ChessPosition doubleDownPosition = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn());
                     if (myPosition.getRow() == 7 && board.getPiece(doubleDownPosition) == null && board.getPiece(downPosition) == null) {
