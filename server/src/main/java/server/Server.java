@@ -4,11 +4,13 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataaccess.*;
 import dataaccess.exceptions.*;
+import jdk.jshell.spi.ExecutionControlProvider;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import spark.*;
 import service.*;
+
 import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
@@ -59,28 +61,28 @@ public class Server {
     }
 
     private void dataAccessExceptionHandler(DataAccessException ex, Request req, Response res) {
-        String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
-        res.type("application/json");
+        exceptionHandler(ex, req, res);
         res.status(500);
-        res.body(body);
+    }
 
-    }
     private void alreadyTakenExceptionHandler(AlreadyTakenException ex, Request req, Response res) {
-        String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
-        res.type("application/json");
+        exceptionHandler(ex, req, res);
         res.status(ex.statusCode());
-        res.body(body);
     }
+
     private void badRequestExceptionHandler(BadRequestException ex, Request req, Response res) {
-        String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
-        res.type("application/json");
+        exceptionHandler(ex, req, res);
         res.status(ex.statusCode());
-        res.body(body);
     }
+
     private void unauthorizedExceptionHandler(UnauthorizedException ex, Request req, Response res) {
+        exceptionHandler(ex, req, res);
+        res.status(ex.statusCode());
+    }
+
+    private void exceptionHandler(Exception ex, Request req, Response res) {
         String body = new Gson().toJson(Map.of("message", String.format("Error: %s", ex.getMessage()), "success", false));
         res.type("application/json");
-        res.status(ex.statusCode());
         res.body(body);
     }
 
@@ -94,6 +96,7 @@ public class Server {
         return new Gson().toJson(authData);
 
     }
+
     private String login(Request req, Response res) throws UnauthorizedException, DataAccessException {
         UserData userData = new Gson().fromJson(req.body(), UserData.class);
         AuthData authData = loginService.login(userData);
@@ -103,6 +106,7 @@ public class Server {
 
         return new Gson().toJson(authData);
     }
+
     private String logout(Request req, Response res) throws UnauthorizedException, DataAccessException {
         String authToken = req.headers("authorization");
 
@@ -110,8 +114,9 @@ public class Server {
         res.status(200);
         res.body("{}");
 
-        return("{}");
+        return ("{}");
     }
+
     private Object listGames(Request req, Response res) throws UnauthorizedException, DataAccessException {
         String authToken = req.headers("authorization");
 
@@ -123,6 +128,7 @@ public class Server {
         res.body(new Gson().toJson(gamesObject));
         return new Gson().toJson(gamesObject);
     }
+
     private String createGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException {
         String authToken = req.headers("authorization");
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
@@ -134,6 +140,7 @@ public class Server {
 
         return (new Gson().toJson(game));
     }
+
     private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
         String playerColor = null;
         String authToken = req.headers("authorization");
@@ -151,13 +158,14 @@ public class Server {
         res.status(200);
         res.body("{}");
 
-        return("{}");
+        return ("{}");
     }
-    private String clearApplication(Request req, Response res) throws DataAccessException{
+
+    private String clearApplication(Request req, Response res) throws DataAccessException {
         clearService.clearAll();
         res.status(200);
         res.body("{}");
 
-        return("{}");
+        return ("{}");
     }
 }
