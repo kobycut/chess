@@ -58,7 +58,10 @@ public class ChessPiece {
     }
 
     private void checkAdd(ChessPosition uniquePosition, ChessBoard board, ChessPosition myPosition, ArrayList<ChessMove> moves, int sevenOrTwo) {
-        if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0 && board.getPiece(uniquePosition) != null && board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() && (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() && myPosition.getRow() == sevenOrTwo)) {
+        if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 &&
+                uniquePosition.getRow() > 0 && board.getPiece(uniquePosition) != null &&
+                board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() &&
+                (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() && myPosition.getRow() == sevenOrTwo)) {
             addMoves(moves, uniquePosition, myPosition);
 
             if (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() && myPosition.getRow() != sevenOrTwo) {
@@ -66,7 +69,11 @@ public class ChessPiece {
 
             }
         }
-        if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 && uniquePosition.getRow() > 0 && board.getPiece(uniquePosition) != null && board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() && (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() && myPosition.getRow() != sevenOrTwo)) {
+        if (uniquePosition.getColumn() < 9 && uniquePosition.getRow() < 9 && uniquePosition.getColumn() > 0 &&
+                uniquePosition.getRow() > 0 && board.getPiece(uniquePosition) != null &&
+                board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() &&
+                (board.getPiece(myPosition).getTeamColor() != board.getPiece(uniquePosition).getTeamColor() &&
+                        myPosition.getRow() != sevenOrTwo)) {
             moves.add(new ChessMove(myPosition, uniquePosition, null));
         }
     }
@@ -92,7 +99,8 @@ public class ChessPiece {
         ChessPosition downPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn());
         ChessPosition diagonalDownLeftPosition = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 1);
 
-        List<ChessPosition> lst = Arrays.asList(leftPosition, diagonalUpLeftPosition, upPosition, diagonalUpRightPosition, rightPosition, diagonalDownRightPosition, downPosition, diagonalDownLeftPosition);
+        List<ChessPosition> lst = Arrays.asList(leftPosition, diagonalUpLeftPosition, upPosition, diagonalUpRightPosition,
+                rightPosition, diagonalDownRightPosition, downPosition, diagonalDownLeftPosition);
 
         return lst;
     }
@@ -131,7 +139,8 @@ public class ChessPiece {
             ChessPosition knightPosition6 = new ChessPosition(myPosition.getRow() - 2, myPosition.getColumn() + 1);
             ChessPosition knightPosition7 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() + 2);
             ChessPosition knightPosition8 = new ChessPosition(myPosition.getRow() - 1, myPosition.getColumn() - 2);
-            List<ChessPosition> lst = Arrays.asList(knightPosition, knightPosition2, knightPosition3, knightPosition4, knightPosition5, knightPosition6, knightPosition7, knightPosition8);
+            List<ChessPosition> lst = Arrays.asList(knightPosition, knightPosition2, knightPosition3, knightPosition4,
+                    knightPosition5, knightPosition6, knightPosition7, knightPosition8);
             for (ChessPosition position : lst) {
                 if (position.getColumn() < 1 || position.getColumn() > 8 || position.getRow() < 1 || position.getRow() > 8) {
                     continue;
