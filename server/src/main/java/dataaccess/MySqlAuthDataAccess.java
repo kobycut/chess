@@ -65,7 +65,7 @@ public class MySqlAuthDataAccess implements AuthDAO {
     ;
 
     public void clearAllAuthTokens() throws DataAccessException {
-        var statement = "DELETE FROM auth";
+        var statement = "TRUNCATE auth";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

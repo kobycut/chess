@@ -1,20 +1,50 @@
 package dataaccess;
+import dataaccess.MySqlAuthDataAccess.*;
+import static org.junit.jupiter.api.Assertions.*;
 
+
+import dataaccess.exceptions.AlreadyTakenException;
+import dataaccess.exceptions.DataAccessException;
+import model.AuthData;
 import org.junit.jupiter.api.Test;
 
 public class DataAccessTest {
 
-    @Test
-    public void goodCreateAuth() {
 
+    @Test
+    public void goodCreateAuth() throws DataAccessException {
+        var dataAccess = new MySqlAuthDataAccess();
+        dataAccess.clearAllAuthTokens();
+        AuthData authData = new AuthData("authTokenRighthere", "Stevey");
+
+
+        AuthData testAuthData = dataAccess.createAuth(authData);
+
+        assertEquals(authData, testAuthData);
+    }
+    @Test
+    public void badCreateAuth() throws DataAccessException {
+        var dataAccess = new MySqlAuthDataAccess();
+        dataAccess.clearAllAuthTokens();
+        AuthData authData = new AuthData(null, "Stevey");
+
+
+        assertThrows(DataAccessException.class, () -> dataAccess.createAuth(authData));
 
     }
     @Test
-    public void badCreateAuth() {
+    public void goodGetAuth() throws DataAccessException {
+        var dataAccess = new MySqlAuthDataAccess();
+        dataAccess.clearAllAuthTokens();
 
-    }
-    @Test
-    public void goodGetAuth() {
+        AuthData authData = new AuthData("authTokenRighthere", "Stevey");
+
+        dataAccess.createAuth(authData);
+
+        AuthData testAuthData = dataAccess.getAuthData(authData.authToken());
+
+        assertEquals(authData, testAuthData);
+
 
     }
     @Test

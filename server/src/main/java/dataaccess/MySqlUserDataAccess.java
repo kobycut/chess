@@ -46,7 +46,7 @@ public class MySqlUserDataAccess implements UserDAO {
     ;
 
     public void clearAllUsers() throws DataAccessException {
-        var statement = "DELETE FROM user";
+        var statement = "TRUNCATE user";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
