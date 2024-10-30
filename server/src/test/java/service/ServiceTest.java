@@ -38,6 +38,7 @@ public class ServiceTest {
         gameDAO = new MySqlGameDataAccess();
 
     }
+
     @Test
     public void goodRegisterUser() throws BadRequestException, AlreadyTakenException, DataAccessException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
@@ -51,6 +52,7 @@ public class ServiceTest {
 
 
     }
+
     @Test
     public void badRegisterUser() throws BadRequestException, AlreadyTakenException, DataAccessException {
         ClearApplication clear = new ClearApplication(userDAO, gameDAO, authDAO);
@@ -88,7 +90,7 @@ public class ServiceTest {
 
 //        var password = BCrypt.hashpw("ScottIsRad", BCrypt.gensalt());
 
-        UserData userData = new UserData("Scott", "ScottIsRad","Scott@Scott.mail");
+        UserData userData = new UserData("Scott", "ScottIsRad", "Scott@Scott.mail");
 
         register.register(userData);
         AuthData authData = login.login(userData);
@@ -194,7 +196,7 @@ public class ServiceTest {
 
         Collection<GameData> games = listGames.listGames(authData.authToken());
 
-        assertEquals(2 , games.size());
+        assertEquals(2, games.size());
 
 
     }
@@ -240,14 +242,8 @@ public class ServiceTest {
 
         JoinGame joinGame = new JoinGame(authDAO, gameDAO);
 
-        assertThrows(BadRequestException.class, () ->  joinGame.join(null, null, null));
+        assertThrows(BadRequestException.class, () -> joinGame.join(null, null, null));
     }
-
-
-
-
-
-
 
 
 }

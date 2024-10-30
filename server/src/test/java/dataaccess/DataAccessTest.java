@@ -157,7 +157,7 @@ public class DataAccessTest {
 
         var game = dataAccess.getGame(1);
 
-        assertEquals("Timothy's game number 1", game.gameName() );
+        assertEquals("Timothy's game number 1", game.gameName());
     }
 
     @Test
@@ -197,7 +197,7 @@ public class DataAccessTest {
 
         GameData gameData = new GameData(1, null, "superman", "batman v superman", new ChessGame());
         dataAccess.createGame("batman v superman");
-        dataAccess.updateGame(gameData,"WHITE","batman");
+        dataAccess.updateGame(gameData, "WHITE", "batman");
 
         assertEquals("batman", dataAccess.getGame(1).whiteUsername());
 
@@ -210,7 +210,7 @@ public class DataAccessTest {
 
         GameData gameData = new GameData(1, "batman", "superman", "batman v superman", new ChessGame());
         dataAccess.createGame("batman v superman");
-        dataAccess.updateGame(gameData,"WHITE",null);
+        dataAccess.updateGame(gameData, "WHITE", null);
 
         assertNull(dataAccess.getGame(1).whiteUsername());
 
@@ -269,14 +269,18 @@ public class DataAccessTest {
         var dataAccess = new MySqlUserDataAccess();
         dataAccess.clearAllUsers();
 
-        dataAccess.createUser(new UserData(null, null, null));
-
+        assertThrows(DataAccessException.class, () -> dataAccess.createUser(new UserData(null, null, null)));
     }
 
     @Test
     public void goodClearAllUsers() throws DataAccessException {
         var dataAccess = new MySqlUserDataAccess();
         dataAccess.clearAllUsers();
+
+        dataAccess.createUser(new UserData("Franky", "Franky's password", "email"));
+        dataAccess.clearAllUsers();
+
+        assertNull(dataAccess.getUser("Franky"));
 
     }
 
