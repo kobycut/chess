@@ -1,5 +1,6 @@
 package dataaccess;
 
+import chess.ChessGame;
 import dataaccess.MySqlAuthDataAccess.*;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -143,7 +144,7 @@ public class DataAccessTest {
 
         var games = dataAccess.getAllGames();
 
-
+        assertEquals(0, games.size());
     }
 
     @Test
@@ -151,6 +152,11 @@ public class DataAccessTest {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
+        dataAccess.createGame("Timothy's game number 1");
+
+        var game = dataAccess.getGame(1);
+
+        assertEquals("Timothy's game number 1", game.gameName() );
     }
 
     @Test
@@ -158,12 +164,18 @@ public class DataAccessTest {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
+        assertEquals(null, dataAccess.createGame(null));
     }
 
     @Test
     public void goodGetGame() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
+
+        dataAccess.createGame("superman");
+        var test = dataAccess.getGame(1);
+
+        assertEquals("superman", test.gameName());
 
     }
 
@@ -172,12 +184,21 @@ public class DataAccessTest {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
+        var test = dataAccess.getGame(243);
+        assertNull(test);
+
     }
 
     @Test
     public void goodUpdateGame() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
+
+        GameData gameData = new GameData(1, null, "superman", "batman v superman", new ChessGame());
+        dataAccess.createGame("batman v superman");
+        dataAccess.updateGame(gameData,"WHITE","batman");
+
+        assertEquals("batman", dataAccess.getGame(1).whiteUsername());
 
     }
 
@@ -186,12 +207,25 @@ public class DataAccessTest {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
+        GameData gameData = new GameData(1, "batman", "superman", "batman v superman", new ChessGame());
+        dataAccess.createGame("batman v superman");
+        dataAccess.updateGame(gameData,"WHITE",null);
+
+        assertNull(dataAccess.getGame(1).whiteUsername());
+
     }
 
     @Test
     public void goodClearAllGames() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
+
+        dataAccess.createGame("2");
+        dataAccess.createGame("43jskd");
+
+        dataAccess.clearAllGames();
+
+        assertEquals(0, dataAccess.getAllGames().size());
 
     }
 
