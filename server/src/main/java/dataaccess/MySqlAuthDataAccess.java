@@ -20,14 +20,25 @@ public class MySqlAuthDataAccess implements AuthDAO{
             preparedStatement.setString(2, username);
             preparedStatement.executeUpdate();
 
-            //  what goes here?
-
             return authData;
+        } catch (SQLException e) {
+            throw new DataAccessException(500, e.getMessage());
         }
     };
 
     public AuthData getAuthData(String authToken) throws DataAccessException {
+        var statement = "SELECT * FROM auth WHERE authToken='?'";
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
+            preparedStatement.setString(1, authToken);
+            var rs = preparedStatement.executeQuery();
+            var username = rs.getString("username");
 
+            return new AuthData(authToken, username);
+
+
+        } catch (SQLException e) {
+            throw new DataAccessException(500, e.getMessage());
+        }
     };
 
     public void deleteAuth(AuthData authData) throws DataAccessException {
@@ -36,6 +47,7 @@ public class MySqlAuthDataAccess implements AuthDAO{
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
             preparedStatement.setString(1, authToken);
             preparedStatement.executeUpdate();
+
         }
 
     };
