@@ -7,7 +7,7 @@ import model.AuthData;
 import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
-public class MySqlAuthDataAccess implements AuthDAO{
+public class MySqlAuthDataAccess implements AuthDAO {
     public MySqlAuthDataAccess() throws DataAccessException {
         configureDatabase();
     }
@@ -26,22 +26,28 @@ public class MySqlAuthDataAccess implements AuthDAO{
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
-    };
+    }
+
+    ;
 
     public AuthData getAuthData(String authToken) throws DataAccessException {
         var statement = "SELECT * FROM auth WHERE authToken=?";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
             preparedStatement.setString(1, authToken);
             var rs = preparedStatement.executeQuery();
-            var username = rs.getString("username");
-
-            return new AuthData(authToken, username);
-
+            if (rs.next()) {
+                var username = rs.getString("username");
+                return new AuthData(authToken, username);
+            } else {
+                throw new DataAccessException(500, "No AuthData found");
+            }
 
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
-    };
+    }
+
+    ;
 
     public void deleteAuth(AuthData authData) throws DataAccessException {
         var authToken = authData.authToken();
@@ -54,7 +60,9 @@ public class MySqlAuthDataAccess implements AuthDAO{
             throw new DataAccessException(500, e.getMessage());
         }
 
-    };
+    }
+
+    ;
 
     public void clearAllAuthTokens() throws DataAccessException {
         var statement = "DELETE FROM auth";
@@ -63,18 +71,13 @@ public class MySqlAuthDataAccess implements AuthDAO{
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
-    };
-
-
-
-
-
+    }
 
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS auth (
-            'authToken' VARCHAR(255) NOT NULL,
-            'username' VARCHAR(255) NOT NULL
+            authToken VARCHAR(255) NOT NULL PRIMARY KEY,
+            username VARCHAR(255) NOT NULL
             )
  
             """
