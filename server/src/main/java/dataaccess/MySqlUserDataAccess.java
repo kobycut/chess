@@ -20,6 +20,8 @@ public class MySqlUserDataAccess {
                 var email = rs.getString("email");
 
                 return new UserData(username, password, email);
+            } else {
+                throw new DataAccessException(500, "No UserData found");
             }
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
