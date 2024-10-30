@@ -8,6 +8,7 @@ import model.GameData;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Objects;
 
 public class MySqlGameDataAccess {
     public MySqlGameDataAccess() throws DataAccessException {
@@ -87,6 +88,25 @@ public class MySqlGameDataAccess {
     };
 
     public void updateGame(GameData gameData, String playerColor, String username) throws DataAccessException {
+        GameData updatedGameData = null;
+        if (Objects.equals(playerColor, "WHITE")) {
+            updatedGameData = new GameData(gameData.gameID(), username, gameData.blackUsername(), gameData.gameName(), gameData.chessGame());
+        }
+        if (Objects.equals(playerColor, "BLACK")) {
+            updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.chessGame());
+        }
+        var statement = "UPDATE game SET gameName, whiteUsername, blackUsername, chessGame=? WHERE gameID=?";
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
+            preparedStatement.setString(1, updatedGameData.gameName());
+            preparedStatement.setString(2, updatedGameData.whiteUsername());
+            preparedStatement.setString(3, updatedGameData.blackUsername());
+            var json = new Gson().toJson(updatedGameData.chessGame());
+            preparedStatement.setString(4, json);
+            preparedStatement.executeUpdate();
+
+        } catch (SQLException e) {
+            throw new DataAccessException(500, e.getMessage());
+        }
 
     };
 
@@ -105,8 +125,8 @@ public class MySqlGameDataAccess {
             CREATE TABLE IF NOT EXISTS game (
             'gameName' string,
             'gameID' int AUTO_INCREMENT,
-            'whiteUsername' string,
-            'blackUsername' string,
+            'whiteUsername' string DEFAULT NULL,
+            'blackUsername' string DEFAULT NULL,
             'chessGame' ChessGame,
             PRIMARY KEY ('gameID')
             )
