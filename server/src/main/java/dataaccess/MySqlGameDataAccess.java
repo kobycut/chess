@@ -11,18 +11,19 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
-public class MySqlGameDataAccess implements GameDAO{
+public class MySqlGameDataAccess implements GameDAO {
 
     private void configure() throws DataAccessException {
         configureDatabase();
     }
+
     @Override
     public Collection<GameData> getAllGames() throws DataAccessException {
         configure();
         var games = new ArrayList<GameData>();
         var statement = "SELECT gameName, gameID, whiteUsername, blackUsername, chessGame FROM game";
         try (var conn = DatabaseManager.getConnection();
-                var preparedStatement = conn.prepareStatement(statement)) {
+             var preparedStatement = conn.prepareStatement(statement)) {
             try (var rs = preparedStatement.executeQuery()) {
                 while (rs.next()) {
                     var gameName = rs.getString("gameName");
@@ -44,6 +45,7 @@ public class MySqlGameDataAccess implements GameDAO{
     }
 
     ;
+
     @Override
     public GameData createGame(String gameName) throws DataAccessException {
         configure();
@@ -52,7 +54,7 @@ public class MySqlGameDataAccess implements GameDAO{
         ChessGame newGame = new ChessGame();
 
         try (var conn = DatabaseManager.getConnection();
-                var preparedStatement = conn.prepareStatement(statement)) {
+             var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, gameName);
             var json = new Gson().toJson(newGame);
             preparedStatement.setString(2, json);
@@ -71,7 +73,7 @@ public class MySqlGameDataAccess implements GameDAO{
                     return new GameData(gameId, whiteUsername, blackUsername, gameName, chessGame);
                 }
                 conn.close();
-                    return null;
+                return null;
 
             }
 
@@ -81,12 +83,13 @@ public class MySqlGameDataAccess implements GameDAO{
     }
 
     ;
+
     @Override
     public GameData getGame(int gameID) throws DataAccessException {
         configure();
         var statement = "SELECT * FROM game WHERE gameID=?";
         try (var conn = DatabaseManager.getConnection();
-                var preparedStatement = conn.prepareStatement(statement)) {
+             var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setInt(1, gameID);
             var rs = preparedStatement.executeQuery();
             if (rs.next()) {
@@ -107,6 +110,7 @@ public class MySqlGameDataAccess implements GameDAO{
     }
 
     ;
+
     @Override
     public void updateGame(GameData gameData, String playerColor, String username) throws DataAccessException {
         configure();
@@ -119,7 +123,7 @@ public class MySqlGameDataAccess implements GameDAO{
         }
         var statement = "UPDATE game SET gameName=?, whiteUsername=?, blackUsername=?, chessGame=? WHERE gameID=?";
         try (var conn = DatabaseManager.getConnection();
-                var preparedStatement = conn.prepareStatement(statement)) {
+             var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, updatedGameData.gameName());
             preparedStatement.setString(2, updatedGameData.whiteUsername());
             preparedStatement.setString(3, updatedGameData.blackUsername());
@@ -140,7 +144,7 @@ public class MySqlGameDataAccess implements GameDAO{
         configure();
         var statement = "TRUNCATE game";
         try (var conn = DatabaseManager.getConnection();
-                var preparedStatement = conn.prepareStatement(statement)) {
+             var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
