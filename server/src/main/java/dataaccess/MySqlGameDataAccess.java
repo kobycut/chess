@@ -15,7 +15,7 @@ public class MySqlGameDataAccess {
         configureDatabase();
     }
 
-    public Collection<GameData> getAllGames() throws DataAccessException{
+    public Collection<GameData> getAllGames() throws DataAccessException {
         var games = new ArrayList<GameData>();
         var statement = "SELECT gameName, gameID, whiteUsername, blackUsername, chessGame FROM game";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
@@ -35,9 +35,11 @@ public class MySqlGameDataAccess {
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
-    };
+    }
 
-    public GameData createGame(String gameName) throws DataAccessException{
+    ;
+
+    public GameData createGame(String gameName) throws DataAccessException {
         var statement = "INSERT INTO game (gameName, chessGame) VALUES (?, ?)";
         var statement2 = "SELECT * FROM game WHERE gameName=?";
         ChessGame newGame = new ChessGame();
@@ -51,41 +53,47 @@ public class MySqlGameDataAccess {
             try (var preparedStatement2 = DatabaseManager.getConnection().prepareStatement(statement2)) {
                 preparedStatement2.setString(1, gameName);
                 var rs = preparedStatement2.executeQuery();
-                Integer gameId = rs.getInt("gameID");
-                String whiteUsername = rs.getString("whiteUsername");
-                String blackUsername = rs.getString("blackUsername");
-
-                var json2 = rs.getString("chessGame");
-                var chessGame = new Gson().fromJson(json2, ChessGame.class);
-
-                return new GameData(gameId, whiteUsername, blackUsername, gameName, chessGame);
-            } catch (SQLException e) {
-                throw new DataAccessException(500, e.getMessage());
+                if (rs.next()) {
+                    Integer gameId = rs.getInt("gameID");
+                    String whiteUsername = rs.getString("whiteUsername");
+                    String blackUsername = rs.getString("blackUsername");
+                    var json2 = rs.getString("chessGame");
+                    var chessGame = new Gson().fromJson(json2, ChessGame.class);
+                    return new GameData(gameId, whiteUsername, blackUsername, gameName, chessGame);
+                } else {
+                    throw new DataAccessException(500, "No game was found");
+                }
             }
 
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
-    };
+    }
 
-    public GameData getGame(int gameID) throws DataAccessException{
+    ;
+
+    public GameData getGame(int gameID) throws DataAccessException {
         var statement = "SELECT * FROM game WHERE gameID=?";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
             preparedStatement.setInt(1, gameID);
             var rs = preparedStatement.executeQuery();
-
-            String gameName = rs.getString("gameName");
-            String whiteUsername = rs.getString("whiteUsername");
-            String blackUsername = rs.getString("blackUsername");
-            var json = rs.getString("chessGame");
-            var chessGame = new Gson().fromJson(json, ChessGame.class);
-
-            return new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
+            if (rs.next()) {
+                String gameName = rs.getString("gameName");
+                String whiteUsername = rs.getString("whiteUsername");
+                String blackUsername = rs.getString("blackUsername");
+                var json = rs.getString("chessGame");
+                var chessGame = new Gson().fromJson(json, ChessGame.class);
+                return new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
+            } else {
+                throw new DataAccessException(500, "No game found");
+            }
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
 
-    };
+    }
+
+    ;
 
     public void updateGame(GameData gameData, String playerColor, String username) throws DataAccessException {
         GameData updatedGameData = null;
@@ -94,6 +102,9 @@ public class MySqlGameDataAccess {
         }
         if (Objects.equals(playerColor, "BLACK")) {
             updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.chessGame());
+        }
+        if (updatedGameData == null) {
+            throw new DataAccessException(500, "No color given");
         }
         var statement = "UPDATE game SET gameName=?, whiteUsername=?, blackUsername=?, chessGame=? WHERE gameID=?";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
@@ -109,27 +120,30 @@ public class MySqlGameDataAccess {
             throw new DataAccessException(500, e.getMessage());
         }
 
-    };
+    }
+
+    ;
 
     public void clearAllGames() throws DataAccessException {
         var statement = "DELETE FROM game";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
-            preparedStatement.executeQuery();
+            preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
 
-    };
+    }
 
-    private final String[] createStatements = {
-            """
+    ;
+
+    private final String[] createStatements = {"""
             CREATE TABLE IF NOT EXISTS game (
-            'gameName' VARCHAR(255),
-            'gameID' INT AUTO_INCREMENT,
-            'whiteUsername' VARCHAR(255) DEFAULT NULL,
-            'blackUsername' VARCHAR(255) DEFAULT NULL,
-            'chessGame' TEXT,
-            PRIMARY KEY ('gameID')
+            gameName VARCHAR(255),
+            gameID INT AUTO_INCREMENT,
+            whiteUsername VARCHAR(255) DEFAULT NULL,
+            blackUsername VARCHAR(255) DEFAULT NULL,
+            chessGame TEXT,
+            PRIMARY KEY (gameID)
             )
  
             """
