@@ -10,6 +10,7 @@ import dataaccess.exceptions.AlreadyTakenException;
 import dataaccess.exceptions.DataAccessException;
 import model.AuthData;
 import model.GameData;
+import model.UserData;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
@@ -234,12 +235,21 @@ public class DataAccessTest {
         var dataAccess = new MySqlUserDataAccess();
         dataAccess.clearAllUsers();
 
+        dataAccess.createUser(new UserData("Franky", "Franky's password", "email"));
+        var test = dataAccess.getUser("Franky");
+
+        assertEquals("email", test.email());
+
     }
 
     @Test
     public void badGetUser() throws DataAccessException {
         var dataAccess = new MySqlUserDataAccess();
         dataAccess.clearAllUsers();
+
+        dataAccess.createUser(new UserData("Franky", "Franky's password", "email"));
+        var test = dataAccess.getUser("Froogy");
+        assertNull(test);
 
 
     }
@@ -249,12 +259,17 @@ public class DataAccessTest {
         var dataAccess = new MySqlUserDataAccess();
         dataAccess.clearAllUsers();
 
+        dataAccess.createUser(new UserData("Franky", "Franky's password", "email"));
+
+        assertEquals("email", dataAccess.getUser("Franky").email());
     }
 
     @Test
     public void badCreateUser() throws DataAccessException {
         var dataAccess = new MySqlUserDataAccess();
         dataAccess.clearAllUsers();
+
+        dataAccess.createUser(new UserData(null, null, null));
 
     }
 

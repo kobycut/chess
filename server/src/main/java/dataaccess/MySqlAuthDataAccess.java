@@ -16,7 +16,8 @@ public class MySqlAuthDataAccess implements AuthDAO {
         String authToken = authData.authToken();
         String username = authData.username();
         var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
+        try (var conn = DatabaseManager.getConnection();
+             var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, authToken);
             preparedStatement.setString(2, username);
             preparedStatement.executeUpdate();
@@ -32,14 +33,15 @@ public class MySqlAuthDataAccess implements AuthDAO {
 
     public AuthData getAuthData(String authToken) throws DataAccessException {
         var statement = "SELECT * FROM auth WHERE authToken=?";
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
+        try (var conn = DatabaseManager.getConnection();
+             var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, authToken);
             var rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 var username = rs.getString("username");
                 return new AuthData(authToken, username);
-            } return null;
-
+            }
+            return null;
 
 
         } catch (SQLException e) {

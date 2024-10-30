@@ -27,10 +27,11 @@ public class MySqlGameDataAccess implements GameDAO{
                     var blackUsername = rs.getString("blackUsername");
                     var json = rs.getString("chessGame");
                     var chessGame = new Gson().fromJson(json, ChessGame.class);
-
+                    DatabaseManager.getConnection().close();
                     games.add(new GameData(gameId, whiteUsername, blackUsername, gameName, chessGame));
                 }
             }
+            DatabaseManager.getConnection().close();
             return games;
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
@@ -59,8 +60,10 @@ public class MySqlGameDataAccess implements GameDAO{
                     String blackUsername = rs.getString("blackUsername");
                     var json2 = rs.getString("chessGame");
                     var chessGame = new Gson().fromJson(json2, ChessGame.class);
+                    DatabaseManager.getConnection().close();
                     return new GameData(gameId, whiteUsername, blackUsername, gameName, chessGame);
                 }
+                DatabaseManager.getConnection().close();
                     return null;
 
             }
@@ -83,8 +86,10 @@ public class MySqlGameDataAccess implements GameDAO{
                 String blackUsername = rs.getString("blackUsername");
                 var json = rs.getString("chessGame");
                 var chessGame = new Gson().fromJson(json, ChessGame.class);
+                DatabaseManager.getConnection().close();
                 return new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
             }
+            DatabaseManager.getConnection().close();
             return null;
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
@@ -111,6 +116,7 @@ public class MySqlGameDataAccess implements GameDAO{
             preparedStatement.setString(4, json);
             preparedStatement.setInt(5, updatedGameData.gameID());
             preparedStatement.executeUpdate();
+            DatabaseManager.getConnection().close();
 
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
@@ -124,6 +130,7 @@ public class MySqlGameDataAccess implements GameDAO{
         var statement = "TRUNCATE game";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
             preparedStatement.executeUpdate();
+            DatabaseManager.getConnection().close();
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
