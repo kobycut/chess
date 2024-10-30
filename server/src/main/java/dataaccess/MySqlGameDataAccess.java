@@ -60,9 +60,9 @@ public class MySqlGameDataAccess implements GameDAO{
                     var json2 = rs.getString("chessGame");
                     var chessGame = new Gson().fromJson(json2, ChessGame.class);
                     return new GameData(gameId, whiteUsername, blackUsername, gameName, chessGame);
-                } else {
-                    throw new DataAccessException(500, "No game was found");
                 }
+                    return null;
+
             }
 
         } catch (SQLException e) {
@@ -84,9 +84,8 @@ public class MySqlGameDataAccess implements GameDAO{
                 var json = rs.getString("chessGame");
                 var chessGame = new Gson().fromJson(json, ChessGame.class);
                 return new GameData(gameID, whiteUsername, blackUsername, gameName, chessGame);
-            } else {
-                throw new DataAccessException(500, "No game found");
             }
+            return null;
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
@@ -102,9 +101,6 @@ public class MySqlGameDataAccess implements GameDAO{
         }
         if (Objects.equals(playerColor, "BLACK")) {
             updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.chessGame());
-        }
-        if (updatedGameData == null) {
-            throw new DataAccessException(500, "No color given");
         }
         var statement = "UPDATE game SET gameName=?, whiteUsername=?, blackUsername=?, chessGame=? WHERE gameID=?";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {

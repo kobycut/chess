@@ -38,9 +38,9 @@ public class MySqlAuthDataAccess implements AuthDAO {
             if (rs.next()) {
                 var username = rs.getString("username");
                 return new AuthData(authToken, username);
-            } else {
-                throw new DataAccessException(500, "No AuthData found");
-            }
+            } return null;
+
+
 
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
