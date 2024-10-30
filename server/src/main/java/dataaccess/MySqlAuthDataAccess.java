@@ -4,6 +4,7 @@ import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.ResponseException;
 import model.AuthData;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
 public class MySqlAuthDataAccess implements AuthDAO{
@@ -21,6 +22,7 @@ public class MySqlAuthDataAccess implements AuthDAO{
             preparedStatement.executeUpdate();
 
             return authData;
+
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
@@ -48,12 +50,19 @@ public class MySqlAuthDataAccess implements AuthDAO{
             preparedStatement.setString(1, authToken);
             preparedStatement.executeUpdate();
 
+        } catch (SQLException e) {
+            throw new DataAccessException(500, e.getMessage());
         }
 
     };
 
     public void clearAllAuthTokens() throws DataAccessException {
-
+        var statement = "DELETE FROM auth";
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
+            preparedStatement.executeUpdate();
+        } catch (SQLException e) {
+            throw new DataAccessException(500, e.getMessage());
+        }
     };
 
 
