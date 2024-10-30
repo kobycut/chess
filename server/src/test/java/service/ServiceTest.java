@@ -29,13 +29,13 @@ public class ServiceTest {
 
     @BeforeAll
     public static void init() throws DataAccessException {
-        userDAO = new UserMemoryDataAccess();
-        authDAO = new AuthMemoryDataAccess();
-        gameDAO = new GameMemoryDataAccess();
+//        userDAO = new UserMemoryDataAccess();
+//        authDAO = new AuthMemoryDataAccess();
+//        gameDAO = new GameMemoryDataAccess();
 
-//        userDAO = new MySqlUserDataAccess();
-//        authDAO = new MySqlAuthDataAccess();
-//        gameDAO = new MySqlGameDataAccess();
+        userDAO = new MySqlUserDataAccess();
+        authDAO = new MySqlAuthDataAccess();
+        gameDAO = new MySqlGameDataAccess();
 
     }
 

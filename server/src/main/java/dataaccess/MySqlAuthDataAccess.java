@@ -8,11 +8,13 @@ import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
 public class MySqlAuthDataAccess implements AuthDAO {
-    public MySqlAuthDataAccess() throws DataAccessException {
+
+    private void configure() throws DataAccessException {
         configureDatabase();
     }
 
     public AuthData createAuth(AuthData authData) throws DataAccessException {
+        configure();
         String authToken = authData.authToken();
         String username = authData.username();
         var statement = "INSERT INTO auth (authToken, username) VALUES (?, ?)";
@@ -21,6 +23,7 @@ public class MySqlAuthDataAccess implements AuthDAO {
             preparedStatement.setString(1, authToken);
             preparedStatement.setString(2, username);
             preparedStatement.executeUpdate();
+            conn.close();
 
             return authData;
 
@@ -32,6 +35,7 @@ public class MySqlAuthDataAccess implements AuthDAO {
     ;
 
     public AuthData getAuthData(String authToken) throws DataAccessException {
+        configure();
         var statement = "SELECT * FROM auth WHERE authToken=?";
         try (var conn = DatabaseManager.getConnection();
              var preparedStatement = conn.prepareStatement(statement)) {
@@ -39,8 +43,10 @@ public class MySqlAuthDataAccess implements AuthDAO {
             var rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 var username = rs.getString("username");
+                conn.close();
                 return new AuthData(authToken, username);
             }
+            conn.close();
             return null;
 
 
@@ -52,9 +58,11 @@ public class MySqlAuthDataAccess implements AuthDAO {
     ;
 
     public void deleteAuth(AuthData authData) throws DataAccessException {
+        configure();
         var authToken = authData.authToken();
         var statement = "DELETE FROM auth WHERE authToken=?";
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
+        try (var conn = DatabaseManager.getConnection();
+                var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, authToken);
             preparedStatement.executeUpdate();
 
@@ -67,8 +75,10 @@ public class MySqlAuthDataAccess implements AuthDAO {
     ;
 
     public void clearAllAuthTokens() throws DataAccessException {
+        configure();
         var statement = "TRUNCATE auth";
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
+        try (var conn = DatabaseManager.getConnection();
+                var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
@@ -92,6 +102,7 @@ public class MySqlAuthDataAccess implements AuthDAO {
             for (var statement : createStatements) {
                 try (var preparedStatement = conn.prepareStatement(statement)) {
                     preparedStatement.executeUpdate();
+                    conn.close();
                 }
             }
         } catch (SQLException ex) {

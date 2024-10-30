@@ -2,37 +2,43 @@ package dataaccess;
 
 import dataaccess.exceptions.DataAccessException;
 import model.UserData;
+import org.junit.jupiter.params.shadow.com.univocity.parsers.common.DataValidationException;
 import org.mindrot.jbcrypt.BCrypt;
 
+import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
 public class MySqlUserDataAccess implements UserDAO {
-    public MySqlUserDataAccess() throws DataAccessException {
+
+    public void configure() throws DataAccessException {
         configureDatabase();
     }
 
     public UserData getUser(String username) throws DataAccessException {
+        configure();
         var statement = "SELECT * FROM user WHERE username=?";
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
+        try (var conn = DatabaseManager.getConnection();
+             var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, username);
             var rs = preparedStatement.executeQuery();
             if (rs.next()) {
                 var password = rs.getString("password");
                 var email = rs.getString("email");
-
+                conn.close();
                 return new UserData(username, password, email);
             }
+            conn.close();
             return null;
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
     }
 
-    ;
-
     public void createUser(UserData userData) throws DataAccessException {
+        configure();
         var statement = "INSERT INTO user (username, password, email) VALUES (?,?,?)";
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
+        try (var conn = DatabaseManager.getConnection();
+                var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, userData.username());
             String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
             preparedStatement.setString(2, hashedPassword);
@@ -46,8 +52,10 @@ public class MySqlUserDataAccess implements UserDAO {
     ;
 
     public void clearAllUsers() throws DataAccessException {
+        configure();
         var statement = "TRUNCATE user";
-        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
+        try (var conn = DatabaseManager.getConnection();
+                var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
