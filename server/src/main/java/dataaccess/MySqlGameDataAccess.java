@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Objects;
 
 public class MySqlGameDataAccess implements GameDAO{
+    @Override
     public MySqlGameDataAccess() throws DataAccessException {
         configureDatabase();
     }

@@ -29,7 +29,7 @@ public class Server {
     private final JoinGame joinGameService = new JoinGame(authDAO, gameDAO);
     private final ClearApplication clearService = new ClearApplication(userDAO, gameDAO, authDAO);
 
-    public Server() throws DataAccessException {
+    public Server() {
     }
 
     public int run(int desiredPort) {
