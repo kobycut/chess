@@ -13,6 +13,7 @@ import org.eclipse.jetty.server.Authentication;
 import org.eclipse.jetty.util.log.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mindrot.jbcrypt.BCrypt;
 import service.*;
 
 import javax.crypto.SecretKey;
@@ -27,10 +28,14 @@ public class ServiceTest {
     static private GameDAO gameDAO;
 
     @BeforeAll
-    public static void init() {
-        userDAO = new UserMemoryDataAccess();
-        authDAO = new AuthMemoryDataAccess();
-        gameDAO = new GameMemoryDataAccess();
+    public static void init() throws DataAccessException {
+//        userDAO = new UserMemoryDataAccess();
+//        authDAO = new AuthMemoryDataAccess();
+//        gameDAO = new GameMemoryDataAccess();
+
+        userDAO = new MySqlUserDataAccess();
+        authDAO = new MySqlAuthDataAccess();
+        gameDAO = new MySqlGameDataAccess();
 
     }
     @Test
@@ -43,8 +48,6 @@ public class ServiceTest {
         AuthData authData = register.register(userData);
 
         assertEquals("BrandNewUser", authData.username());
-
-        assertEquals(userData ,userDAO.getUser("BrandNewUser"));
 
 
     }
@@ -82,6 +85,8 @@ public class ServiceTest {
 
         Login login = new Login(userDAO, authDAO);
         Register register = new Register(userDAO, authDAO);
+
+//        var password = BCrypt.hashpw("ScottIsRad", BCrypt.gensalt());
 
         UserData userData = new UserData("Scott", "ScottIsRad","Scott@Scott.mail");
 

@@ -27,7 +27,10 @@ public class Login {
 //        if (!userData.password().equals(userDAO.getUser(userData.username()).password())) {
 //            throw new UnauthorizedException(401);
 //        }
-        var hashedPassword = userDAO.getUser(userData.username()).password();
+//        String hashedPassword = BCrypt.hashpw(userDAO.getUser(userData.username()).password(), BCrypt.gensalt());
+
+        String hashedPassword = userDAO.getUser(userData.username()).password();
+
         if (!BCrypt.checkpw(userData.password(), hashedPassword)) {
             throw new UnauthorizedException(401);
         }

@@ -118,10 +118,10 @@ public class MySqlGameDataAccess implements GameDAO{
 
     }
 
-    ;
+
 
     public void clearAllGames() throws DataAccessException {
-        var statement = "DELETE FROM game";
+        var statement = "TRUNCATE game";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
