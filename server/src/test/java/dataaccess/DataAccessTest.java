@@ -1,5 +1,7 @@
 package dataaccess;
+
 import dataaccess.MySqlAuthDataAccess.*;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 
@@ -10,6 +12,7 @@ import model.GameData;
 import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
+import java.util.List;
 
 public class DataAccessTest {
 
@@ -25,6 +28,7 @@ public class DataAccessTest {
 
         assertEquals(authData, testAuthData);
     }
+
     @Test
     public void badCreateAuth() throws DataAccessException {
         var dataAccess = new MySqlAuthDataAccess();
@@ -35,6 +39,7 @@ public class DataAccessTest {
         assertThrows(DataAccessException.class, () -> dataAccess.createAuth(authData));
 
     }
+
     @Test
     public void goodGetAuth() throws DataAccessException {
         var dataAccess = new MySqlAuthDataAccess();
@@ -50,6 +55,7 @@ public class DataAccessTest {
 
 
     }
+
     @Test
     public void badGetAuth() throws DataAccessException {
         var dataAccess = new MySqlAuthDataAccess();
@@ -64,6 +70,7 @@ public class DataAccessTest {
         assertNull(testAuthData);
 
     }
+
     @Test
     public void goodDeleteAuth() throws DataAccessException {
         var dataAccess = new MySqlAuthDataAccess();
@@ -80,6 +87,7 @@ public class DataAccessTest {
 
 
     }
+
     @Test
     public void badDeleteAuth() throws DataAccessException {
         var dataAccess = new MySqlAuthDataAccess();
@@ -96,6 +104,7 @@ public class DataAccessTest {
 
 
     }
+
     @Test
     public void goodClearAuthtokens() throws DataAccessException {
         var dataAccess = new MySqlAuthDataAccess();
@@ -111,6 +120,7 @@ public class DataAccessTest {
         assertNull(testAuthData);
 
     }
+
     @Test
     public void goodGetAllGames() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
@@ -122,64 +132,76 @@ public class DataAccessTest {
 
         var games = dataAccess.getAllGames();
 
-        var expected = new ArrayList<GameData>();
-        assertEquals();
+        assertEquals(3, games.size());
 
     }
+
     @Test
     public void badGetAllGames() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
+        var games = dataAccess.getAllGames();
+
+
     }
+
     @Test
     public void goodCreateGame() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
     }
+
     @Test
     public void badCreateGame() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
     }
+
     @Test
     public void goodGetGame() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
     }
+
     @Test
     public void badGetGame() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
     }
+
     @Test
     public void goodUpdateGame() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
     }
+
     @Test
     public void badUpdateGame() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
     }
+
     @Test
     public void goodClearAllGames() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
     }
+
     @Test
     public void goodGetUser() throws DataAccessException {
         var dataAccess = new MySqlUserDataAccess();
         dataAccess.clearAllUsers();
 
     }
+
     @Test
     public void badGetUser() throws DataAccessException {
         var dataAccess = new MySqlUserDataAccess();
@@ -187,18 +209,21 @@ public class DataAccessTest {
 
 
     }
+
     @Test
     public void goodCreateUser() throws DataAccessException {
         var dataAccess = new MySqlUserDataAccess();
         dataAccess.clearAllUsers();
 
     }
+
     @Test
     public void badCreateUser() throws DataAccessException {
         var dataAccess = new MySqlUserDataAccess();
         dataAccess.clearAllUsers();
 
     }
+
     @Test
     public void goodClearAllUsers() throws DataAccessException {
         var dataAccess = new MySqlUserDataAccess();
