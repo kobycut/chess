@@ -5,6 +5,7 @@ import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.UnauthorizedException;
 import model.AuthData;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.UUID;
 
@@ -23,7 +24,11 @@ public class Login {
         if (userDAO.getUser(userData.username()) == null) {
             throw new UnauthorizedException(401);
         }
-        if (!userData.password().equals(userDAO.getUser(userData.username()).password())) {
+//        if (!userData.password().equals(userDAO.getUser(userData.username()).password())) {
+//            throw new UnauthorizedException(401);
+//        }
+        var hashedPassword = userDAO.getUser(userData.username()).password();
+        if (!BCrypt.checkpw(userData.password(), hashedPassword)) {
             throw new UnauthorizedException(401);
         }
         AuthData authData = new AuthData(UUID.randomUUID().toString(), userData.username());

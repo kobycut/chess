@@ -17,9 +17,9 @@ import java.util.HashMap;
 
 public class Server {
 
-    private final GameDAO gameDAO = new GameMemoryDataAccess();
+    private final GameDAO gameDAO = new MySqlGameDataAccess();
     private final AuthDAO authDAO = new MySqlAuthDataAccess();
-    private final UserDAO userDAO = new UserMemoryDataAccess();
+    private final UserDAO userDAO = new MySqlUserDataAccess();
 
     private final Register registerService = new Register(userDAO, authDAO);
     private final Login loginService = new Login(userDAO, authDAO);

@@ -2,10 +2,11 @@ package dataaccess;
 
 import dataaccess.exceptions.DataAccessException;
 import model.UserData;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.sql.SQLException;
 
-public class MySqlUserDataAccess {
+public class MySqlUserDataAccess implements UserDAO {
     public MySqlUserDataAccess() throws DataAccessException {
         configureDatabase();
     }
@@ -20,9 +21,8 @@ public class MySqlUserDataAccess {
                 var email = rs.getString("email");
 
                 return new UserData(username, password, email);
-            } else {
-                throw new DataAccessException(500, "No UserData found");
             }
+            return null;
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
         }
@@ -34,7 +34,8 @@ public class MySqlUserDataAccess {
         var statement = "INSERT INTO user (username, password, email) VALUES (?,?,?)";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
             preparedStatement.setString(1, userData.username());
-            preparedStatement.setString(2, userData.password());
+            String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+            preparedStatement.setString(2, hashedPassword);
             preparedStatement.setString(3, userData.email());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

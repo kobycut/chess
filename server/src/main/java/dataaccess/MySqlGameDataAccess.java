@@ -10,7 +10,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Objects;
 
-public class MySqlGameDataAccess {
+public class MySqlGameDataAccess implements GameDAO{
     public MySqlGameDataAccess() throws DataAccessException {
         configureDatabase();
     }
