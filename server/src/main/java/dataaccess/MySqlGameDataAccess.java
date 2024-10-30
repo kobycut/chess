@@ -95,13 +95,14 @@ public class MySqlGameDataAccess {
         if (Objects.equals(playerColor, "BLACK")) {
             updatedGameData = new GameData(gameData.gameID(), gameData.whiteUsername(), username, gameData.gameName(), gameData.chessGame());
         }
-        var statement = "UPDATE game SET gameName, whiteUsername, blackUsername, chessGame=? WHERE gameID=?";
+        var statement = "UPDATE game SET gameName=?, whiteUsername=?, blackUsername=?, chessGame=? WHERE gameID=?";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
             preparedStatement.setString(1, updatedGameData.gameName());
             preparedStatement.setString(2, updatedGameData.whiteUsername());
             preparedStatement.setString(3, updatedGameData.blackUsername());
             var json = new Gson().toJson(updatedGameData.chessGame());
             preparedStatement.setString(4, json);
+            preparedStatement.setInt(5, updatedGameData.gameID());
             preparedStatement.executeUpdate();
 
         } catch (SQLException e) {
@@ -123,11 +124,11 @@ public class MySqlGameDataAccess {
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS game (
-            'gameName' string,
-            'gameID' int AUTO_INCREMENT,
-            'whiteUsername' string DEFAULT NULL,
-            'blackUsername' string DEFAULT NULL,
-            'chessGame' ChessGame,
+            'gameName' VARCHAR(255),
+            'gameID' INT AUTO_INCREMENT,
+            'whiteUsername' VARCHAR(255) DEFAULT NULL,
+            'blackUsername' VARCHAR(255) DEFAULT NULL,
+            'chessGame' TEXT,
             PRIMARY KEY ('gameID')
             )
  

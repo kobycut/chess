@@ -73,8 +73,8 @@ public class MySqlAuthDataAccess implements AuthDAO{
     private final String[] createStatements = {
             """
             CREATE TABLE IF NOT EXISTS auth (
-            'authToken' string NOT NULL,
-            'username' string NOT NULL
+            'authToken' VARCHAR(255) NOT NULL,
+            'username' VARCHAR(255) NOT NULL
             )
  
             """
