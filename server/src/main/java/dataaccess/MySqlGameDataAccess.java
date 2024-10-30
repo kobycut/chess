@@ -6,6 +6,7 @@ import dataaccess.exceptions.DataAccessException;
 import model.GameData;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 public class MySqlGameDataAccess {
@@ -14,7 +15,25 @@ public class MySqlGameDataAccess {
     }
 
     public Collection<GameData> getAllGames() throws DataAccessException{
+        var games = new ArrayList<GameData>();
+        var statement = "SELECT gameName, gameID, whiteUsername, blackUsername, chessGame FROM game";
+        try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
+            try (var rs = preparedStatement.executeQuery()) {
+                while (rs.next()) {
+                    var gameName = rs.getString("gameName");
+                    var gameId = rs.getInt("gameID");
+                    var whiteUsername = rs.getString("whiteUsername");
+                    var blackUsername = rs.getString("blackUsername");
+                    var json = rs.getString("chessGame");
+                    var chessGame = new Gson().fromJson(json, ChessGame.class);
 
+                    games.add(new GameData(gameId, whiteUsername, blackUsername, gameName, chessGame));
+                }
+            }
+            return games;
+        } catch (SQLException e) {
+            throw new DataAccessException(500, e.getMessage());
+        }
     };
 
     public GameData createGame(String gameName) throws DataAccessException{
