@@ -18,7 +18,7 @@ import java.util.HashMap;
 public class Server {
 
     private final GameDAO gameDAO = new GameMemoryDataAccess();
-    private final AuthDAO authDAO = new AuthMemoryDataAccess();
+    private final AuthDAO authDAO = new MySqlAuthDataAccess();
     private final UserDAO userDAO = new UserMemoryDataAccess();
 
     private final Register registerService = new Register(userDAO, authDAO);
@@ -28,6 +28,9 @@ public class Server {
     private final CreateGame createGameService = new CreateGame(authDAO, gameDAO);
     private final JoinGame joinGameService = new JoinGame(authDAO, gameDAO);
     private final ClearApplication clearService = new ClearApplication(userDAO, gameDAO, authDAO);
+
+    public Server() throws DataAccessException {
+    }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);

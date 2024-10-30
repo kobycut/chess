@@ -8,7 +8,7 @@ import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
 public class MySqlAuthDataAccess implements AuthDAO{
-    public MySqlAuthDataAccess() throws ResponseException, DataAccessException {
+    public MySqlAuthDataAccess() throws DataAccessException {
         configureDatabase();
     }
 
@@ -29,7 +29,7 @@ public class MySqlAuthDataAccess implements AuthDAO{
     };
 
     public AuthData getAuthData(String authToken) throws DataAccessException {
-        var statement = "SELECT * FROM auth WHERE authToken='?'";
+        var statement = "SELECT * FROM auth WHERE authToken=?";
         try (var preparedStatement = DatabaseManager.getConnection().prepareStatement(statement)) {
             preparedStatement.setString(1, authToken);
             var rs = preparedStatement.executeQuery();
@@ -81,7 +81,7 @@ public class MySqlAuthDataAccess implements AuthDAO{
 
     };
 
-    private void configureDatabase() throws DataAccessException, ResponseException {
+    private void configureDatabase() throws DataAccessException {
         DatabaseManager.createDatabase();
         try (var conn = DatabaseManager.getConnection()) {
             for (var statement : createStatements) {
@@ -90,7 +90,7 @@ public class MySqlAuthDataAccess implements AuthDAO{
                 }
             }
         } catch (SQLException ex) {
-            throw new ResponseException(500, String.format("Unable to configure database: %s", ex.getMessage()));
+            throw new DataAccessException(500, String.format("Unable to configure database: %s", ex.getMessage()));
         }
     }
 }
