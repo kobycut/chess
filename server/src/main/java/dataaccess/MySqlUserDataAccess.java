@@ -2,12 +2,13 @@ package dataaccess;
 
 import dataaccess.exceptions.DataAccessException;
 import model.UserData;
+
 import java.sql.SQLException;
 
 public class MySqlUserDataAccess implements UserDAO {
 
     public void configure() throws DataAccessException {
-        configureDatabase();
+        new ConfigureDatabase(createStatements);
     }
 
     public UserData getUser(String username) throws DataAccessException {
@@ -34,7 +35,7 @@ public class MySqlUserDataAccess implements UserDAO {
         configure();
         var statement = "INSERT INTO user (username, password, email) VALUES (?,?,?)";
         try (var conn = DatabaseManager.getConnection();
-                var preparedStatement = conn.prepareStatement(statement)) {
+             var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, userData.username());
             preparedStatement.setString(2, userData.password());
             preparedStatement.setString(3, userData.email());
@@ -50,7 +51,7 @@ public class MySqlUserDataAccess implements UserDAO {
         configure();
         var statement = "TRUNCATE user";
         try (var conn = DatabaseManager.getConnection();
-                var preparedStatement = conn.prepareStatement(statement)) {
+             var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
@@ -70,18 +71,5 @@ public class MySqlUserDataAccess implements UserDAO {
             """
 
     };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(500, String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
 
 }

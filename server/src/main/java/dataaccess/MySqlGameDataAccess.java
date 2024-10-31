@@ -4,6 +4,7 @@ import chess.ChessGame;
 import com.google.gson.Gson;
 import dataaccess.exceptions.DataAccessException;
 import model.GameData;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -12,7 +13,7 @@ import java.util.Objects;
 public class MySqlGameDataAccess implements GameDAO {
 
     private void configure() throws DataAccessException {
-        configureDatabase();
+        new ConfigureDatabase(createStatements);
     }
 
     @Override
@@ -164,19 +165,6 @@ public class MySqlGameDataAccess implements GameDAO {
             """
 
     };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(500, String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
 
 
 }

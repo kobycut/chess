@@ -8,7 +8,7 @@ import java.sql.SQLException;
 public class MySqlAuthDataAccess implements AuthDAO {
 
     private void configure() throws DataAccessException {
-        configureDatabase();
+        new ConfigureDatabase(createStatements);
     }
 
     public AuthData createAuth(AuthData authData) throws DataAccessException {
@@ -60,7 +60,7 @@ public class MySqlAuthDataAccess implements AuthDAO {
         var authToken = authData.authToken();
         var statement = "DELETE FROM auth WHERE authToken=?";
         try (var conn = DatabaseManager.getConnection();
-                var preparedStatement = conn.prepareStatement(statement)) {
+             var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, authToken);
             preparedStatement.executeUpdate();
 
@@ -76,7 +76,7 @@ public class MySqlAuthDataAccess implements AuthDAO {
         configure();
         var statement = "TRUNCATE auth";
         try (var conn = DatabaseManager.getConnection();
-                var preparedStatement = conn.prepareStatement(statement)) {
+             var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.executeUpdate();
         } catch (SQLException e) {
             throw new DataAccessException(500, e.getMessage());
@@ -93,18 +93,4 @@ public class MySqlAuthDataAccess implements AuthDAO {
             """
 
     };
-
-    private void configureDatabase() throws DataAccessException {
-        DatabaseManager.createDatabase();
-        try (var conn = DatabaseManager.getConnection()) {
-            for (var statement : createStatements) {
-                try (var preparedStatement = conn.prepareStatement(statement)) {
-                    preparedStatement.executeUpdate();
-                    conn.close();
-                }
-            }
-        } catch (SQLException ex) {
-            throw new DataAccessException(500, String.format("Unable to configure database: %s", ex.getMessage()));
-        }
-    }
 }
