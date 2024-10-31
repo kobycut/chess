@@ -70,7 +70,6 @@ public class MySqlGameDataAccess implements GameDAO {
                     conn.close();
                     return new GameData(gameId, whiteUsername, blackUsername, gameName, chessGame);
                 }
-                conn.close();
                 return null;
 
             }
