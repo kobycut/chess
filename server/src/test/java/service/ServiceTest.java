@@ -11,6 +11,7 @@ import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+
 import java.util.Collection;
 
 
@@ -22,11 +23,7 @@ public class ServiceTest {
     static private GameDAO gameDAO;
 
     @BeforeAll
-    public static void init() throws DataAccessException {
-//        userDAO = new UserMemoryDataAccess();
-//        authDAO = new AuthMemoryDataAccess();
-//        gameDAO = new GameMemoryDataAccess();
-
+    public static void init() {
         userDAO = new MySqlUserDataAccess();
         authDAO = new MySqlAuthDataAccess();
         gameDAO = new MySqlGameDataAccess();
