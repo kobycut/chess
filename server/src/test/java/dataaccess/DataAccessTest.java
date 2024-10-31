@@ -165,7 +165,7 @@ public class DataAccessTest {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
 
-        assertEquals(null, dataAccess.createGame(null));
+        assertNull(dataAccess.createGame(null));
     }
 
     @Test
