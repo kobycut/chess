@@ -1,5 +1,4 @@
 package service;
-
 import dataaccess.*;
 import dataaccess.exceptions.DataAccessException;
 import dataaccess.exceptions.UnauthorizedException;
@@ -28,8 +27,8 @@ public class Login {
 //            throw new UnauthorizedException(401);
 //        }
 //        String hashedPassword = BCrypt.hashpw(userDAO.getUser(userData.username()).password(), BCrypt.gensalt());
-
-        String hashedPassword = userDAO.getUser(userData.username()).password();
+        UserData user = userDAO.getUser(userData.username());
+        String hashedPassword = user.password();
 
         if (!BCrypt.checkpw(userData.password(), hashedPassword)) {
             throw new UnauthorizedException(401);

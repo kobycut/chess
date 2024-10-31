@@ -2,10 +2,6 @@ package dataaccess;
 
 import dataaccess.exceptions.DataAccessException;
 import model.UserData;
-import org.junit.jupiter.params.shadow.com.univocity.parsers.common.DataValidationException;
-import org.mindrot.jbcrypt.BCrypt;
-
-import javax.xml.crypto.Data;
 import java.sql.SQLException;
 
 public class MySqlUserDataAccess implements UserDAO {
@@ -40,8 +36,7 @@ public class MySqlUserDataAccess implements UserDAO {
         try (var conn = DatabaseManager.getConnection();
                 var preparedStatement = conn.prepareStatement(statement)) {
             preparedStatement.setString(1, userData.username());
-            String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
-            preparedStatement.setString(2, hashedPassword);
+            preparedStatement.setString(2, userData.password());
             preparedStatement.setString(3, userData.email());
             preparedStatement.executeUpdate();
         } catch (SQLException e) {

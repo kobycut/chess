@@ -5,6 +5,8 @@ import dataaccess.exceptions.AlreadyTakenException;
 import dataaccess.exceptions.BadRequestException;
 import dataaccess.exceptions.DataAccessException;
 import model.*;
+import org.eclipse.jetty.server.Authentication;
+import org.mindrot.jbcrypt.BCrypt;
 
 import java.util.UUID;
 
@@ -25,7 +27,8 @@ public class Register {
         if (userData.password() == null || userData.username() == null || userData.email()==null) {
             throw new BadRequestException(400);
         }
-        userDAO.createUser(userData);
+        String hashedPassword = BCrypt.hashpw(userData.password(), BCrypt.gensalt());
+        userDAO.createUser(new UserData(userData.username(), hashedPassword, userData.email()));
 
         AuthData authData = new AuthData(UUID.randomUUID().toString(), userData.username());
         authDAO.createAuth(authData);

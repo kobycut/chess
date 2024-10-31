@@ -9,16 +9,10 @@ import dataaccess.exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
-import org.eclipse.jetty.server.Authentication;
-import org.eclipse.jetty.util.log.Log;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.mindrot.jbcrypt.BCrypt;
-import service.*;
-
-import javax.crypto.SecretKey;
 import java.util.Collection;
-import java.util.List;
+
 
 import static org.junit.jupiter.api.Assertions.*;
 
