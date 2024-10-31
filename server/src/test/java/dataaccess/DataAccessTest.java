@@ -164,6 +164,7 @@ public class DataAccessTest {
     public void badCreateGame() throws DataAccessException {
         var dataAccess = new MySqlGameDataAccess();
         dataAccess.clearAllGames();
+
         var test = dataAccess.createGame(null);
         assertNull(test);
     }
