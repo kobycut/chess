@@ -6,4 +6,6 @@ public class ServerFacade {
     public ServerFacade(String url) {
         serverUrl = url;
     }
+
+//    public
 }

@@ -20,7 +20,7 @@ public class Repl {
 
             try {
                 result = client.eval(line);
-                System.out.print(EscapeSequences.SET_TEXT_COLOR_BLUE + result);
+                System.out.print(result);
             } catch (Throwable e) {
                 var msg = e.toString();
                 System.out.print(msg);

@@ -7,10 +7,13 @@ import java.util.Arrays;
 public class ChessClient {
     private State state = State.SIGNEDOUT;
     private String username = null;
+    private final ServerFacade server;
+    private final String serverUrl;
 
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
+        this.serverUrl = serverUrl;
 
     }
     public String eval(String input) {
@@ -55,7 +58,7 @@ public class ChessClient {
     }
 
     public String quit() {
-
+        return "quit";
     }
 
     public String login(String... params) {
@@ -64,33 +67,45 @@ public class ChessClient {
             username = String.join("-", params);
 
         }
+        return "";
     }
 
     public String register(String... params) {
+        if (params.length >= 2) {
+            state = State.SIGNEDIN;
+            username = String.join("-", params);
 
+
+
+            return String.format("You signed in as %s.", username);
+        }
+//        throw new Exception(400,)
+        return "";
     }
 
     public String logout() {
         checkSignedIn();
-
+        return "";
     }
 
     public String createGame(String... params) {
         checkSignedIn();
-
+        return "";
     }
 
     public String listGames() {
         checkSignedIn();
-
+        return "";
     }
 
     public String playGame(String... params) {
         checkSignedIn();
+        return "";
     }
 
     public String observeGame(String... params) {
         checkSignedIn();
+        return "";
     }
 
     private void checkSignedIn() {
