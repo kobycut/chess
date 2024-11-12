@@ -1,5 +1,8 @@
 package Facades;
 
+
+import model.AuthData;
+
 public class ServerFacade {
     private final String serverUrl;
 
@@ -7,5 +10,8 @@ public class ServerFacade {
         serverUrl = url;
     }
 
+    public void createAuth(AuthData authData) {
+
+    }
 //    public
 }

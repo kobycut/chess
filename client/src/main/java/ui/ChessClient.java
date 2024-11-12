@@ -62,30 +62,33 @@ public class ChessClient {
     }
 
     public String login(String... params) {
-        if (params.length > 1) {
+        if (params.length == 2) {
             state = State.SIGNEDIN;
-            username = String.join("-", params);
-
+            username = params[0];
+            // server facade login stuff
         }
-        return "";
+        // throw error
+        return "error";
     }
 
     public String register(String... params) {
-        if (params.length >= 2) {
+        if (params.length == 2) {
             state = State.SIGNEDIN;
-            username = String.join("-", params);
-
+            username = params[0];
+            // server facade register stuff
 
 
             return String.format("You signed in as %s.", username);
         }
-//        throw new Exception(400,)
-        return "";
+//        throw error
+        return "error";
     }
 
     public String logout() {
         checkSignedIn();
-        return "";
+        state = State.SIGNEDOUT;
+
+        return String.format("%s quit Chess 240 :(", username);
     }
 
     public String createGame(String... params) {
@@ -112,6 +115,9 @@ public class ChessClient {
         if (state == State.SIGNEDOUT) {
 //            throw new (400, "Sign in");
         }
+    }
+    private void drawBoard() {
+
     }
 
 }
