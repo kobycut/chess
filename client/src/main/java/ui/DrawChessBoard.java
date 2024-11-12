@@ -51,7 +51,7 @@ public class DrawChessBoard {
         drawBoard(out2, reverse);
         out.println();
         drawHeaders(out2, reverse);
-
+        out.println();
 
     }
 
@@ -129,6 +129,7 @@ public class DrawChessBoard {
                     }
                     if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
                         out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+
                         out.print(piece.toString().toUpperCase());
 
                     } else {
