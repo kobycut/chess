@@ -5,6 +5,7 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import exceptions.*;
 
 import java.util.Arrays;
 
@@ -20,7 +21,6 @@ public class ChessClient {
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
-
     }
 
     public String eval(String input) {
@@ -73,8 +73,9 @@ public class ChessClient {
         if (params.length == 2) {
             state = State.SIGNEDIN;
             username = params[0];
-            // server facade login stuff
-
+            String password = params[1];
+            server.login(username, password);
+            // websocket
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged in as %s \n", username);
         }
         // throw error
@@ -86,8 +87,10 @@ public class ChessClient {
         if (params.length == 3) {
             state = State.SIGNEDIN;
             username = params[0];
-            // server facade register stuff
-
+            String password = params[1];
+            String email = params[2];
+            server.register(username, password, email);
+            server.login(username, password);
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "registered %s.", username);
         }
 //        throw error
@@ -97,15 +100,14 @@ public class ChessClient {
     public String logout() {
         checkSignedIn();
         state = State.SIGNEDOUT;
-
+        server.logout();
         return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged out %s", username);
     }
 
     public String createGame(String... params) {
         checkSignedIn();
         if (params.length == 1) {
-            // server facade stuff
-
+            server.createGame(params[0]);
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "game %s created", params[0]);
         }
         // throw error
@@ -114,7 +116,7 @@ public class ChessClient {
 
     public String listGames() {
         checkSignedIn();
-        // server facade stuff
+//        var games = server.listGames();
         var result = new StringBuilder();
 //        var gson = new Gson();
         // for loop that iterates through games, converts them to readable, then appends to string builder.
@@ -127,7 +129,8 @@ public class ChessClient {
         if (params.length == 2) {
             Integer id = parseInt(params[0]);
             String playerColor = params[1];
-            // cool server facade stuff
+            server.joinGame(id, playerColor);
+            // draw game
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
         }
         // throw error
@@ -138,9 +141,8 @@ public class ChessClient {
         checkSignedIn();
         if (params.length == 1) {
             Integer id = parseInt(params[0]);
-            // more cool server facade stuff
-//            ChessBoard board = server
-//            drawBoard(board);
+            server.observeGame(id);
+
             ChessBoard chess = new ChessBoard(); // testes
             chess.resetBoard(); // testing
             drawBoard(chess); // testing

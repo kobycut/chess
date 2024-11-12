@@ -34,6 +34,9 @@ public class DrawChessBoard {
         out.println();
         drawHeaders(out, reverse);
         out.println();
+        out.println();
+        out.println();
+        out.println();
 
         reverse = true;
         pieces.clear();
@@ -114,6 +117,10 @@ public class DrawChessBoard {
                     out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                     out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
                 }
+                if (i == 0 && j == 0 || i == 2 && j == 2 || i == 0 && j == 1 || i == 2 && j == 1 || i == 1 && j ==2 || i == 1 && j == 0) {
+                    continue;
+                }
+
                 if (i == 1 && j == 1) {
                     if (bool == 1) {
                         out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
