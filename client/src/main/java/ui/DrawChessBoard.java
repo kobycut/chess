@@ -17,8 +17,8 @@ public class DrawChessBoard {
 
     public DrawChessBoard(ChessBoard board) {
         this.board = board;
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
+        for (int i = 7; i > -1; i--) {
+            for (int j = 7; j > -1; j--) {
                 ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
                 pieces.add(piece);
             }
@@ -37,8 +37,9 @@ public class DrawChessBoard {
 
         reverse = true;
         pieces.clear();
-        for (int i = 7; i > -1; i--) {
-            for (int j = 7; j > -1; j--) {
+
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
                 ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
                 pieces.add(piece);
             }
@@ -84,19 +85,23 @@ public class DrawChessBoard {
         int bgNum = 1;
         for (int i = 0; i < 8; i++) {
             out.println();
-            drawSquare(out, i, 1, bgNum);
+            drawSquare(out, i, 1, bgNum, reverse);
             bgNum += 1;
             for (int j = 0; j < 8; j++) {
-                drawSquare(out, i, 0, bgNum);
+                drawSquare(out, i, 0, bgNum, reverse);
                 bgNum += 1;
             }
-            drawSquare(out, i, 1, bgNum);
+            drawSquare(out, i, 1, bgNum, reverse);
         }
 
     }
 
-    private void drawSquare(PrintStream out, int index, int bool, int bgNum) {
-        String[] sideHeaders = {"8", "7", "6", "5", "4", "3", "2", "1"};
+    private void drawSquare(PrintStream out, int index, int bool, int bgNum, boolean reverse) {
+
+        String[] sideHeaders = {"1", "2", "3", "4", "5", "6", "7", "8"};
+        if (reverse) {
+            sideHeaders = new String[]{"8", "7", "6", "5", "4", "3", "2", "1"};
+        }
         out.print(EscapeSequences.SET_BG_COLOR_BLACK);
         if (bgNum % 2 == 0) {
             out.print(EscapeSequences.SET_BG_COLOR_WHITE);
