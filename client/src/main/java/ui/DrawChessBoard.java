@@ -9,8 +9,6 @@ import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
 
 public class DrawChessBoard {
     private ChessBoard board;
@@ -30,15 +28,38 @@ public class DrawChessBoard {
     public void main() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.SET_TEXT_BOLD);
-        drawHeaders(out);
-        drawBoard(out);
+        boolean reverse = false;
+        drawHeaders(out, reverse);
+        drawBoard(out, reverse);
         out.println();
-        drawHeaders(out);
+        drawHeaders(out, reverse);
         out.println();
+
+        reverse = true;
+        pieces.clear();
+        for (int i = 7; i > -1; i--) {
+            for (int j = 7; j > -1; j--) {
+                ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
+                pieces.add(piece);
+            }
+        }
+
+        counter = 0;
+        var out2 = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        drawHeaders(out2, reverse);
+        drawBoard(out2, reverse);
+        out.println();
+        drawHeaders(out2, reverse);
+
+
     }
 
-    private void drawHeaders(PrintStream out) {
-        String[] headers = {" ", "a", "b", "c", "d", "e", "f", "g", "h", " "};
+    private void drawHeaders(PrintStream out, boolean reverse) {
+        String[] headers = {" ", "h", "g", "f", "e", "d", "c", "b", "a", " "};
+        if (reverse) {
+            headers = new String[]{" ", "a", "b", "c", "d", "e", "f", "g", "h", " "};
+        }
+
         for (int boardCol = 0; boardCol < 10; boardCol++) {
             drawHeader(out, headers[boardCol]);
         }
@@ -59,7 +80,7 @@ public class DrawChessBoard {
         }
     }
 
-    private void drawBoard(PrintStream out) {
+    private void drawBoard(PrintStream out, boolean reverse) {
         int bgNum = 1;
         for (int i = 0; i < 8; i++) {
             out.println();
@@ -83,6 +104,7 @@ public class DrawChessBoard {
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
+
                 if (bool == 1) {
                     out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                     out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
@@ -102,10 +124,10 @@ public class DrawChessBoard {
                     }
                     if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
                         out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
-                        out.print(piece);
+                        out.print(piece.toString().toUpperCase());
 
                     } else {
-                        out.print(piece);
+                        out.print(piece.toString().toUpperCase());
                     }
                     counter++;
                     continue;
