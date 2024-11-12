@@ -1,8 +1,14 @@
 package ui;
 
 import Facades.ServerFacade;
+import chess.ChessBoard;
+import chess.ChessGame;
+import chess.ChessPiece;
+import chess.ChessPosition;
 
 import java.util.Arrays;
+
+import static java.lang.Integer.parseInt;
 
 public class ChessClient {
     private State state = State.SIGNEDOUT;
@@ -16,12 +22,13 @@ public class ChessClient {
         this.serverUrl = serverUrl;
 
     }
+
     public String eval(String input) {
         try {
             var cmd = "help";
-            var tokens = input.toLowerCase().toLowerCase().split(" ");
+            var tokens = input.split(" ");
             if (tokens.length > 0) {
-               cmd = tokens[0];
+                cmd = tokens[0];
             }
             var params = Arrays.copyOfRange(tokens, 1, tokens.length);
             return switch (cmd) {
@@ -58,27 +65,30 @@ public class ChessClient {
     }
 
     public String quit() {
-        return "quit";
+        return EscapeSequences.SET_TEXT_COLOR_BLUE + "quit";
     }
 
     public String login(String... params) {
+        checkSignedOut();
         if (params.length == 2) {
             state = State.SIGNEDIN;
             username = params[0];
             // server facade login stuff
+
+            return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged in as %s \n", username);
         }
         // throw error
-        return "error";
+        return "login error";
     }
 
     public String register(String... params) {
-        if (params.length == 2) {
+        checkSignedOut();
+        if (params.length == 3) {
             state = State.SIGNEDIN;
             username = params[0];
             // server facade register stuff
 
-
-            return String.format("You signed in as %s.", username);
+            return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "registered %s.", username);
         }
 //        throw error
         return "error";
@@ -88,27 +98,56 @@ public class ChessClient {
         checkSignedIn();
         state = State.SIGNEDOUT;
 
-        return String.format("%s quit Chess 240 :(", username);
+        return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged out %s", username);
     }
 
     public String createGame(String... params) {
         checkSignedIn();
-        return "";
+        if (params.length == 1) {
+            // server facade stuff
+
+            return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "game %s created", params[0]);
+        }
+        // throw error
+        return "error";
     }
 
     public String listGames() {
         checkSignedIn();
+        // server facade stuff
+        var result = new StringBuilder();
+//        var gson = new Gson();
+        // for loop that iterates through games, converts them to readable, then appends to string builder.
+        // return result
         return "";
     }
 
     public String playGame(String... params) {
         checkSignedIn();
-        return "";
+        if (params.length == 2) {
+            Integer id = parseInt(params[0]);
+            String playerColor = params[1];
+            // cool server facade stuff
+            return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
+        }
+        // throw error
+        return "error";
     }
 
     public String observeGame(String... params) {
         checkSignedIn();
-        return "";
+        if (params.length == 1) {
+            Integer id = parseInt(params[0]);
+            // more cool server facade stuff
+//            ChessBoard board = server
+//            drawBoard(board);
+            ChessBoard chess = new ChessBoard(); // testes
+            chess.resetBoard(); // testing
+            drawBoard(chess); // testing
+            return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "observing game %s", id);
+        }
+        // throw error
+        return "error";
     }
 
     private void checkSignedIn() {
@@ -116,9 +155,39 @@ public class ChessClient {
 //            throw new (400, "Sign in");
         }
     }
-    private void drawBoard() {
+
+    private void checkSignedOut() {
+        if (state == State.SIGNEDIN) {
+//            throw new (400, "Sign in");
+        }
+    }
+
+    private void drawBoard(ChessBoard board) {
+        var string = new StringBuilder();
+        for (int i = 0; i < 8; i++) {
+            for (int j = 0; j < 8; j++) {
+                ChessPosition position = new ChessPosition(i, j);
+                ChessPiece piece = board.getPiece(position);
+                var whiteBackground = true;
+                var red = false;
+                if (j % 2 == 0) {
+                    whiteBackground = false;
+                }
+
+                if (piece != null) {
+                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
+                        var red = true;
+                    }
+
+                    string.append()
+                }
+                if (red)
+
+            }
+        }
 
     }
+
 
 }
 
