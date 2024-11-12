@@ -163,28 +163,9 @@ public class ChessClient {
     }
 
     private void drawBoard(ChessBoard board) {
-        var string = new StringBuilder();
-        for (int i = 0; i < 8; i++) {
-            for (int j = 0; j < 8; j++) {
-                ChessPosition position = new ChessPosition(i, j);
-                ChessPiece piece = board.getPiece(position);
-                var whiteBackground = true;
-                var red = false;
-                if (j % 2 == 0) {
-                    whiteBackground = false;
-                }
+        DrawChessBoard drawChessBoard = new DrawChessBoard(board);
+        drawChessBoard.main();
 
-                if (piece != null) {
-                    if (piece.getTeamColor() == ChessGame.TeamColor.WHITE) {
-                        var red = true;
-                    }
-
-                    string.append()
-                }
-                if (red)
-
-            }
-        }
 
     }
 
