@@ -65,7 +65,7 @@ public class ChessClient {
     }
 
     public String quit() {
-        return EscapeSequences.SET_TEXT_COLOR_BLUE + "quit";
+        return "quit";
     }
 
     public String login(String... params) throws DataAccessException {
@@ -78,7 +78,6 @@ public class ChessClient {
             // websocket
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged in as %s \n", username);
         }
-        // throw error
         throw new DataAccessException(400, "provide the correct login information");
     }
 
@@ -116,7 +115,7 @@ public class ChessClient {
 
     public String listGames() throws DataAccessException {
         checkSignedIn();
-//        var games = server.listGames();
+        var games = server.listGames();
         var result = new StringBuilder();
 //        var gson = new Gson();
         // for loop that iterates through games, converts them to readable, then appends to string builder.
