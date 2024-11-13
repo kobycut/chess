@@ -35,7 +35,7 @@ public class ServerFacade {
             var record = new UserData(username, password, null);
             return this.makeRequest("POST", path, record, AuthData.class);
         } catch (Exception ex) {
-            throw new DataAccessException(500, "something went wrong");
+            throw new DataAccessException(500, "no such login");
         }
     }
 
@@ -56,7 +56,7 @@ public class ServerFacade {
 
             this.makeRequest("DELETE", path, authData.authToken(), null);
         } catch (Exception ex) {
-            throw new DataAccessException(500, ex.getMessage());
+            throw new DataAccessException(500, "something went wrong, sign in if not already");
         }
 
     }
@@ -68,7 +68,7 @@ public class ServerFacade {
             GameAuthObject gameAuthObject = new GameAuthObject(game, authData.authToken());
             this.makeRequest("POST", path, gameAuthObject, GameData.class);
         } catch (Exception ex) {
-            throw new DataAccessException(500, "input correct createGame information");
+            throw new DataAccessException(500, "input correct parameters");
         }
     }
 
@@ -77,16 +77,19 @@ public class ServerFacade {
             var path = "/game";
             return this.makeRequest("GET", path, authData.authToken(), GameDataCollection.class);
         } catch (Exception ex) {
-            throw new DataAccessException(500, "input correct listGames information");
+            throw new DataAccessException(500, "input correct parameters");
         }
     }
 
     public void joinGame(Integer id, String playerColor, AuthData authData) throws DataAccessException {
-        var path = "/game";
-        JoinGameObject joinGameObject = new JoinGameObject(id, authData.authToken(), playerColor);
+        try {
+            var path = "/game";
+            JoinGameObject joinGameObject = new JoinGameObject(id, authData.authToken(), playerColor);
 
-        this.makeRequest("PUT", path, joinGameObject, null);
-
+            this.makeRequest("PUT", path, joinGameObject, null);
+        } catch (Exception ex) {
+            throw new DataAccessException(500, "input correct parameters");
+        }
     }
 
     public void clearAll() throws DataAccessException {
