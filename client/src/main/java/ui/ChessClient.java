@@ -158,6 +158,9 @@ public class ChessClient {
             String playerColor = params[1];
             server.joinGame(id, playerColor);
             // draw game
+            ChessBoard chessBoard = new ChessBoard(); // testes
+            chessBoard.resetBoard();
+            drawBoard(chessBoard);
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
         }
         throw new DataAccessException(400, "provide the correct playGame information");
@@ -169,9 +172,10 @@ public class ChessClient {
             Integer id = parseInt(params[0]);
             server.observeGame(id);
 
-            ChessBoard chess = new ChessBoard(); // testes
-            chess.resetBoard(); // testing
-            drawBoard(chess); // testing
+            ChessBoard chessBoard = new ChessBoard(); // testes
+            chessBoard.resetBoard();
+            drawBoard(chessBoard);
+
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "observing game %s", id);
         }
         throw new DataAccessException(400, "provide the correct observeGame information");
