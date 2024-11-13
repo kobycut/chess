@@ -62,7 +62,7 @@ public class ServerFacade {
             GameAuthObject gameAuthObject = new GameAuthObject(game, authData.authToken());
             this.makeRequest("POST", path, gameAuthObject, GameData.class);
         } catch (Exception ex) {
-            throw new DataAccessException(500, "input correct parameters");
+            throw new DataAccessException(500, "something went wrong");
         }
     }
 
@@ -82,7 +82,7 @@ public class ServerFacade {
 
             this.makeRequest("PUT", path, joinGameObject, null);
         } catch (Exception ex) {
-            throw new DataAccessException(500, "input correct parameters");
+            throw new DataAccessException(500, "that game does not exist or the selected team color is already full");
         }
     }
 
