@@ -157,7 +157,7 @@ public class ChessClient {
             Integer id = parseInt(params[0]);
             String playerColor = params[1];
             server.joinGame(id, playerColor, authData);
-            // draw game
+
             ChessBoard chessBoard = new ChessBoard(); // testes
             chessBoard.resetBoard();
             drawBoard(chessBoard);

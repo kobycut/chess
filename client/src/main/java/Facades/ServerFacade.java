@@ -30,9 +30,13 @@ public class ServerFacade {
     }
 
     public AuthData login(String username, String password) throws DataAccessException {
-        var path = "/session";
-        var record = new UserData(username, password, null);
-        return this.makeRequest("POST", path, record, AuthData.class);
+        try {
+            var path = "/session";
+            var record = new UserData(username, password, null);
+            return this.makeRequest("POST", path, record, AuthData.class);
+        } catch (Exception ex) {
+            throw new DataAccessException(500, "something went wrong");
+        }
     }
 
     public AuthData register(String username, String password, String email) throws DataAccessException {
@@ -79,16 +83,10 @@ public class ServerFacade {
 
     public void joinGame(Integer id, String playerColor, AuthData authData) throws DataAccessException {
         var path = "/game";
-        GameData game = new GameData(id, null, null, null, null);
+        JoinGameObject joinGameObject = new JoinGameObject(id, authData.authToken(), playerColor);
 
-        JsonObject jsonObject = new JsonObject();
-        jsonObject.addProperty("playerColor", playerColor);
-        JoinGameObject joinGameObject = new JoinGameObject(game, authData.authToken(), playerColor);
+        this.makeRequest("PUT", path, joinGameObject, null);
 
-        String response = this.makeRequest("PUT", path, joinGameObject, String.class);
-        if (!Objects.equals(response, "{}")) {
-            throw new DataAccessException(500, "provide the correct information");
-        }
     }
 
     public void clearAll() throws DataAccessException {
@@ -180,18 +178,18 @@ public class ServerFacade {
     }
 
     public static class JoinGameObject {
-        private final GameData game;
+        private final int gameID;
         private final String authToken;
         private final String playerColor;
 
-        public JoinGameObject(GameData game, String authToken, String playerColor) {
-            this.game = game;
+        public JoinGameObject(int gameId, String authToken, String playerColor) {
+            this.gameID = gameId;
             this.authToken = authToken;
             this.playerColor = playerColor;
         }
 
-        public GameData getGame() {
-            return game;
+        public int getGame() {
+            return gameID;
         }
 
         public String getAuth() {
