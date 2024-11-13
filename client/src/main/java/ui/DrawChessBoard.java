@@ -72,8 +72,11 @@ public class DrawChessBoard {
     private void drawHeader(PrintStream out, String headerText) {
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
+                if (i == 0 && j == 0 || i == 2 && j == 2 || i == 0 && j == 1 || i == 2 && j == 1 || i == 1 && j == 2 || i == 1 && j == 0) {
+                    continue;
+                }
                 out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
-                if (i == 1 && j == 1) {
+                if (i == 1) {
                     out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
                     out.print(headerText);
                     continue;
@@ -117,11 +120,11 @@ public class DrawChessBoard {
                     out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                     out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
                 }
-                if (i == 0 && j == 0 || i == 2 && j == 2 || i == 0 && j == 1 || i == 2 && j == 1 || i == 1 && j ==2 || i == 1 && j == 0) {
+                if (i == 0 && j == 0 || i == 2 && j == 2 || i == 0 && j == 1 || i == 2 && j == 1 || i == 1 && j == 2 || i == 1 && j == 0) {
                     continue;
                 }
 
-                if (i == 1 && j == 1) {
+                if (i == 1) {
                     if (bool == 1) {
                         out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                         out.print(sideHeaders[index]);
@@ -136,10 +139,32 @@ public class DrawChessBoard {
                     }
                     if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
                         out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+//                        var pieceSymbol = "";
+//                        switch (piece.getPieceType()) {
+//                            case ChessPiece.PieceType.PAWN -> pieceSymbol = EscapeSequences.BLACK_PAWN;
+//                            case ChessPiece.PieceType.ROOK -> pieceSymbol = EscapeSequences.BLACK_ROOK;
+//                            case ChessPiece.PieceType.KNIGHT -> pieceSymbol = EscapeSequences.BLACK_KNIGHT;
+//                            case ChessPiece.PieceType.BISHOP -> pieceSymbol = EscapeSequences.BLACK_BISHOP;
+//                            case ChessPiece.PieceType.QUEEN -> pieceSymbol = EscapeSequences.BLACK_QUEEN;
+//                            case ChessPiece.PieceType.KING -> pieceSymbol = EscapeSequences.BLACK_KING;
+//                        }
+                        ;
 
                         out.print(piece.toString().toUpperCase());
+//                        out.print(pieceSymbol);
 
                     } else {
+
+//                        var pieceSymbol = "";
+//                        switch (piece.getPieceType()) {
+//                            case ChessPiece.PieceType.PAWN -> pieceSymbol = EscapeSequences.WHITE_PAWN;
+//                            case ChessPiece.PieceType.ROOK -> pieceSymbol = EscapeSequences.WHITE_ROOK;
+//                            case ChessPiece.PieceType.KNIGHT -> pieceSymbol = EscapeSequences.WHITE_KNIGHT;
+//                            case ChessPiece.PieceType.BISHOP -> pieceSymbol = EscapeSequences.WHITE_BISHOP;
+//                            case ChessPiece.PieceType.QUEEN -> pieceSymbol = EscapeSequences.WHITE_QUEEN;
+//                            case ChessPiece.PieceType.KING -> pieceSymbol = EscapeSequences.WHITE_KING;
+//                        }
+//                        out.print(pieceSymbol);
                         out.print(piece.toString().toUpperCase());
                     }
                     counter++;
