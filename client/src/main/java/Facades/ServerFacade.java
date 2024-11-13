@@ -26,9 +26,6 @@ public class ServerFacade {
         serverUrl = url;
     }
 
-    public void observeGame(Integer id) {
-    }
-
     public AuthData login(String username, String password) throws DataAccessException {
         try {
             var path = "/session";
@@ -181,28 +178,16 @@ public class ServerFacade {
     }
 
     public static class JoinGameObject {
-        private final int gameID;
         private final String authToken;
-        private final String playerColor;
 
         public JoinGameObject(int gameId, String authToken, String playerColor) {
-            this.gameID = gameId;
             this.authToken = authToken;
-            this.playerColor = playerColor;
-        }
-
-        public int getGame() {
-            return gameID;
         }
 
         public String getAuth() {
             return authToken;
         }
 
-        public String getPlayerColor() {
-            return playerColor;
-        }
+
     }
-
-
 }

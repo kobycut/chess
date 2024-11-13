@@ -52,9 +52,6 @@ public class Server {
         Spark.exception(BadRequestException.class, this::badRequestExceptionHandler);
         Spark.exception(UnauthorizedException.class, this::unauthorizedExceptionHandler);
 
-        // Register your endpoints and handle exceptions here.
-
-        //This line initializes the server and can be removed once you have a functioning endpoint
         Spark.init();
 
         Spark.awaitInitialization();
@@ -145,23 +142,15 @@ public class Server {
         String playerColor = null;
         String authToken = req.headers("authorization");
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
-//        GameData gameData = null;
         JsonObject obj = new Gson().fromJson(req.body(), JsonObject.class);
         if (obj.get("playerColor") != null) {
             playerColor = obj.get("playerColor").getAsString();
         }
-//        if (obj.get("game") != null) {
-//            JsonObject result = obj.get("game").getAsJsonObject();
-//            int id = result.get("gameID").getAsInt();
-//            gameData = new GameData(id, null, null, null, null);
-//        }
 
         joinGameService.join(authToken, gameData, playerColor);
 
         res.status(200);
         res.body("{}");
-
-//        return new Gson().toJson("{}");
         return "{}";
     }
 

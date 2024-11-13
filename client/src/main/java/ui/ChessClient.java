@@ -21,13 +21,11 @@ public class ChessClient {
     private State state = State.SIGNEDOUT;
     private String username = null;
     private final ServerFacade server;
-    private final String serverUrl;
     private AuthData authData;
 
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
-        this.serverUrl = serverUrl;
     }
 
     public String eval(String input) {
@@ -170,7 +168,6 @@ public class ChessClient {
         checkSignedIn();
         if (params.length == 1) {
             Integer id = parseInt(params[0]);
-            server.observeGame(id);
 
             ChessBoard chessBoard = new ChessBoard(); // testes
             chessBoard.resetBoard();
