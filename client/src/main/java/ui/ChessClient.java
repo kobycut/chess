@@ -68,7 +68,7 @@ public class ChessClient {
         return EscapeSequences.SET_TEXT_COLOR_BLUE + "quit";
     }
 
-    public String login(String... params) {
+    public String login(String... params) throws DataAccessException {
         checkSignedOut();
         if (params.length == 2) {
             state = State.SIGNEDIN;
@@ -79,10 +79,10 @@ public class ChessClient {
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged in as %s \n", username);
         }
         // throw error
-        return "login error";
+        throw new DataAccessException(400, "provide the correct login information");
     }
 
-    public String register(String... params) {
+    public String register(String... params) throws DataAccessException {
         checkSignedOut();
         if (params.length == 3) {
             state = State.SIGNEDIN;
@@ -93,28 +93,28 @@ public class ChessClient {
             server.login(username, password);
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "registered %s.", username);
         }
-//        throw error
-        return "error";
+        throw new DataAccessException(400, "provide the correct register information");
+
     }
 
-    public String logout() {
+    public String logout() throws DataAccessException {
         checkSignedIn();
         state = State.SIGNEDOUT;
         server.logout();
         return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged out %s", username);
     }
 
-    public String createGame(String... params) {
+    public String createGame(String... params) throws DataAccessException {
         checkSignedIn();
         if (params.length == 1) {
             server.createGame(params[0]);
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "game %s created", params[0]);
         }
-        // throw error
-        return "error";
+        throw new DataAccessException(400, "provide the correct createGame information");
+
     }
 
-    public String listGames() {
+    public String listGames() throws DataAccessException {
         checkSignedIn();
 //        var games = server.listGames();
         var result = new StringBuilder();
@@ -124,7 +124,7 @@ public class ChessClient {
         return "";
     }
 
-    public String playGame(String... params) {
+    public String playGame(String... params) throws DataAccessException {
         checkSignedIn();
         if (params.length == 2) {
             Integer id = parseInt(params[0]);
@@ -133,11 +133,11 @@ public class ChessClient {
             // draw game
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
         }
-        // throw error
-        return "error";
+        throw new DataAccessException(400, "provide the correct playGame information");
+
     }
 
-    public String observeGame(String... params) {
+    public String observeGame(String... params) throws DataAccessException {
         checkSignedIn();
         if (params.length == 1) {
             Integer id = parseInt(params[0]);
@@ -148,19 +148,21 @@ public class ChessClient {
             drawBoard(chess); // testing
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "observing game %s", id);
         }
-        // throw error
-        return "error";
+        throw new DataAccessException(400, "provide the correct observeGame information");
+
     }
 
-    private void checkSignedIn() {
+    private void checkSignedIn() throws DataAccessException {
         if (state == State.SIGNEDOUT) {
-//            throw new (400, "Sign in");
+            throw new DataAccessException(400, "please sign in");
+
         }
     }
 
-    private void checkSignedOut() {
+    private void checkSignedOut() throws DataAccessException {
         if (state == State.SIGNEDIN) {
-//            throw new (400, "Sign in");
+            throw new DataAccessException(400, "please sign out");
+
         }
     }
 
