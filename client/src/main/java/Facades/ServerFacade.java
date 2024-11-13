@@ -3,6 +3,7 @@ package Facades;
 
 import com.google.gson.Gson;
 import model.AuthData;
+import model.GameData;
 import model.UserData;
 import exceptions.*;
 
@@ -13,6 +14,7 @@ import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
 import java.net.URL;
+import java.util.List;
 import java.util.Map;
 
 public class ServerFacade {
@@ -33,9 +35,14 @@ public class ServerFacade {
     }
 
     public void register(String username, String password, String email) throws DataAccessException {
-        var path = "/user";
-        var record = new UserData(username, password, email);
-        this.authData = this.makeRequest("POST", path, record, AuthData.class);
+        try {
+            var path = "/user";
+            var record = new UserData(username, password, email);
+            this.authData = this.makeRequest("POST", path, record, AuthData.class);
+        } catch (Exception ex) {
+            throw new DataAccessException(500, "username already taken");
+        }
+
     }
 
     public String logout() throws DataAccessException {
@@ -47,10 +54,12 @@ public class ServerFacade {
 
     }
 
-    public void createGame(String param) {
+    public void createGame(String param) throws DataAccessException {
         var path = "/game";
-
-//        this.makeRequest("POST", path, )
+        // takes in header "authorization" authToken and body GameData
+        GameData game = new GameData(0, null, null, param, null);
+        GameAuthObject gameAuthObject = new GameAuthObject(game, authData.authToken());
+        this.makeRequest("POST", path, gameAuthObject, GameData.class);
     }
 
     public Object listGames() throws DataAccessException {
@@ -79,6 +88,12 @@ public class ServerFacade {
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
+            if (request instanceof GameAuthObject) {
+                GameAuthObject gameAuthObject = (GameAuthObject) request;
+                String authToken = gameAuthObject.getAuth();
+                http.addRequestProperty("authorization", authToken);
+                request = gameAuthObject.getGame();
+            }
             http.addRequestProperty("Content-Type", "application/json");
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
@@ -109,6 +124,22 @@ public class ServerFacade {
 
     private boolean isSuccessful(int status) {
         return status / 100 == 2;
+    }
+
+    public class GameAuthObject extends Object {
+        private GameData game;
+        private String authToken;
+
+        public GameAuthObject(GameData game, String authToken) {
+            this.game = game;
+            this.authToken = authToken;
+        }
+        public GameData getGame() {
+            return game;
+        }
+        public String getAuth() {
+            return this.authToken;
+        }
     }
 
 
