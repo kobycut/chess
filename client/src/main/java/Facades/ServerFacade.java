@@ -50,7 +50,7 @@ public class ServerFacade {
         try {
             var path = "/session";
 
-            var status = this.makeRequest("DELETE", path, authData, String.class);
+            var status = this.makeRequest("DELETE", path, authData.authToken(), String.class);
             this.authData = null;
             return status;
         } catch (Exception ex) {
