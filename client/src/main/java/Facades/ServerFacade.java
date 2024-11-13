@@ -3,7 +3,9 @@ package Facades;
 
 import com.google.gson.Gson;
 import model.AuthData;
+
 import model.GameData;
+import model.GameDataCollection;
 import model.UserData;
 import exceptions.*;
 
@@ -13,7 +15,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.Map;
+import java.util.Collection;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -67,17 +69,24 @@ public class ServerFacade {
         }
     }
 
-    public Map<String, Object> listGames() throws DataAccessException {
+    public Object listGames() throws DataAccessException {
 //        try {
-            var path = "/game";
-            // if it is null for the request how are we checking the authdata???
-            return this.makeRequest("GET", path, null, Map.class);
+        var path = "/game";
+        return this.makeRequest("GET", path, authData.authToken(), GameDataCollection.class);
 //        } catch (Exception ex) {
 //            throw new DataAccessException(500, "input correct listGames information");
 //        }
     }
 
     public void joinGame(Integer id, String playerColor) {
+        var path = "/game";
+
+//        this.makeRequest("PUT", path, )
+    }
+
+    public void clearAll() throws DataAccessException {
+        var path = "/db";
+        this.makeRequest("DELETE", path, null, null);
     }
 
 
@@ -105,7 +114,13 @@ public class ServerFacade {
                 http.addRequestProperty("authorization", authToken);
                 request = gameAuthObject.getGame();
             }
-            http.addRequestProperty("Content-Type", "application/json");
+            if (request instanceof String) {
+                String authToken = (String) request;
+                http.addRequestProperty("authorization", authToken);
+                return;
+            } else {
+                http.addRequestProperty("Content-Type", "application/json");
+            }
             String reqData = new Gson().toJson(request);
             try (OutputStream reqBody = http.getOutputStream()) {
                 reqBody.write(reqData.getBytes());
@@ -145,9 +160,11 @@ public class ServerFacade {
             this.game = game;
             this.authToken = authToken;
         }
+
         public GameData getGame() {
             return game;
         }
+
         public String getAuth() {
             return this.authToken;
         }

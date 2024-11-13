@@ -7,8 +7,11 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import com.google.gson.Gson;
 import exceptions.*;
+import model.GameData;
+import model.GameDataCollection;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Map;
 
 import static java.lang.Integer.parseInt;
@@ -96,7 +99,7 @@ public class ChessClient {
             state = State.SIGNEDIN;
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "registered %s.", username);
         }
-        throw new DataAccessException(400, "provide the correct register information");
+        throw new DataAccessException(400, "username is already taken or the inputs were not correct");
 
     }
 
@@ -123,17 +126,24 @@ public class ChessClient {
 
     public String listGames() throws DataAccessException {
 
-            checkSignedIn();
-            Map<String, Object> games = server.listGames();
-            var result = new StringBuilder();
-            var gson = new Gson();
-            int i = 0;
-            for (Map.Entry<String, Object> entry : games.entrySet()) {
+        checkSignedIn();
+        Object games = server.listGames();
+        var result = new StringBuilder();
+        var gson = new Gson();
+        int i = 0;
+        if (games instanceof GameDataCollection collection) {
+
+            for (GameData game : collection.games()) {
                 i++;
-                result.append(gson.toJson(i)).append(gson.toJson(entry.getKey())).
-                        append(gson.toJson(entry.getValue())).append("\n");
+                result.append(gson.toJson(i)).append(": ").append(game.gameID()).append(game.gameName()).
+                        append(game.blackUsername()).append(game.whiteUsername());
+
+
             }
-            return result.toString();
+
+
+        }
+        return result.toString();
     }
 
     public String playGame(String... params) throws DataAccessException {
