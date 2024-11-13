@@ -164,7 +164,7 @@ public class ChessClient {
         if (params.length == 1) {
             Integer id = parseInt(params[0]);
 
-            ChessBoard chessBoard = new ChessBoard(); // testes
+            ChessBoard chessBoard = new ChessBoard();
             chessBoard.resetBoard();
             drawBoard(chessBoard);
 

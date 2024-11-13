@@ -82,6 +82,7 @@ public class DrawChessBoard {
                     continue;
                 }
                 out.print(" ");
+
             }
 
         }
@@ -134,43 +135,25 @@ public class DrawChessBoard {
                     ChessPiece piece = pieces.get(counter);
                     if (piece == null) {
                         out.print(" ");
+
                         counter++;
                         continue;
                     }
                     if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
                         out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
-//                        var pieceSymbol = "";
-//                        switch (piece.getPieceType()) {
-//                            case ChessPiece.PieceType.PAWN -> pieceSymbol = EscapeSequences.BLACK_PAWN;
-//                            case ChessPiece.PieceType.ROOK -> pieceSymbol = EscapeSequences.BLACK_ROOK;
-//                            case ChessPiece.PieceType.KNIGHT -> pieceSymbol = EscapeSequences.BLACK_KNIGHT;
-//                            case ChessPiece.PieceType.BISHOP -> pieceSymbol = EscapeSequences.BLACK_BISHOP;
-//                            case ChessPiece.PieceType.QUEEN -> pieceSymbol = EscapeSequences.BLACK_QUEEN;
-//                            case ChessPiece.PieceType.KING -> pieceSymbol = EscapeSequences.BLACK_KING;
-//                        }
-                        ;
+
 
                         out.print(piece.toString().toUpperCase());
-//                        out.print(pieceSymbol);
-
                     } else {
 
-//                        var pieceSymbol = "";
-//                        switch (piece.getPieceType()) {
-//                            case ChessPiece.PieceType.PAWN -> pieceSymbol = EscapeSequences.WHITE_PAWN;
-//                            case ChessPiece.PieceType.ROOK -> pieceSymbol = EscapeSequences.WHITE_ROOK;
-//                            case ChessPiece.PieceType.KNIGHT -> pieceSymbol = EscapeSequences.WHITE_KNIGHT;
-//                            case ChessPiece.PieceType.BISHOP -> pieceSymbol = EscapeSequences.WHITE_BISHOP;
-//                            case ChessPiece.PieceType.QUEEN -> pieceSymbol = EscapeSequences.WHITE_QUEEN;
-//                            case ChessPiece.PieceType.KING -> pieceSymbol = EscapeSequences.WHITE_KING;
-//                        }
-//                        out.print(pieceSymbol);
+
                         out.print(piece.toString().toUpperCase());
                     }
                     counter++;
                     continue;
                 }
                 out.print(" ");
+
             }
         }
     }

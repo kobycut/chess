@@ -114,7 +114,5 @@ public class ServerFacadeTests {
         serverFacade.createGame("TEST", authData);
         serverFacade.joinGame(1, "BLACK", authData);
         assertThrows(DataAccessException.class, () -> serverFacade.joinGame(1, "BLACK", authData));
-
-
     }
 }
