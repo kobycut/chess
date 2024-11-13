@@ -9,6 +9,7 @@ import com.google.gson.Gson;
 import exceptions.*;
 
 import java.util.Arrays;
+import java.util.Map;
 
 import static java.lang.Integer.parseInt;
 
@@ -77,7 +78,7 @@ public class ChessClient {
             String password = params[1];
             server.login(username, password);
             // websocket
-             state = State.SIGNEDIN;
+            state = State.SIGNEDIN;
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged in as %s \n", username);
         }
         throw new DataAccessException(400, "provide the correct login information");
@@ -121,16 +122,18 @@ public class ChessClient {
     }
 
     public String listGames() throws DataAccessException {
-        checkSignedIn();
-        var games = server.listGames();
-        var result = new StringBuilder();
-        var gson = new Gson();
-//        for loop that iterates through games, converts them to readable, then appends to string builder.
-//        for (var game : games) {
-//            result.append(gson.toJson(game)).append('\n');
-//        }
-//        return result;
-        return "";
+
+            checkSignedIn();
+            Map<String, Object> games = server.listGames();
+            var result = new StringBuilder();
+            var gson = new Gson();
+            int i = 0;
+            for (Map.Entry<String, Object> entry : games.entrySet()) {
+                i++;
+                result.append(gson.toJson(i)).append(gson.toJson(entry.getKey())).
+                        append(gson.toJson(entry.getValue())).append("\n");
+            }
+            return result.toString();
     }
 
     public String playGame(String... params) throws DataAccessException {

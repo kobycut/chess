@@ -13,8 +13,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.net.URL;
-import java.util.List;
 import java.util.Map;
 
 public class ServerFacade {
@@ -46,25 +44,37 @@ public class ServerFacade {
     }
 
     public String logout() throws DataAccessException {
-        var path = "/session";
+        try {
+            var path = "/session";
 
-        var status = this.makeRequest("DELETE", path, authData, String.class);
-        this.authData = null;
-        return status;
+            var status = this.makeRequest("DELETE", path, authData, String.class);
+            this.authData = null;
+            return status;
+        } catch (Exception ex) {
+            throw new DataAccessException(500, ex.getMessage());
+        }
 
     }
 
     public void createGame(String param) throws DataAccessException {
-        var path = "/game";
-        // takes in header "authorization" authToken and body GameData
-        GameData game = new GameData(0, null, null, param, null);
-        GameAuthObject gameAuthObject = new GameAuthObject(game, authData.authToken());
-        this.makeRequest("POST", path, gameAuthObject, GameData.class);
+        try {
+            var path = "/game";
+            GameData game = new GameData(0, null, null, param, null);
+            GameAuthObject gameAuthObject = new GameAuthObject(game, authData.authToken());
+            this.makeRequest("POST", path, gameAuthObject, GameData.class);
+        } catch (Exception ex) {
+            throw new DataAccessException(500, "input correct createGame information");
+        }
     }
 
-    public Object listGames() throws DataAccessException {
-        var path = "/game";
-        return this.makeRequest("GET", path, authData, Map.class);
+    public Map<String, Object> listGames() throws DataAccessException {
+//        try {
+            var path = "/game";
+            // if it is null for the request how are we checking the authdata???
+            return this.makeRequest("GET", path, null, Map.class);
+//        } catch (Exception ex) {
+//            throw new DataAccessException(500, "input correct listGames information");
+//        }
     }
 
     public void joinGame(Integer id, String playerColor) {
@@ -76,6 +86,7 @@ public class ServerFacade {
             URI uri = new URI(serverUrl + path);
             HttpURLConnection http = (HttpURLConnection) uri.toURL().openConnection();
             http.setRequestMethod(method);
+
             http.setDoOutput(true);
             writeBody(request, http);
             http.connect();
