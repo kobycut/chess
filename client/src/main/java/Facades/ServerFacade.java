@@ -38,10 +38,15 @@ public class ServerFacade {
         this.authData = this.makeRequest("POST", path, record, AuthData.class);
     }
 
-    public void logout() {
+    public void logout() throws DataAccessException {
+        var path = "/session";
+        this.makeRequest("DELETE", path, authData, AuthData.class);
     }
 
     public void createGame(String param) {
+        var path = "/game";
+
+//        this.makeRequest("POST", path, )
     }
 
     public Object listGames() throws DataAccessException {

@@ -5,6 +5,7 @@ import chess.ChessBoard;
 import chess.ChessGame;
 import chess.ChessPiece;
 import chess.ChessPosition;
+import com.google.gson.Gson;
 import exceptions.*;
 
 import java.util.Arrays;
@@ -117,9 +118,12 @@ public class ChessClient {
         checkSignedIn();
         var games = server.listGames();
         var result = new StringBuilder();
-//        var gson = new Gson();
-        // for loop that iterates through games, converts them to readable, then appends to string builder.
-        // return result
+        var gson = new Gson();
+//        for loop that iterates through games, converts them to readable, then appends to string builder.
+        for (var game : games) {
+            result.append(gson.toJson(game)).append('\n');
+        }
+        return result;
         return "";
     }
 
