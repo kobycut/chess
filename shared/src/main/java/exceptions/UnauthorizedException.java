@@ -1,4 +1,4 @@
-package dataaccess.exceptions;
+package exceptions;
 
 public class UnauthorizedException extends Exception{
     final private int statusCode;

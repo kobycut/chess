@@ -3,10 +3,13 @@ package server;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataaccess.*;
-import dataaccess.exceptions.*;
-import jdk.jshell.spi.ExecutionControlProvider;
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
+import exceptions.DataAccessException;
+import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
+import model.GameDataCollection;
 import model.UserData;
 import spark.*;
 import service.*;
@@ -112,32 +115,27 @@ public class Server {
 
     private String logout(Request req, Response res) throws UnauthorizedException, DataAccessException {
         String authToken = req.headers("authorization");
-
         logoutService.logout(authToken);
         res.status(200);
         res.body("{}");
 
-        return ("{}");
+        return new Gson().toJson("{}");
     }
 
     private Object listGames(Request req, Response res) throws UnauthorizedException, DataAccessException {
+
         String authToken = req.headers("authorization");
-
         Collection<GameData> allGames = listGamesService.listGames(authToken);
-        Map<String, Object> gamesObject = new HashMap<>();
-        gamesObject.put("games", allGames);
-
+        GameDataCollection collection = new GameDataCollection(allGames);
         res.status(200);
-        res.body(new Gson().toJson(gamesObject));
-        return new Gson().toJson(gamesObject);
+        res.body(new Gson().toJson(collection));
+        return new Gson().toJson(collection);
     }
 
     private String createGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException {
         String authToken = req.headers("authorization");
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
-
         GameData game = createGameService.createGame(gameData, authToken);
-
         res.status(200);
         res.body(new Gson().toJson(game));
 
@@ -147,21 +145,24 @@ public class Server {
     private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
         String playerColor = null;
         String authToken = req.headers("authorization");
-
+//        GameData gameData = new Gson().fromJson(req.body(), GameData.class);
+        GameData gameData = null;
         JsonObject obj = new Gson().fromJson(req.body(), JsonObject.class);
         if (obj.get("playerColor") != null) {
             playerColor = obj.get("playerColor").getAsString();
         }
-
-        GameData gameData = new Gson().fromJson(req.body(), GameData.class);
-
+        if (obj.get("game") != null) {
+            JsonObject result = obj.get("game").getAsJsonObject();
+            int id = result.get("gameID").getAsInt();
+            gameData = new GameData(id, null, null, null, null);
+        }
 
         joinGameService.join(authToken, gameData, playerColor);
 
         res.status(200);
         res.body("{}");
 
-        return ("{}");
+        return new Gson().toJson("{}");
     }
 
     private String clearApplication(Request req, Response res) throws DataAccessException {

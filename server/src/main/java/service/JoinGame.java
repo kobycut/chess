@@ -1,12 +1,12 @@
 package service;
 
-import dataaccess.exceptions.AlreadyTakenException;
-import dataaccess.exceptions.BadRequestException;
-import dataaccess.exceptions.UnauthorizedException;
+import exceptions.AlreadyTakenException;
+import exceptions.BadRequestException;
+import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 import dataaccess.AuthDAO;
-import dataaccess.exceptions.DataAccessException;
+import exceptions.DataAccessException;
 import dataaccess.GameDAO;
 
 import java.util.Objects;

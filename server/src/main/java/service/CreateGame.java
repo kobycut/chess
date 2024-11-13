@@ -1,10 +1,10 @@
 package service;
 
 import dataaccess.AuthDAO;
-import dataaccess.exceptions.BadRequestException;
-import dataaccess.exceptions.DataAccessException;
+import exceptions.BadRequestException;
+import exceptions.DataAccessException;
 import dataaccess.GameDAO;
-import dataaccess.exceptions.UnauthorizedException;
+import exceptions.UnauthorizedException;
 import model.AuthData;
 import model.GameData;
 

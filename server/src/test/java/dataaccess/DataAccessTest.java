@@ -1,20 +1,15 @@
 package dataaccess;
 
 import chess.ChessGame;
-import dataaccess.MySqlAuthDataAccess.*;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 
-import dataaccess.exceptions.AlreadyTakenException;
-import dataaccess.exceptions.DataAccessException;
+import exceptions.DataAccessException;
 import model.AuthData;
 import model.GameData;
 import model.UserData;
 import org.junit.jupiter.api.Test;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class DataAccessTest {
 

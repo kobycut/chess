@@ -1,4 +1,4 @@
-package dataaccess.exceptions;
+package exceptions;
 
 public class AlreadyTakenException extends Exception{
     final private int statusCode;

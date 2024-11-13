@@ -1,7 +1,7 @@
 package service;
 import dataaccess.*;
-import dataaccess.exceptions.DataAccessException;
-import dataaccess.exceptions.UnauthorizedException;
+import exceptions.DataAccessException;
+import exceptions.UnauthorizedException;
 import model.AuthData;
 
 public class Logout {
