@@ -7,6 +7,7 @@ import chess.ChessPiece;
 import chess.ChessPosition;
 import com.google.gson.Gson;
 import exceptions.*;
+import model.AuthData;
 import model.GameData;
 import model.GameDataCollection;
 
@@ -21,6 +22,7 @@ public class ChessClient {
     private String username = null;
     private final ServerFacade server;
     private final String serverUrl;
+    private AuthData authData;
 
 
     public ChessClient(String serverUrl) {
@@ -79,7 +81,7 @@ public class ChessClient {
 
             username = params[0];
             String password = params[1];
-            server.login(username, password);
+            authData = server.login(username, password);
             // websocket
             state = State.SIGNEDIN;
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged in as %s \n", username);
@@ -94,8 +96,8 @@ public class ChessClient {
             username = params[0];
             String password = params[1];
             String email = params[2];
-            server.register(username, password, email);
-            server.login(username, password);
+            authData = server.register(username, password, email);
+            authData = server.login(username, password);
             state = State.SIGNEDIN;
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "registered %s.", username);
         }
@@ -106,18 +108,16 @@ public class ChessClient {
     public String logout() throws DataAccessException {
         checkSignedIn();
 
-        String status = server.logout();
-        if (!status.equals("{}")) {
-            throw new DataAccessException(500, "logout error");
-        }
+        server.logout(authData);
         state = State.SIGNEDOUT;
+        authData = null;
         return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged out %s", username);
     }
 
     public String createGame(String... params) throws DataAccessException {
         checkSignedIn();
         if (params.length == 1) {
-            server.createGame(params[0]);
+            server.createGame(params[0], authData);
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "game %s created", params[0]);
         }
         throw new DataAccessException(400, "provide the correct createGame information");
@@ -126,7 +126,7 @@ public class ChessClient {
 
     public String listGames() throws DataAccessException {
         checkSignedIn();
-        Object games = server.listGames();
+        Object games = server.listGames(authData);
         var result = new StringBuilder();
         var gson = new Gson();
         int i = 0;
@@ -156,7 +156,7 @@ public class ChessClient {
         if (params.length == 2) {
             Integer id = parseInt(params[0]);
             String playerColor = params[1];
-            server.joinGame(id, playerColor);
+            server.joinGame(id, playerColor, authData);
             // draw game
             ChessBoard chessBoard = new ChessBoard(); // testes
             chessBoard.resetBoard();
@@ -185,14 +185,12 @@ public class ChessClient {
     private void checkSignedIn() throws DataAccessException {
         if (state == State.SIGNEDOUT) {
             throw new DataAccessException(400, "please sign in");
-
         }
     }
 
     private void checkSignedOut() throws DataAccessException {
         if (state == State.SIGNEDIN) {
             throw new DataAccessException(400, "please sign out");
-
         }
     }
 

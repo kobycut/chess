@@ -20,7 +20,7 @@ import java.util.Objects;
 
 public class ServerFacade {
     private final String serverUrl;
-    private AuthData authData;
+
 
     public ServerFacade(String url) {
         serverUrl = url;
@@ -29,37 +29,35 @@ public class ServerFacade {
     public void observeGame(Integer id) {
     }
 
-    public void login(String username, String password) throws DataAccessException {
+    public AuthData login(String username, String password) throws DataAccessException {
         var path = "/session";
         var record = new UserData(username, password, null);
-        this.authData = this.makeRequest("POST", path, record, AuthData.class);
+        return this.makeRequest("POST", path, record, AuthData.class);
     }
 
-    public void register(String username, String password, String email) throws DataAccessException {
+    public AuthData register(String username, String password, String email) throws DataAccessException {
         try {
             var path = "/user";
             var record = new UserData(username, password, email);
-            this.authData = this.makeRequest("POST", path, record, AuthData.class);
+            return this.makeRequest("POST", path, record, AuthData.class);
         } catch (Exception ex) {
             throw new DataAccessException(500, "username already taken");
         }
 
     }
 
-    public String logout() throws DataAccessException {
+    public void logout(AuthData authData) throws DataAccessException {
         try {
             var path = "/session";
 
-            var status = this.makeRequest("DELETE", path, authData.authToken(), String.class);
-            this.authData = null;
-            return status;
+            this.makeRequest("DELETE", path, authData.authToken(), null);
         } catch (Exception ex) {
             throw new DataAccessException(500, ex.getMessage());
         }
 
     }
 
-    public void createGame(String param) throws DataAccessException {
+    public void createGame(String param, AuthData authData) throws DataAccessException {
         try {
             var path = "/game";
             GameData game = new GameData(0, null, null, param, null);
@@ -70,7 +68,7 @@ public class ServerFacade {
         }
     }
 
-    public Object listGames() throws DataAccessException {
+    public Object listGames(AuthData authData) throws DataAccessException {
         try {
             var path = "/game";
             return this.makeRequest("GET", path, authData.authToken(), GameDataCollection.class);
@@ -79,7 +77,7 @@ public class ServerFacade {
         }
     }
 
-    public void joinGame(Integer id, String playerColor) throws DataAccessException {
+    public void joinGame(Integer id, String playerColor, AuthData authData) throws DataAccessException {
         var path = "/game";
         GameData game = new GameData(id, null, null, null, null);
 
