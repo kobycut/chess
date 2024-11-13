@@ -2,6 +2,7 @@ package Facades;
 
 
 import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import model.AuthData;
 
 import model.GameData;
@@ -15,7 +16,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.Collection;
+import java.util.Objects;
 
 public class ServerFacade {
     private final String serverUrl;
@@ -70,18 +71,26 @@ public class ServerFacade {
     }
 
     public Object listGames() throws DataAccessException {
-//        try {
-        var path = "/game";
-        return this.makeRequest("GET", path, authData.authToken(), GameDataCollection.class);
-//        } catch (Exception ex) {
-//            throw new DataAccessException(500, "input correct listGames information");
-//        }
+        try {
+            var path = "/game";
+            return this.makeRequest("GET", path, authData.authToken(), GameDataCollection.class);
+        } catch (Exception ex) {
+            throw new DataAccessException(500, "input correct listGames information");
+        }
     }
 
-    public void joinGame(Integer id, String playerColor) {
+    public void joinGame(Integer id, String playerColor) throws DataAccessException {
         var path = "/game";
+        GameData game = new GameData(id, null, null, null, null);
 
-//        this.makeRequest("PUT", path, )
+        JsonObject jsonObject = new JsonObject();
+        jsonObject.addProperty("playerColor", playerColor);
+        JoinGameObject joinGameObject = new JoinGameObject(game, authData.authToken(), playerColor);
+
+        String response = this.makeRequest("PUT", path, joinGameObject, String.class);
+        if (!Objects.equals(response, "{}")) {
+            throw new DataAccessException(500, "provide the correct information");
+        }
     }
 
     public void clearAll() throws DataAccessException {
@@ -108,14 +117,16 @@ public class ServerFacade {
 
     private static void writeBody(Object request, HttpURLConnection http) throws IOException {
         if (request != null) {
-            if (request instanceof GameAuthObject) {
-                GameAuthObject gameAuthObject = (GameAuthObject) request;
+            if (request instanceof JoinGameObject joinGameObject) {
+                String authToken = joinGameObject.getAuth();
+                http.addRequestProperty("authorization", authToken);
+            }
+            if (request instanceof GameAuthObject gameAuthObject) {
                 String authToken = gameAuthObject.getAuth();
                 http.addRequestProperty("authorization", authToken);
                 request = gameAuthObject.getGame();
             }
-            if (request instanceof String) {
-                String authToken = (String) request;
+            if (request instanceof String authToken) {
                 http.addRequestProperty("authorization", authToken);
                 return;
             } else {
@@ -152,9 +163,9 @@ public class ServerFacade {
         return status / 100 == 2;
     }
 
-    public class GameAuthObject extends Object {
-        private GameData game;
-        private String authToken;
+    public static class GameAuthObject {
+        private final GameData game;
+        private final String authToken;
 
         public GameAuthObject(GameData game, String authToken) {
             this.game = game;
@@ -167,6 +178,30 @@ public class ServerFacade {
 
         public String getAuth() {
             return this.authToken;
+        }
+    }
+
+    public static class JoinGameObject {
+        private final GameData game;
+        private final String authToken;
+        private final String playerColor;
+
+        public JoinGameObject(GameData game, String authToken, String playerColor) {
+            this.game = game;
+            this.authToken = authToken;
+            this.playerColor = playerColor;
+        }
+
+        public GameData getGame() {
+            return game;
+        }
+
+        public String getAuth() {
+            return authToken;
+        }
+
+        public String getPlayerColor() {
+            return playerColor;
         }
     }
 

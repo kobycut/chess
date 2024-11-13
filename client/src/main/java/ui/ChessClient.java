@@ -125,7 +125,6 @@ public class ChessClient {
     }
 
     public String listGames() throws DataAccessException {
-
         checkSignedIn();
         Object games = server.listGames();
         var result = new StringBuilder();
@@ -147,11 +146,7 @@ public class ChessClient {
                 }
                 result.append(gson.toJson(i)).append(": ").append("(GAMEID: ").append(gameId).append(") (GAMENAME: ").append(gameName).
                         append(") (BLACK PLAYER: ").append(blackUser).append(") (WHITE PLAYER: ").append(whiteUser).append(")\n");
-
-
             }
-
-
         }
         return result.toString();
     }
@@ -166,7 +161,6 @@ public class ChessClient {
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
         }
         throw new DataAccessException(400, "provide the correct playGame information");
-
     }
 
     public String observeGame(String... params) throws DataAccessException {
