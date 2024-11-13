@@ -1,6 +1,6 @@
 package client;
 
-import Facades.*;
+import facades.*;
 
 import exceptions.DataAccessException;
 import model.AuthData;

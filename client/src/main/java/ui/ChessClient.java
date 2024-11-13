@@ -1,10 +1,7 @@
 package ui;
 
-import Facades.ServerFacade;
+import facades.ServerFacade;
 import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
 import com.google.gson.Gson;
 import exceptions.*;
 import model.AuthData;
@@ -12,8 +9,6 @@ import model.GameData;
 import model.GameDataCollection;
 
 import java.util.Arrays;
-import java.util.Collection;
-import java.util.Map;
 
 import static java.lang.Integer.parseInt;
 

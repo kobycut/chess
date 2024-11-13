@@ -1,8 +1,7 @@
-package Facades;
+package facades;
 
 
 import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import model.AuthData;
 
 import model.GameData;
@@ -16,7 +15,6 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URI;
-import java.util.Objects;
 
 public class ServerFacade {
     private final String serverUrl;
