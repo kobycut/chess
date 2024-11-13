@@ -72,11 +72,12 @@ public class ChessClient {
     public String login(String... params) throws DataAccessException {
         checkSignedOut();
         if (params.length == 2) {
-            state = State.SIGNEDIN;
+
             username = params[0];
             String password = params[1];
             server.login(username, password);
             // websocket
+             state = State.SIGNEDIN;
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged in as %s \n", username);
         }
         throw new DataAccessException(400, "provide the correct login information");
@@ -85,12 +86,13 @@ public class ChessClient {
     public String register(String... params) throws DataAccessException {
         checkSignedOut();
         if (params.length == 3) {
-            state = State.SIGNEDIN;
+
             username = params[0];
             String password = params[1];
             String email = params[2];
             server.register(username, password, email);
             server.login(username, password);
+            state = State.SIGNEDIN;
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "registered %s.", username);
         }
         throw new DataAccessException(400, "provide the correct register information");
@@ -99,8 +101,12 @@ public class ChessClient {
 
     public String logout() throws DataAccessException {
         checkSignedIn();
+
+        String status = server.logout();
+        if (!status.equals("{}")) {
+            throw new DataAccessException(500, "logout error");
+        }
         state = State.SIGNEDOUT;
-        server.logout();
         return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "logged out %s", username);
     }
 
@@ -120,10 +126,10 @@ public class ChessClient {
         var result = new StringBuilder();
         var gson = new Gson();
 //        for loop that iterates through games, converts them to readable, then appends to string builder.
-        for (var game : games) {
-            result.append(gson.toJson(game)).append('\n');
-        }
-        return result;
+//        for (var game : games) {
+//            result.append(gson.toJson(game)).append('\n');
+//        }
+//        return result;
         return "";
     }
 

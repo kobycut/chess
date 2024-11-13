@@ -38,9 +38,13 @@ public class ServerFacade {
         this.authData = this.makeRequest("POST", path, record, AuthData.class);
     }
 
-    public void logout() throws DataAccessException {
+    public String logout() throws DataAccessException {
         var path = "/session";
-        this.makeRequest("DELETE", path, authData, AuthData.class);
+
+        var status = this.makeRequest("DELETE", path, authData, String.class);
+        this.authData = null;
+        return status;
+
     }
 
     public void createGame(String param) {
