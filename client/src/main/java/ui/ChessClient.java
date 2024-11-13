@@ -135,8 +135,18 @@ public class ChessClient {
 
             for (GameData game : collection.games()) {
                 i++;
-                result.append(gson.toJson(i)).append(": ").append(game.gameID()).append(game.gameName()).
-                        append(game.blackUsername()).append(game.whiteUsername());
+                var gameId = game.gameID();
+                var gameName = game.gameName();
+                var blackUser = game.blackUsername();
+                var whiteUser = game.whiteUsername();
+                if (blackUser == null) {
+                    blackUser = "NONE";
+                }
+                if (whiteUser == null) {
+                    whiteUser = "NONE";
+                }
+                result.append(gson.toJson(i)).append(": ").append("(GAMEID: ").append(gameId).append(") (GAMENAME: ").append(gameName).
+                        append(") (BLACK PLAYER: ").append(blackUser).append(") (WHITE PLAYER: ").append(whiteUser).append(")\n");
 
 
             }
