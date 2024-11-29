@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessGame;
 import facades.ServerFacade;
 import chess.ChessBoard;
 import com.google.gson.Gson;
@@ -17,7 +18,8 @@ public class ChessClient {
     private String username = null;
     private final ServerFacade server;
     private AuthData authData;
-
+    private Playing playing = Playing.NOTPLAYING;
+    private Observing observing = Observing.NOTOBSERVING;
 
     public ChessClient(String serverUrl) {
         server = new ServerFacade(serverUrl);
@@ -40,6 +42,11 @@ public class ChessClient {
                 case "playGame" -> playGame(params);
                 case "observeGame" -> observeGame(params);
                 case "logout" -> logout();
+                case "redrawChessBoard" -> redrawBoard();
+                case "leave" -> leave();
+                case "makeMove" -> makeMove();
+                case "resign" -> resign();
+                case "highlight" -> highlight();
                 default -> help();
             };
         } catch (Exception ex) {
@@ -48,6 +55,24 @@ public class ChessClient {
     }
 
     public String help() {
+
+        if (observing == Observing.OBSERVING) {
+            return """
+                    - redrawChessBoard
+                    - leave
+                    - highlight (highlights legal moves)
+                    """;
+        }
+
+        if (playing == Playing.PLAYING) {
+            return """
+                    - redrawChessBoard
+                    - leave
+                    - makeMove
+                    - resign
+                    - highlight (highlights legal moves)
+                    """;
+        }
         if (state == State.SIGNEDOUT) {
             return """
                     - register <USERNAME> <PASSWORD> <EMAIL>
@@ -150,10 +175,16 @@ public class ChessClient {
             Integer id = parseInt(params[0]);
             String playerColor = params[1];
             server.joinGame(id, playerColor, authData);
-
-            ChessBoard chessBoard = new ChessBoard(); // testes
+            // websocket connection is opened
+            // get playerColor
+            var teamColor = ChessGame.TeamColor.BLACK;
+            if (playerColor.equals("WHITE")) {
+                teamColor = ChessGame.TeamColor.WHITE;
+            }
+            ChessBoard chessBoard = new ChessBoard();
             chessBoard.resetBoard();
-            drawBoard(chessBoard);
+            drawBoard(chessBoard, teamColor);
+            playing = Playing.PLAYING; // new
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
         }
         throw new DataAccessException(400, "provide the correct playGame information");
@@ -163,11 +194,11 @@ public class ChessClient {
         checkSignedIn();
         if (params.length == 1) {
             Integer id = parseInt(params[0]);
-
+            // websocket connection is opened
             ChessBoard chessBoard = new ChessBoard();
             chessBoard.resetBoard();
-            drawBoard(chessBoard);
-
+            drawBoard(chessBoard, ChessGame.TeamColor.WHITE);
+            observing = Observing.OBSERVING; // new
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "observing game %s", id);
         }
         throw new DataAccessException(400, "provide the correct observeGame information");
@@ -186,11 +217,55 @@ public class ChessClient {
         }
     }
 
-    private void drawBoard(ChessBoard board) {
+    private void drawBoard(ChessBoard board, ChessGame.TeamColor playerColor) {
         DrawChessBoard drawChessBoard = new DrawChessBoard(board);
-        drawChessBoard.main();
+        if (observing == Observing.OBSERVING) {
+            drawChessBoard.drawWhiteBoard();
+        }
+        else if (playerColor == ChessGame.TeamColor.WHITE) {
+            drawChessBoard.drawWhiteBoard();
+        }
+        else if (playerColor == ChessGame.TeamColor.BLACK) {
+            drawChessBoard.drawBlackBoard();
+        }
+    }
 
 
+    public String redrawBoard() throws DataAccessException {
+        var board = new ChessBoard();
+
+        if (playing == Playing.PLAYING || observing == Observing.OBSERVING) {
+            if (observing == Observing.OBSERVING) {
+                drawBoard(board, ChessGame.TeamColor.WHITE);
+            }
+            // get playerColor
+            var playerColor = ChessGame.TeamColor.WHITE;
+            drawBoard(board, playerColor);
+            return "redrew the board";
+        } else {
+            throw new DataAccessException(400, "please play or observe a game to view to complete this action");
+        }
+    }
+
+    public String leave() throws DataAccessException {
+        if (playing == Playing.NOTPLAYING && observing == Observing.NOTOBSERVING) {
+            throw new DataAccessException(400, "Can't leave if you are not in a game");
+        }
+        observing = Observing.NOTOBSERVING;
+        playing = Playing.NOTPLAYING;
+        return String.format(username + " left the game");
+    }
+
+    public String makeMove() {
+        return "pass";
+    }
+
+    public String resign() {
+        return "pass";
+    }
+
+    public String highlight() {
+        return "pass";
     }
 
 
