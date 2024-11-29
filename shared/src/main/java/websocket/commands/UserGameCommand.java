@@ -11,15 +11,19 @@ import java.util.Objects;
 public class UserGameCommand {
 
     private final CommandType commandType;
+    private final String username;
+    private final String teamColor;
 
     private final String authToken;
 
     private final Integer gameID;
 
-    public UserGameCommand(CommandType commandType, String authToken, Integer gameID) {
+    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, String username, String teamColor) {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
+        this.username = username;
+        this.teamColor = teamColor;
     }
 
     public enum CommandType {
@@ -41,6 +45,9 @@ public class UserGameCommand {
         return gameID;
     }
 
+    public String getUsername() {return username;}
+
+    public String getTeamColor() {return teamColor;}
     @Override
     public boolean equals(Object o) {
         if (this == o) {

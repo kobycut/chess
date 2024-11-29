@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import dataaccess.*;
@@ -17,6 +18,9 @@ import service.*;
 import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
+import java.util.Objects;
+
+import server.websocket.*;
 
 public class Server {
 
@@ -31,14 +35,18 @@ public class Server {
     private final CreateGame createGameService = new CreateGame(authDAO, gameDAO);
     private final JoinGame joinGameService = new JoinGame(authDAO, gameDAO);
     private final ClearApplication clearService = new ClearApplication(userDAO, gameDAO, authDAO);
+    private final WebSocketHandler webSocketHandler;
 
     public Server() {
+        webSocketHandler = new WebSocketHandler();
     }
 
     public int run(int desiredPort) {
         Spark.port(desiredPort);
 
         Spark.staticFiles.location("web");
+
+        Spark.webSocket("/ws", webSocketHandler);
 
         Spark.post("/user", this::registerUser);
         Spark.post("/session", this::login);
@@ -148,7 +156,11 @@ public class Server {
         }
 
         joinGameService.join(authToken, gameData, playerColor);
-
+        String username = gameData.blackUsername();
+        if (Objects.equals(playerColor, "WHITE")) {
+            username = gameData.whiteUsername();
+        }
+        webSocketHandler.joined(username, playerColor);
         res.status(200);
         res.body("{}");
         return "{}";

@@ -1,12 +1,15 @@
 package ui;
 import java.util.Scanner;
-import ui.EscapeSequences.*;
 
-public class Repl {
+import facades.NotificationHandler;
+import ui.EscapeSequences.*;
+import websocket.messages.ServerMessage;
+
+public class Repl implements NotificationHandler {
     private final ChessClient client;
 
     public Repl(String serverUrl) {
-        client = new ChessClient(serverUrl);
+        client = new ChessClient(serverUrl, this);
     }
     public void run() {
         System.out.println("♕ Welcome to 240 Chess! Sign in to begin. ♕");
@@ -30,5 +33,11 @@ public class Repl {
     }
     private void printPrompt() {
         System.out.print("\n" + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + ">>> " + EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+    }
+
+    @Override
+    public void notify(ServerMessage notification) {
+        System.out.println(notification.getServerMessageType()); // may not give message
+        printPrompt();
     }
 }

@@ -1,10 +1,12 @@
 package ui;
 
 import chess.ChessGame;
+import facades.NotificationHandler;
 import facades.ServerFacade;
 import chess.ChessBoard;
 import com.google.gson.Gson;
 import exceptions.*;
+import facades.WebSocketFacade;
 import model.AuthData;
 import model.GameData;
 import model.GameDataCollection;
@@ -20,9 +22,16 @@ public class ChessClient {
     private AuthData authData;
     private Playing playing = Playing.NOTPLAYING;
     private Observing observing = Observing.NOTOBSERVING;
+    private String teamColor;
 
-    public ChessClient(String serverUrl) {
+    private final String serverUrl;
+    private final NotificationHandler notficationHandler;
+    private WebSocketFacade ws;
+
+    public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverUrl);
+        this.serverUrl = serverUrl;
+        this.notficationHandler = notificationHandler;
     }
 
     public String eval(String input) {
@@ -174,16 +183,18 @@ public class ChessClient {
         if (params.length == 2) {
             Integer id = parseInt(params[0]);
             String playerColor = params[1];
+            teamColor = playerColor;
             server.joinGame(id, playerColor, authData);
+
+
             // websocket connection is opened
             // get playerColor
-            var teamColor = ChessGame.TeamColor.BLACK;
-            if (playerColor.equals("WHITE")) {
-                teamColor = ChessGame.TeamColor.WHITE;
-            }
+            ws = new WebSocketFacade(serverUrl, notficationHandler);
+            ws.joinGame(username, playerColor, id, authData.authToken());
+
             ChessBoard chessBoard = new ChessBoard();
             chessBoard.resetBoard();
-            drawBoard(chessBoard, teamColor);
+            drawBoard(chessBoard, playerColor);
             playing = Playing.PLAYING; // new
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
         }
@@ -197,7 +208,7 @@ public class ChessClient {
             // websocket connection is opened
             ChessBoard chessBoard = new ChessBoard();
             chessBoard.resetBoard();
-            drawBoard(chessBoard, ChessGame.TeamColor.WHITE);
+            drawBoard(chessBoard, "WHITE");
             observing = Observing.OBSERVING; // new
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "observing game %s", id);
         }
@@ -217,15 +228,15 @@ public class ChessClient {
         }
     }
 
-    private void drawBoard(ChessBoard board, ChessGame.TeamColor playerColor) {
+    private void drawBoard(ChessBoard board, String playerColor) {
         DrawChessBoard drawChessBoard = new DrawChessBoard(board);
         if (observing == Observing.OBSERVING) {
             drawChessBoard.drawWhiteBoard();
         }
-        else if (playerColor == ChessGame.TeamColor.WHITE) {
+        else if (playerColor.equals("WHITE")) {
             drawChessBoard.drawWhiteBoard();
         }
-        else if (playerColor == ChessGame.TeamColor.BLACK) {
+        else if (playerColor.equals("BLACK")) {
             drawChessBoard.drawBlackBoard();
         }
     }
@@ -236,11 +247,11 @@ public class ChessClient {
 
         if (playing == Playing.PLAYING || observing == Observing.OBSERVING) {
             if (observing == Observing.OBSERVING) {
-                drawBoard(board, ChessGame.TeamColor.WHITE);
+                drawBoard(board, "WHITE");
             }
             // get playerColor
-            var playerColor = ChessGame.TeamColor.WHITE;
-            drawBoard(board, playerColor);
+
+            drawBoard(board, teamColor);
             return "redrew the board";
         } else {
             throw new DataAccessException(400, "please play or observe a game to view to complete this action");
