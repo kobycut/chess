@@ -14,6 +14,10 @@ public class Connection {
     }
 
     public void send(String msg) throws IOException {
+
+//            System.out.println("Sesh open" + msg);
         session.getRemote().sendString(msg);
+
+
     }
 }

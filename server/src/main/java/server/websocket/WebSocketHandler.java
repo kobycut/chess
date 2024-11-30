@@ -1,15 +1,16 @@
 package server.websocket;
 
 import com.google.gson.Gson;
-import com.sun.nio.sctp.NotificationHandler;
 import exceptions.DataAccessException;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
+import org.eclipse.jetty.websocket.api.annotations.WebSocket;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 
+@WebSocket
 public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
 
@@ -27,20 +28,26 @@ public class WebSocketHandler {
     private void connect(String username, Session session, String teamColor) throws IOException {
         connections.add(username, session);
         var message = String.format("%s joined the game as %s team", username, teamColor);
+
+        if (teamColor.equals("Observer")) {
+            message = String.format("%s joined the game as an observer", username);
+        }
+
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-        connections.broadcast(username, notification);
+
+        connections.broadcast(notification);
     }
     private void makeMove() {}
     private void leave() {}
     private void resign() {}
-    public void joined(String username, String playerColor) throws DataAccessException {
-        try {
-            var message = String.format("%s joined the game as %s team", username, playerColor);
-            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-            connections.broadcast("", notification);
-        } catch (Exception ex) {
-            throw new DataAccessException(500, "Could not join the game");
-        }
-
-    }
+//    public void joined(String username, String playerColor) throws DataAccessException {
+//        try {
+//            var message = String.format("%s joined the game as %s team", username, playerColor);
+//            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+//            connections.broadcast(notification);
+//        } catch (Exception ex) {
+//            throw new DataAccessException(500, "Could not join the game");
+//        }
+//
+//    }
 }

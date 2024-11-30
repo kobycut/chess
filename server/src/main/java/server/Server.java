@@ -160,7 +160,7 @@ public class Server {
         if (Objects.equals(playerColor, "WHITE")) {
             username = gameData.whiteUsername();
         }
-        webSocketHandler.joined(username, playerColor);
+//        webSocketHandler.joined(username, playerColor);
         res.status(200);
         res.body("{}");
         return "{}";

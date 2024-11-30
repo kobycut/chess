@@ -1,6 +1,5 @@
 package facades;
 
-import chess.ChessGame;
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
 import websocket.commands.UserGameCommand;

@@ -1,5 +1,6 @@
 package websocket.commands;
 
+import java.util.List;
 import java.util.Objects;
 
 /**
@@ -13,7 +14,6 @@ public class UserGameCommand {
     private final CommandType commandType;
     private final String username;
     private final String teamColor;
-
     private final String authToken;
 
     private final Integer gameID;
@@ -24,6 +24,7 @@ public class UserGameCommand {
         this.gameID = gameID;
         this.username = username;
         this.teamColor = teamColor;
+
     }
 
     public enum CommandType {

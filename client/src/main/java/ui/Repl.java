@@ -1,9 +1,12 @@
 package ui;
 import java.util.Scanner;
 
+import exceptions.DataAccessException;
 import facades.NotificationHandler;
 import ui.EscapeSequences.*;
 import websocket.messages.ServerMessage;
+
+import javax.xml.crypto.Data;
 
 public class Repl implements NotificationHandler {
     private final ChessClient client;
@@ -37,7 +40,12 @@ public class Repl implements NotificationHandler {
 
     @Override
     public void notify(ServerMessage notification) {
-        System.out.println(notification.getServerMessageType()); // may not give message
+        try {
+            Thread.sleep(100);
+        } catch (InterruptedException e) {
+             return;
+        }
+        System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA + notification.getServerMessageType() + " " + EscapeSequences.SET_TEXT_COLOR_BLUE + notification.message);
         printPrompt();
     }
 }

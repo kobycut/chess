@@ -12,6 +12,7 @@ import model.GameData;
 import model.GameDataCollection;
 
 import java.util.Arrays;
+import java.util.List;
 
 import static java.lang.Integer.parseInt;
 
@@ -25,13 +26,13 @@ public class ChessClient {
     private String teamColor;
 
     private final String serverUrl;
-    private final NotificationHandler notficationHandler;
+    private final NotificationHandler notificationHandler;
     private WebSocketFacade ws;
 
     public ChessClient(String serverUrl, NotificationHandler notificationHandler) {
         server = new ServerFacade(serverUrl);
         this.serverUrl = serverUrl;
-        this.notficationHandler = notificationHandler;
+        this.notificationHandler = notificationHandler;
     }
 
     public String eval(String input) {
@@ -187,9 +188,10 @@ public class ChessClient {
             server.joinGame(id, playerColor, authData);
 
 
+
             // websocket connection is opened
             // get playerColor
-            ws = new WebSocketFacade(serverUrl, notficationHandler);
+            ws = new WebSocketFacade(serverUrl, notificationHandler);
             ws.joinGame(username, playerColor, id, authData.authToken());
 
             ChessBoard chessBoard = new ChessBoard();
@@ -210,6 +212,8 @@ public class ChessClient {
             chessBoard.resetBoard();
             drawBoard(chessBoard, "WHITE");
             observing = Observing.OBSERVING; // new
+            ws = new WebSocketFacade(serverUrl, notificationHandler);
+            ws.joinGame(username, "Observer", id, authData.authToken());
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "observing game %s", id);
         }
         throw new DataAccessException(400, "provide the correct observeGame information");
