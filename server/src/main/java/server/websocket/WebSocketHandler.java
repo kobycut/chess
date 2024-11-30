@@ -21,7 +21,7 @@ public class WebSocketHandler {
             case CONNECT -> connect(command.getUsername(), session, command.getTeamColor());
             case MAKE_MOVE -> makeMove();
             case LEAVE -> leave(command.getUsername(), session);
-            case RESIGN -> resign();
+            case RESIGN -> resign(command.getUsername(), session);
         }
     }
 
@@ -44,7 +44,14 @@ public class WebSocketHandler {
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
         connections.broadcast(notification);
     }
-    private void resign() {}
+    private void resign(String username, Session session) throws IOException {
+        connections.add(username, session);
+        var message = String.format("%s resigned", username);
+        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(notification);
+    }
+
+
 //    public void joined(String username, String playerColor) throws DataAccessException {
 //        try {
 //            var message = String.format("%s joined the game as %s team", username, playerColor);

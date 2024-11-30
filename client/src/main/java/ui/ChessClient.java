@@ -276,8 +276,13 @@ public class ChessClient {
         return "pass";
     }
 
-    public String resign() {
-        return "pass";
+    public String resign() throws DataAccessException {
+        if (playing == Playing.NOTPLAYING) {
+            throw new DataAccessException(400, "Can't resign if you are not in a game");
+        }
+        ws.resign(username);
+        playing = Playing.NOTPLAYING;
+        return String.format(username + " resigned");
     }
 
     public String highlight() {
