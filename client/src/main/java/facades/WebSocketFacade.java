@@ -50,4 +50,12 @@ public class WebSocketFacade extends Endpoint {
            throw new DataAccessException(500, "could not join game");
        }
     }
+    public void leaveGame(String username) throws DataAccessException {
+        try {
+            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, null, null, username, null);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+        } catch (Exception ex) {
+            throw new DataAccessException(500, "could not leave game");
+        }
+    }
 }

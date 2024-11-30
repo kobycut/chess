@@ -266,6 +266,7 @@ public class ChessClient {
         if (playing == Playing.NOTPLAYING && observing == Observing.NOTOBSERVING) {
             throw new DataAccessException(400, "Can't leave if you are not in a game");
         }
+        ws.leaveGame(username);
         observing = Observing.NOTOBSERVING;
         playing = Playing.NOTPLAYING;
         return String.format(username + " left the game");

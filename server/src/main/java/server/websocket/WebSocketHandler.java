@@ -20,7 +20,7 @@ public class WebSocketHandler {
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getUsername(), session, command.getTeamColor());
             case MAKE_MOVE -> makeMove();
-            case LEAVE -> leave();
+            case LEAVE -> leave(command.getUsername(), session);
             case RESIGN -> resign();
         }
     }
@@ -38,7 +38,12 @@ public class WebSocketHandler {
         connections.broadcast(notification);
     }
     private void makeMove() {}
-    private void leave() {}
+    private void leave(String username, Session session) throws IOException {
+        connections.add(username, session);
+        var message = String.format("%s left the game", username);
+        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        connections.broadcast(notification);
+    }
     private void resign() {}
 //    public void joined(String username, String playerColor) throws DataAccessException {
 //        try {
