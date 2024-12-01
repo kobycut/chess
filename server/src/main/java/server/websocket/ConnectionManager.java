@@ -1,5 +1,7 @@
 package server.websocket;
 
+import chess.ChessBoard;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
 
@@ -11,8 +13,8 @@ import java.util.concurrent.ConcurrentHashMap;
 public class ConnectionManager {
     public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
 
-    public void add(String username, Session session) {
-        var connection = new Connection(username, session);
+    public void add(String username, Session session, ChessBoard board) {
+        var connection = new Connection(username, session, board);
         connections.put(username, connection);
     }
 

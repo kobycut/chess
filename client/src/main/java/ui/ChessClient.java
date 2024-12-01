@@ -194,9 +194,8 @@ public class ChessClient {
             ws = new WebSocketFacade(serverUrl, notificationHandler);
             ws.joinGame(username, playerColor, id, authData.authToken());
 
-            ChessBoard chessBoard = new ChessBoard();
-            chessBoard.resetBoard();
-            drawBoard(chessBoard, playerColor);
+
+//            drawBoard(chessBoard, playerColor);
             playing = Playing.PLAYING; // new
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
         }

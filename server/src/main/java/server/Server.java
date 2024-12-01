@@ -1,5 +1,6 @@
 package server;
 
+import chess.ChessBoard;
 import chess.ChessGame;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -15,6 +16,7 @@ import model.UserData;
 import spark.*;
 import service.*;
 
+import java.io.IOException;
 import java.util.Collection;
 import java.util.Map;
 import java.util.HashMap;
@@ -146,7 +148,7 @@ public class Server {
         return (new Gson().toJson(game));
     }
 
-    private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
+    private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException, IOException {
         String playerColor = null;
         String authToken = req.headers("authorization");
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);
@@ -155,12 +157,10 @@ public class Server {
             playerColor = obj.get("playerColor").getAsString();
         }
 
-        joinGameService.join(authToken, gameData, playerColor);
-        String username = gameData.blackUsername();
-        if (Objects.equals(playerColor, "WHITE")) {
-            username = gameData.whiteUsername();
-        }
-//        webSocketHandler.joined(username, playerColor);
+        GameData gameDataServer = joinGameService.join(authToken, gameData, playerColor);
+
+        webSocketHandler.loadGame(gameDataServer);
+
         res.status(200);
         res.body("{}");
         return "{}";
@@ -173,4 +173,5 @@ public class Server {
 
         return ("{}");
     }
+
 }

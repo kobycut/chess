@@ -49,6 +49,7 @@ public class WebSocketFacade extends Endpoint {
        } catch (Exception ex) {
            throw new DataAccessException(500, "could not join game");
        }
+
     }
     public void leaveGame(String username) throws DataAccessException {
         try {

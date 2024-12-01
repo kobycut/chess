@@ -2,6 +2,7 @@ package server.websocket;
 
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
+import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -26,29 +27,35 @@ public class WebSocketHandler {
     }
 
     private void connect(String username, Session session, String teamColor) throws IOException {
-        connections.add(username, session);
+        connections.add(username, session, null);
         var message = String.format("%s joined the game as %s team", username, teamColor);
 
         if (teamColor.equals("Observer")) {
             message = String.format("%s joined the game as an observer", username);
         }
 
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
 
         connections.broadcast(notification);
     }
     private void makeMove() {}
     private void leave(String username, Session session) throws IOException {
-        connections.add(username, session);
+        connections.add(username, session, null);
         var message = String.format("%s left the game", username);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
         connections.broadcast(notification);
     }
     private void resign(String username, Session session) throws IOException {
-        connections.add(username, session);
+        connections.add(username, session, null);
         var message = String.format("%s resigned", username);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
+        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
         connections.broadcast(notification);
+    }
+    public void loadGame(GameData gameData) throws IOException {
+        var board = gameData.chessGame().getBoard();
+        var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, board);
+        connections.broadcast(loadGame);
+
     }
 
 

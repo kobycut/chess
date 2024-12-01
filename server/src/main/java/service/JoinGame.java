@@ -21,7 +21,7 @@ public class JoinGame {
         this.gameDAO = gameDAO;
     }
 
-    public void join(String authToken, GameData gameData, String playerColor)
+    public GameData join(String authToken, GameData gameData, String playerColor)
             throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException {
 
         AuthData authData = authDAO.getAuthData(authToken);
@@ -43,5 +43,6 @@ public class JoinGame {
         }
 
         gameDAO.updateGame(game, playerColor, authData.username());
+        return gameDAO.getGame(game.gameID());
     }
 }
