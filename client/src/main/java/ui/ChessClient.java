@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessPosition;
 import facades.NotificationHandler;
 import facades.ServerFacade;
 import chess.ChessBoard;
@@ -236,9 +237,14 @@ public class ChessClient {
     public String redrawBoard() throws DataAccessException {
 
         var board = chessBoard;
+        if (board == null) {
+            board = new ChessBoard();
+            board.resetBoard();
+        }
         if (playing == Playing.PLAYING || observing == Observing.OBSERVING) {
             if (observing == Observing.OBSERVING) {
                 drawBoard(board, "WHITE");
+                return "redrew the board";
             }
             drawBoard(board, teamColor);
             return "redrew the board";
