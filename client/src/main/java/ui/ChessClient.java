@@ -1,6 +1,5 @@
 package ui;
 
-import chess.ChessGame;
 import facades.NotificationHandler;
 import facades.ServerFacade;
 import chess.ChessBoard;
@@ -12,7 +11,6 @@ import model.GameData;
 import model.GameDataCollection;
 
 import java.util.Arrays;
-import java.util.List;
 
 import static java.lang.Integer.parseInt;
 
@@ -25,7 +23,7 @@ public class ChessClient {
     private Observing observing = Observing.NOTOBSERVING;
     private String teamColor;
     private Integer gameId;
-
+    public ChessBoard chessBoard;
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
     private WebSocketFacade ws;
@@ -240,13 +238,12 @@ public class ChessClient {
 
 
     public String redrawBoard() throws DataAccessException {
-        var board = new ChessBoard();
 
+        var board = chessBoard;
         if (playing == Playing.PLAYING || observing == Observing.OBSERVING) {
             if (observing == Observing.OBSERVING) {
                 drawBoard(board, "WHITE");
             }
-
             drawBoard(board, teamColor);
             return "redrew the board";
         } else {
