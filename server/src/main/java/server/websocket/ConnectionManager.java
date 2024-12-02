@@ -24,6 +24,7 @@ public class ConnectionManager {
 
     public void broadcast(ServerMessage notification, ArrayList<String> includeUsers) throws IOException {
         var removeList = new ArrayList<Connection>();
+
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 for (var user : includeUsers) {

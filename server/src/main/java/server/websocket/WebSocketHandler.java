@@ -49,6 +49,7 @@ public class WebSocketHandler {
 
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
         lst.removeIf(Objects::isNull);
+//        lst.remove(username);
         connections.broadcast(notification, lst);
     }
 
