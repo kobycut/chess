@@ -56,7 +56,7 @@ public class WebSocketHandler {
     }
 
     private void leave(String username, Session session, Integer gameId, String playerColor) throws IOException, DataAccessException {
-        connections.add(username, session, null);
+        connections.remove(username);
         var message = String.format("%s left the game", username);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
         //  update database
@@ -79,7 +79,13 @@ public class WebSocketHandler {
 //        var board = gameData.chessGame().getBoard();
         var gameDataPlayerColor = new GameDataPlayerColor(gameData, playerColor);
         var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameDataPlayerColor);
-//        connections.broadcast(loadGame);
+
+
+        var lst = new ArrayList<String>();
+        lst.add(gameData.whiteUsername());
+        lst.add(gameData.blackUsername());
+        lst.removeIf(Objects::isNull);
+        connections.broadcast(loadGame, lst);
 
     }
 

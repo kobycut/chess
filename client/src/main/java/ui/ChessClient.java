@@ -189,9 +189,9 @@ public class ChessClient {
             teamColor = playerColor;
 
             ws = new WebSocketFacade(serverUrl, notificationHandler);
-            ws.joinGame(username, playerColor, id, authData.authToken());
-            server.joinGame(id, playerColor, authData);
 
+            server.joinGame(id, playerColor, authData);
+            ws.joinGame(username, playerColor, id, authData.authToken());
             playing = Playing.PLAYING; // new
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
         }
