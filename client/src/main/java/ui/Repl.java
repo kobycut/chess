@@ -50,18 +50,23 @@ public class Repl implements NotificationHandler {
             return;
         }
         if (notification.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
+            System.out.println("\n");
             GameDataPlayerColor obj = (GameDataPlayerColor) notification.gameData;
             var board = obj.getGameData().chessGame().getBoard();
             var playerColor = obj.getPlayerColor();
             var drawBoard = new DrawChessBoard(board);
             if (playerColor.equals("WHITE")) {
                 drawBoard.drawWhiteBoard();
+
             } else if (playerColor.equals("BLACK")) {
                 drawBoard.drawBlackBoard();
+
             }
             else {
                 drawBoard.drawWhiteBoard();
             }
+
+            printPrompt();
             return;
         }
         System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA + notification.getServerMessageType() + " " + EscapeSequences.SET_TEXT_COLOR_BLUE + notification.message);

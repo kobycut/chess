@@ -253,7 +253,6 @@ public class ChessClient {
             if (observing == Observing.OBSERVING) {
                 drawBoard(board, "WHITE");
             }
-            // get playerColor
 
             drawBoard(board, teamColor);
             return "redrew the board";

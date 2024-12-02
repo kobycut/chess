@@ -1,6 +1,8 @@
 package server.websocket;
 
 import com.google.gson.Gson;
+import dataaccess.GameDAO;
+import dataaccess.MySqlGameDataAccess;
 import exceptions.DataAccessException;
 import model.GameData;
 import model.GameDataPlayerColor;
@@ -47,6 +49,11 @@ public class WebSocketHandler {
         connections.add(username, session, null);
         var message = String.format("%s left the game", username);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
+        //  update database
+
+        var db = new MySqlGameDataAccess();
+        db.updateGame();
+
         connections.broadcast(notification);
     }
 
