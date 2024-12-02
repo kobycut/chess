@@ -200,10 +200,6 @@ public class ChessClient {
         checkSignedIn();
         if (params.length == 1) {
             Integer id = parseInt(params[0]);
-
-            ChessBoard chessBoard = new ChessBoard();
-            chessBoard.resetBoard();
-            drawBoard(chessBoard, "WHITE");
             observing = Observing.OBSERVING; // new
             ws = new WebSocketFacade(serverUrl, notificationHandler);
             ws.joinGame(username, "Observer", id, authData.authToken());
