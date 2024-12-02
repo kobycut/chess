@@ -3,6 +3,7 @@ package websocket.messages;
 import chess.ChessBoard;
 import com.google.gson.Gson;
 import model.GameData;
+import model.GameDataPlayerColor;
 
 import java.util.Objects;
 
@@ -15,7 +16,7 @@ import java.util.Objects;
 public class ServerMessage {
     ServerMessageType serverMessageType;
     public String message;
-    public Object gameData;
+    public GameDataPlayerColor gameData;
 
     public enum ServerMessageType {
         LOAD_GAME,
@@ -23,7 +24,7 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type, String message, Object gameData) {
+    public ServerMessage(ServerMessageType type, String message, GameDataPlayerColor gameData) {
         this.serverMessageType = type;
         this.message = message;
         this.gameData = gameData;
