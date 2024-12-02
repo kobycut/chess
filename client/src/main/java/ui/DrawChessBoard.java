@@ -66,9 +66,6 @@ public class DrawChessBoard {
         out.println();
         drawHeaders(out, reverse);
         out.println();
-        out.println();
-        out.println();
-        out.println();
     }
     public void drawBlackBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
