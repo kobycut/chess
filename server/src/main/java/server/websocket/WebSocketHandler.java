@@ -65,8 +65,11 @@ public class WebSocketHandler {
         GameData gameData = db.getGame(gameId);
 
         db.updateGame(gameData, playerColor, null);
-
-//        connections.broadcast(notification);
+        var lst = new ArrayList<String>();
+        lst.add(gameData.whiteUsername());
+        lst.add(gameData.blackUsername());
+        lst.removeIf(Objects::isNull);
+        connections.broadcast(notification, lst);
     }
 
     private void resign(String username, Session session) throws IOException {
@@ -83,9 +86,11 @@ public class WebSocketHandler {
 
 
         var lst = new ArrayList<String>();
-        lst.add(gameData.whiteUsername());
-        lst.add(gameData.blackUsername());
-        lst.removeIf(Objects::isNull);
+        if (Objects.equals(playerColor, "WHITE"))
+            lst.add(gameData.whiteUsername());
+        else {
+            lst.add(gameData.blackUsername());
+        }
         connections.broadcast(loadGame, lst);
 
     }
