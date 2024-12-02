@@ -19,6 +19,7 @@ import java.util.Objects;
 @WebSocket
 public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
+
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException, DataAccessException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
@@ -49,7 +50,7 @@ public class WebSocketHandler {
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
         lst.removeIf(Objects::isNull);
 //        lst.remove(username);
-        connections.broadcast(notification, lst, gameId);
+        connections.broadcast(notification, username, gameId);
     }
 
     private void makeMove() {
@@ -68,11 +69,11 @@ public class WebSocketHandler {
         lst.add(gameData.whiteUsername());
         lst.add(gameData.blackUsername());
         lst.removeIf(Objects::isNull);
-        connections.broadcast(notification, lst, gameId);
+        connections.broadcast(notification, username, gameId);
     }
 
     private void resign(String username, Session session) throws IOException {
-        connections.add(username, session, null, null);
+        connections.remove(username);
         var message = String.format("%s resigned", username);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
 //        connections.broadcast(notification);
@@ -83,14 +84,15 @@ public class WebSocketHandler {
         var gameDataPlayerColor = new GameDataPlayerColor(gameData, playerColor);
         var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameDataPlayerColor);
 
-
+        var username = gameData.blackUsername();
         var lst = new ArrayList<String>();
-        if (Objects.equals(playerColor, "WHITE"))
+        if (Objects.equals(playerColor, "WHITE")) {
             lst.add(gameData.whiteUsername());
-        else {
+            username = gameData.whiteUsername();
+        } else {
             lst.add(gameData.blackUsername());
         }
-        connections.broadcast(loadGame, lst, null);
+        connections.broadcastLoad(loadGame, username);
 
     }
 

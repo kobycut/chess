@@ -23,15 +23,31 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void broadcast(ServerMessage notification, ArrayList<String> includeUsers, Integer id) throws IOException {
+    public void broadcast(ServerMessage notification, String excludeUser, Integer gameId) throws IOException {
         var removeList = new ArrayList<Connection>();
 
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                for (var user : includeUsers) {
-                    if (c.visitorName.contains(user) || (Objects.equals(c.gameId, id))) {
-                c.send(notification.toString());
-                    }
+                if (!Objects.equals(c.visitorName, excludeUser) && Objects.equals(c.gameId, gameId)) {
+                    c.send(notification.toString());
+                }
+            } else {
+                removeList.add(c);
+            }
+        }
+
+        // Clean up any connections that were left open.
+        for (var c : removeList) {
+            connections.remove(c.visitorName);
+        }
+    }
+    public void broadcastLoad(ServerMessage notification, String includeUser) throws IOException {
+        var removeList = new ArrayList<Connection>();
+
+        for (var c : connections.values()) {
+            if (c.session.isOpen()) {
+                if (Objects.equals(c.visitorName, includeUser)) {
+                    c.send(notification.toString());
                 }
             } else {
                 removeList.add(c);

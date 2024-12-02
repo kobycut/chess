@@ -68,8 +68,9 @@ public class DrawChessBoard {
         out.println();
     }
     public void drawBlackBoard() {
-        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
 
+        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
+        out.print(EscapeSequences.SET_TEXT_BOLD);
         boolean reverse = true;
         pieces.clear();
 
