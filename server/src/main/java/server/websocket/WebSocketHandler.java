@@ -3,6 +3,7 @@ package server.websocket;
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
 import model.GameData;
+import model.GameDataPlayerColor;
 import org.eclipse.jetty.websocket.api.Session;
 import org.eclipse.jetty.websocket.api.annotations.OnWebSocketMessage;
 import org.eclipse.jetty.websocket.api.annotations.WebSocket;
@@ -38,22 +39,28 @@ public class WebSocketHandler {
 
         connections.broadcast(notification);
     }
-    private void makeMove() {}
+
+    private void makeMove() {
+    }
+
     private void leave(String username, Session session) throws IOException {
         connections.add(username, session, null);
         var message = String.format("%s left the game", username);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
         connections.broadcast(notification);
     }
+
     private void resign(String username, Session session) throws IOException {
         connections.add(username, session, null);
         var message = String.format("%s resigned", username);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
         connections.broadcast(notification);
     }
-    public void loadGame(GameData gameData) throws IOException {
-        var board = gameData.chessGame().getBoard();
-        var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, board);
+
+    public void loadGame(GameData gameData, String playerColor) throws IOException {
+//        var board = gameData.chessGame().getBoard();
+        var gameDataPlayerColor = new GameDataPlayerColor(gameData, playerColor);
+        var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameDataPlayerColor);
         connections.broadcast(loadGame);
 
     }
@@ -70,3 +77,5 @@ public class WebSocketHandler {
 //
 //    }
 }
+
+

@@ -2,6 +2,8 @@ package facades;
 
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
+import ui.ChessClient;
+import ui.DrawChessBoard;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
 

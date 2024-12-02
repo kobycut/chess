@@ -185,7 +185,7 @@ public class ChessClient {
             Integer id = parseInt(params[0]);
             String playerColor = params[1];
             teamColor = playerColor;
-            server.joinGame(id, playerColor, authData);
+
 
 
 
@@ -193,6 +193,7 @@ public class ChessClient {
             // get playerColor
             ws = new WebSocketFacade(serverUrl, notificationHandler);
             ws.joinGame(username, playerColor, id, authData.authToken());
+            server.joinGame(id, playerColor, authData);
 
 
 //            drawBoard(chessBoard, playerColor);

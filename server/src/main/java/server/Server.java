@@ -158,8 +158,7 @@ public class Server {
         }
 
         GameData gameDataServer = joinGameService.join(authToken, gameData, playerColor);
-
-        webSocketHandler.loadGame(gameDataServer);
+        webSocketHandler.loadGame(gameDataServer, playerColor);
 
         res.status(200);
         res.body("{}");
