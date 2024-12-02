@@ -53,9 +53,9 @@ public class WebSocketFacade extends Endpoint {
        }
 
     }
-    public void leaveGame(String username) throws DataAccessException {
+    public void leaveGame(String username, Integer gameId, String teamColor) throws DataAccessException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, null, null, username, null);
+            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, null, gameId, username, teamColor);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception ex) {
             throw new DataAccessException(500, "could not leave game");

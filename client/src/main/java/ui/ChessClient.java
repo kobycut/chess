@@ -24,6 +24,7 @@ public class ChessClient {
     private Playing playing = Playing.NOTPLAYING;
     private Observing observing = Observing.NOTOBSERVING;
     private String teamColor;
+    private Integer gameId;
 
     private final String serverUrl;
     private final NotificationHandler notificationHandler;
@@ -183,20 +184,14 @@ public class ChessClient {
         checkSignedIn();
         if (params.length == 2) {
             Integer id = parseInt(params[0]);
+            gameId = id;
             String playerColor = params[1];
             teamColor = playerColor;
 
-
-
-
-            // websocket connection is opened
-            // get playerColor
             ws = new WebSocketFacade(serverUrl, notificationHandler);
             ws.joinGame(username, playerColor, id, authData.authToken());
             server.joinGame(id, playerColor, authData);
 
-
-//            drawBoard(chessBoard, playerColor);
             playing = Playing.PLAYING; // new
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
         }
@@ -207,7 +202,7 @@ public class ChessClient {
         checkSignedIn();
         if (params.length == 1) {
             Integer id = parseInt(params[0]);
-            // websocket connection is opened
+
             ChessBoard chessBoard = new ChessBoard();
             chessBoard.resetBoard();
             drawBoard(chessBoard, "WHITE");
@@ -236,11 +231,9 @@ public class ChessClient {
         DrawChessBoard drawChessBoard = new DrawChessBoard(board);
         if (observing == Observing.OBSERVING) {
             drawChessBoard.drawWhiteBoard();
-        }
-        else if (playerColor.equals("WHITE")) {
+        } else if (playerColor.equals("WHITE")) {
             drawChessBoard.drawWhiteBoard();
-        }
-        else if (playerColor.equals("BLACK")) {
+        } else if (playerColor.equals("BLACK")) {
             drawChessBoard.drawBlackBoard();
         }
     }
@@ -265,7 +258,7 @@ public class ChessClient {
         if (playing == Playing.NOTPLAYING && observing == Observing.NOTOBSERVING) {
             throw new DataAccessException(400, "Can't leave if you are not in a game");
         }
-        ws.leaveGame(username);
+        ws.leaveGame(username, gameId, teamColor);
         observing = Observing.NOTOBSERVING;
         playing = Playing.NOTPLAYING;
         return String.format(username + " left the game");

@@ -19,12 +19,12 @@ public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException {
+    public void onMessage(Session session, String message) throws IOException, DataAccessException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getUsername(), session, command.getTeamColor());
             case MAKE_MOVE -> makeMove();
-            case LEAVE -> leave(command.getUsername(), session);
+            case LEAVE -> leave(command.getUsername(), session, command.getGameID(), command.getTeamColor());
             case RESIGN -> resign(command.getUsername(), session);
         }
     }
@@ -45,14 +45,15 @@ public class WebSocketHandler {
     private void makeMove() {
     }
 
-    private void leave(String username, Session session) throws IOException {
+    private void leave(String username, Session session, Integer gameId, String playerColor) throws IOException, DataAccessException {
         connections.add(username, session, null);
         var message = String.format("%s left the game", username);
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
         //  update database
-
         var db = new MySqlGameDataAccess();
-        db.updateGame();
+        GameData gameData = db.getGame(gameId);
+
+        db.updateGame(gameData, playerColor, null);
 
         connections.broadcast(notification);
     }
