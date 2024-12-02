@@ -22,11 +22,15 @@ public class ConnectionManager {
         connections.remove(visitorName);
     }
 
-    public void broadcast(ServerMessage notification) throws IOException {
+    public void broadcast(ServerMessage notification, ArrayList<String> includeUsers) throws IOException {
         var removeList = new ArrayList<Connection>();
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
-                c.send(notification.toString());
+                for (var user : includeUsers) {
+                    if (c.visitorName.contains(user)) {
+                        c.send(notification.toString());
+                    }
+                }
             } else {
                 removeList.add(c);
             }
