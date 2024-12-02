@@ -57,7 +57,7 @@ public class DrawChessBoard {
 //        out.println();
 //    }
 
-    public void drawWhiteBoard() {
+    public void drawBlackBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.SET_TEXT_BOLD);
         boolean reverse = false;
@@ -67,7 +67,7 @@ public class DrawChessBoard {
         drawHeaders(out, reverse);
         out.println();
     }
-    public void drawBlackBoard() {
+    public void drawWhiteBoard() {
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.SET_TEXT_BOLD);
@@ -163,7 +163,7 @@ public class DrawChessBoard {
                         out.print(sideHeaders[index]);
                         continue;
                     }
-                    out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+                    out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
                     ChessPiece piece = pieces.get(counter);
                     if (piece == null) {
                         out.print(" ");
@@ -172,7 +172,7 @@ public class DrawChessBoard {
                         continue;
                     }
                     if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
-                        out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+                        out.print(EscapeSequences.SET_TEXT_COLOR_RED);
 
 
                         out.print(piece.toString().toUpperCase());
