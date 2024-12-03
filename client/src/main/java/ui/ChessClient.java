@@ -274,7 +274,9 @@ public class ChessClient {
             char endNum = endLet.charAt(1);
 
             int startRow = Character.getNumericValue(startNum);
+            startRow = getRow(startRow);
             int endRow = Character.getNumericValue(endNum);
+            endRow = getRow(endRow);
             Integer startCol = getCol(startLetter);
             Integer endCol = getCol(endLetter);
             ChessPosition startPos = new ChessPosition(startRow, startCol);
@@ -305,17 +307,30 @@ public class ChessClient {
     }
 
     private Integer getCol(char letter) {
-        int col = 0;
+        int col = 1;
         switch (letter) {
-            case 'b' -> {col = 1;}
-            case 'c' -> {col = 2;}
-            case 'd' -> {col = 3;}
-            case 'e' -> {col = 4;}
-            case 'f' -> {col = 5;}
-            case 'g' -> {col = 6;}
-            case 'h' -> {col = 7;}
+            case 'b' -> {col = 2;}
+            case 'c' -> {col = 3;}
+            case 'd' -> {col = 4;}
+            case 'e' -> {col = 5;}
+            case 'f' -> {col = 6;}
+            case 'g' -> {col = 7;}
+            case 'h' -> {col = 8;}
         };
         return col;
+    }
+    private Integer getRow(Integer num) {
+        int row = 1;
+        switch (num) {
+            case 7 -> {row = 2;}
+            case 6 -> {row = 3;}
+            case 5 -> {row = 4;}
+            case 4 -> {row = 5;}
+            case 3 -> {row = 6;}
+            case 2 -> {row = 7;}
+            case 1 -> {row = 8;}
+        };
+        return row;
     }
 
 }
