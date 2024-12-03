@@ -285,7 +285,7 @@ public class ChessClient {
             ws.makeMove(username, move, gameId, teamColor);
 
             // call websocket and stuff with move passed in hehe :)
-            return "pass";
+            return String.format(username + " made a move" + move);
 
         }
         throw new DataAccessException(400, "provide the correct move information");
