@@ -1,11 +1,13 @@
 package websocket.commands;
 
+import chess.ChessMove;
+
 import java.util.List;
 import java.util.Objects;
 
 /**
  * Represents a command a user can send the server over a websocket
- *
+ * <p>
  * Note: You can add to this class, but you should not alter the existing
  * methods.
  */
@@ -15,15 +17,16 @@ public class UserGameCommand {
     private final String username;
     private final String teamColor;
     private final String authToken;
-
+    private final ChessMove move;
     private final Integer gameID;
 
-    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, String username, String teamColor) {
+    public UserGameCommand(CommandType commandType, String authToken, Integer gameID, String username, String teamColor, ChessMove move) {
         this.commandType = commandType;
         this.authToken = authToken;
         this.gameID = gameID;
         this.username = username;
         this.teamColor = teamColor;
+        this.move = move;
 
     }
 
@@ -46,9 +49,18 @@ public class UserGameCommand {
         return gameID;
     }
 
-    public String getUsername() {return username;}
+    public String getUsername() {
+        return username;
+    }
 
-    public String getTeamColor() {return teamColor;}
+    public String getTeamColor() {
+        return teamColor;
+    }
+
+    public ChessMove getMove() {
+        return move;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

@@ -25,7 +25,7 @@ public class WebSocketHandler {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getUsername(), session, command.getTeamColor(), command.getGameID());
-            case MAKE_MOVE -> makeMove();
+            case MAKE_MOVE -> makeMove(command.getUsername(), command.getMove(), command.getGameID());
             case LEAVE -> leave(command.getUsername(), session, command.getGameID(), command.getTeamColor());
             case RESIGN -> resign(command.getUsername(), session);
         }
@@ -80,7 +80,6 @@ public class WebSocketHandler {
     }
 
     public void loadGame(GameData gameData, String playerColor) throws IOException {
-//        var board = gameData.chessGame().getBoard();
         var gameDataPlayerColor = new GameDataPlayerColor(gameData, playerColor);
         var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameDataPlayerColor);
 
@@ -96,17 +95,6 @@ public class WebSocketHandler {
 
     }
 
-
-//    public void joined(String username, String playerColor) throws DataAccessException {
-//        try {
-//            var message = String.format("%s joined the game as %s team", username, playerColor);
-//            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message);
-//            connections.broadcast(notification);
-//        } catch (Exception ex) {
-//            throw new DataAccessException(500, "Could not join the game");
-//        }
-//
-//    }
 }
 
 

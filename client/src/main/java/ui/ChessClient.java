@@ -273,16 +273,20 @@ public class ChessClient {
             char startNum = startLet.charAt(1);
             char endNum = endLet.charAt(1);
 
-            Integer startRow = Character.getNumericValue(startNum);
-            Integer endRow = Character.getNumericValue(endNum);
+            int startRow = Character.getNumericValue(startNum);
+            int endRow = Character.getNumericValue(endNum);
             Integer startCol = getCol(startLetter);
             Integer endCol = getCol(endLetter);
             ChessPosition startPos = new ChessPosition(startRow, startCol);
             ChessPosition endPos = new ChessPosition(endRow, endCol);
             ChessMove move = new ChessMove(startPos, endPos, null);
 
+            ws = new WebSocketFacade(serverUrl, notificationHandler);
+            ws.makeMove(username, move, gameId);
+
             // call websocket and stuff with move passed in hehe :)
             return "pass";
+
         }
         throw new DataAccessException(400, "provide the correct move information");
     }

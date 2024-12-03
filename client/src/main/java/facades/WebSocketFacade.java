@@ -1,5 +1,6 @@
 package facades;
 
+import chess.ChessMove;
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
 import ui.ChessClient;
@@ -46,7 +47,7 @@ public class WebSocketFacade extends Endpoint {
     }
     public void joinGame(String username, String teamColor, Integer gameId, String authToken) throws DataAccessException {
        try {
-           var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId, username, teamColor);
+           var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId, username, teamColor, null);
            this.session.getBasicRemote().sendText(new Gson().toJson(command));
        } catch (Exception ex) {
            throw new DataAccessException(500, "could not join game");
@@ -55,7 +56,7 @@ public class WebSocketFacade extends Endpoint {
     }
     public void leaveGame(String username, Integer gameId, String teamColor) throws DataAccessException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, null, gameId, username, teamColor);
+            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, null, gameId, username, teamColor, null);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception ex) {
             throw new DataAccessException(500, "could not leave game");
@@ -63,10 +64,18 @@ public class WebSocketFacade extends Endpoint {
     }
     public void resign(String username) throws DataAccessException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, null, null, username, null);
+            var command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, null, null, username, null, null);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception ex) {
             throw new DataAccessException(500, "could not resign game");
+        }
+    }
+    public void makeMove(String username, ChessMove move, Integer gameId) throws DataAccessException {
+        try {
+            var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, null, gameId, username, null, move);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+        }catch (Exception ex) {
+            throw new DataAccessException(500, "could not make move");
         }
     }
 }
