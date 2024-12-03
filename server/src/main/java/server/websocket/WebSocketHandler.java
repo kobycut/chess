@@ -30,7 +30,7 @@ public class WebSocketHandler {
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getUsername(), session, command.getTeamColor(), command.getGameID());
             case MAKE_MOVE ->
-                    makeMove(command.getUsername(), command.getMove(), command.getGameID(), command.getTeamColor());
+                    makeMove(command.getUsername(), command.getMove(), command.getGameID(), command.getTeamColor(), command.getMoveString());
             case LEAVE -> leave(command.getUsername(), session, command.getGameID(), command.getTeamColor());
             case RESIGN -> resign(command.getUsername(), session);
         }
@@ -45,20 +45,13 @@ public class WebSocketHandler {
         }
         var db = new MySqlGameDataAccess();
         GameData gameData = db.getGame(gameId);
-        var lst = new ArrayList<String>();
-        lst.add(gameData.whiteUsername());
-        lst.add(gameData.blackUsername());
-        if (!lst.contains(username)) {
-            lst.add(username);
-        }
+
 
         var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
-        lst.removeIf(Objects::isNull);
-//        lst.remove(username);
         connections.broadcast(notification, username, gameId);
     }
 
-    private void makeMove(String username, ChessMove move, Integer gameId, String playerColor) throws DataAccessException, InvalidMoveException, IOException {
+    private void makeMove(String username, ChessMove move, Integer gameId, String playerColor, String moveString) throws DataAccessException, InvalidMoveException, IOException {
         var db = new MySqlGameDataAccess();
         GameData gameData = db.getGame(gameId);
         ChessGame.TeamColor teamColor = ChessGame.TeamColor.BLACK;
@@ -71,10 +64,12 @@ public class WebSocketHandler {
 
         }
 
-        var message = String.format("%s made move %s", username, move.toString());
+        var message = String.format("%s moved %s", username, moveString);
         String stateMessage = null;
-
-        gameData.chessGame().setTeamTurn(teamColor);
+        var pieceColor = gameData.chessGame().getBoard().getPiece(move.getStartPosition()).getTeamColor();
+        if (teamColor == pieceColor) {
+            // throw error
+        }
         gameData.chessGame().makeMove(move);
         db.updateGame(gameData, playerColor, username);
         loadGame(gameData, playerColor);
@@ -83,7 +78,6 @@ public class WebSocketHandler {
             stateMessage = String.format("%s is in check", oppUsername);
         }
         if (gameData.chessGame().isInCheckmate(teamColor)) {
-
             stateMessage = String.format("%s is in checkmate", oppUsername);
         }
         if (gameData.chessGame().isInStalemate(teamColor)) {
@@ -91,10 +85,12 @@ public class WebSocketHandler {
         }
 
         var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message, new GameDataPlayerColor(gameData, playerColor));
+        var moveNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
+        connections.broadcast(moveNotification, username, gameId);
 
+        connections.broadcast(loadGameNotification, username, gameId);
 
-        connections.broadcast(loadGameNotification, null, gameId);
-
+        gameData.chessGame().setTeamTurn(oppColor);
         if (stateMessage != null) {
             var gameStateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, stateMessage, null);
             connections.broadcast(gameStateNotification, null, gameId);

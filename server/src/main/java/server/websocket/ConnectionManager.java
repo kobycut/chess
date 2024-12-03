@@ -1,6 +1,7 @@
 package server.websocket;
 
 import chess.ChessBoard;
+import chess.ChessGame;
 import model.GameData;
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
@@ -29,6 +30,14 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!Objects.equals(c.visitorName, excludeUser) && Objects.equals(c.gameId, gameId)) {
+                    if (notification.gameData != null) {
+                        if (Objects.equals(c.visitorName, notification.gameData.getGameData().blackUsername())) {
+                            notification.gameData.setPlayerColor("BLACK");
+                        }
+                        if (Objects.equals(c.visitorName, notification.gameData.getGameData().whiteUsername())) {
+                            notification.gameData.setPlayerColor("WHITE");
+                        }
+                    }
                     c.send(notification.toString());
                 }
             } else {

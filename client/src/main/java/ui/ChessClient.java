@@ -265,6 +265,7 @@ public class ChessClient {
     }
 
     public String makeMove(String... params) throws DataAccessException {
+
         if (params.length == 2) {
             String startLet = params[0];
             String endLet = params[1];
@@ -282,15 +283,20 @@ public class ChessClient {
             ChessPosition startPos = new ChessPosition(startRow, startCol);
             ChessPosition endPos = new ChessPosition(endRow, endCol);
             ChessMove move = new ChessMove(startPos, endPos, null);
+            String moveString = startLetter + Integer.toString(startRow) + " to " + endLetter + Integer.toString(endRow);
+            try {
+                ws = new WebSocketFacade(serverUrl, notificationHandler);
+                ws.makeMove(username, move, gameId, teamColor, moveString);
+            } catch (Exception ex) {
+                throw new DataAccessException(500, "cannot make that move");
+            }
+            return String.format(username + " moved " + startLetter + Integer.toString(startRow) + " to " + endLetter + Integer.toString(endRow));
 
-            ws = new WebSocketFacade(serverUrl, notificationHandler);
-            ws.makeMove(username, move, gameId, teamColor);
 
-            // call websocket and stuff with move passed in hehe :)
-            return String.format(username + " made a move" + move);
-
+        } else {
+            throw new DataAccessException(400, "provide the correct move information");
         }
-        throw new DataAccessException(400, "provide the correct move information");
+
     }
 
     public String resign() throws DataAccessException {
