@@ -13,6 +13,7 @@ import model.GameData;
 import model.GameDataCollection;
 
 import java.util.Arrays;
+import java.util.concurrent.ExecutionException;
 
 import static java.lang.Integer.parseInt;
 
@@ -53,7 +54,7 @@ public class ChessClient {
                 case "playGame" -> playGame(params);
                 case "observeGame" -> observeGame(params);
                 case "logout" -> logout();
-                case "redrawChessBoard" -> redrawBoard();
+                case "redraw" -> redrawBoard();
                 case "leave" -> leave();
                 case "makeMove" -> makeMove(params);
                 case "resign" -> resign();
@@ -69,7 +70,7 @@ public class ChessClient {
 
         if (observing == Observing.OBSERVING) {
             return """
-                    - redrawChessBoard
+                    - redraw
                     - leave
                     - highlight (highlights legal moves)
                     """;
@@ -77,7 +78,7 @@ public class ChessClient {
 
         if (playing == Playing.PLAYING) {
             return """
-                    - redrawChessBoard
+                    - redraw
                     - leave
                     - makeMove <START POSITION> <END POSITION> (e.g. e7 e5)
                     - resign
@@ -173,8 +174,7 @@ public class ChessClient {
                 if (whiteUser == null) {
                     whiteUser = "NONE";
                 }
-                result.append(gson.toJson(i)).append(": ").append("(GAMEID: ").append(gameId).append(") (GAMENAME: ").append(gameName).
-                        append(") (BLACK PLAYER: ").append(blackUser).append(") (WHITE PLAYER: ").append(whiteUser).append(")\n");
+                result.append(gson.toJson(i)).append(": ").append("(GAMEID: ").append(gameId).append(") (GAMENAME: ").append(gameName).append(") (BLACK PLAYER: ").append(blackUser).append(") (WHITE PLAYER: ").append(whiteUser).append(")\n");
             }
         }
         return result.toString();
@@ -265,37 +265,42 @@ public class ChessClient {
     }
 
     public String makeMove(String... params) throws DataAccessException {
-
+        if (playing == Playing.NOTPLAYING) {
+            throw new DataAccessException(400, "Can't make a move if not playing a game");
+        }
         if (params.length == 2) {
-            String startLet = params[0];
-            String endLet = params[1];
-            char startLetter = startLet.charAt(0);
-            char endLetter = endLet.charAt(0);
-            char startNum = startLet.charAt(1);
-            char endNum = endLet.charAt(1);
-
-            int startRow = Character.getNumericValue(startNum);
-            startRow = getRow(startRow);
-            int endRow = Character.getNumericValue(endNum);
-            endRow = getRow(endRow);
-            Integer startCol = getCol(startLetter);
-            Integer endCol = getCol(endLetter);
-            ChessPosition startPos = new ChessPosition(startRow, startCol);
-            ChessPosition endPos = new ChessPosition(endRow, endCol);
-            ChessMove move = new ChessMove(startPos, endPos, null);
-            String moveString = startLetter + Integer.toString(startRow) + " to " + endLetter + Integer.toString(endRow);
             try {
+                String startLet = params[0];
+                String endLet = params[1];
+                char startLetter = startLet.charAt(0);
+                char endLetter = endLet.charAt(0);
+                char startNum = startLet.charAt(1);
+                char endNum = endLet.charAt(1);
+
+                int startRow = Character.getNumericValue(startNum);
+                startRow = getRow(startRow);
+                int endRow = Character.getNumericValue(endNum);
+                endRow = getRow(endRow);
+                Integer startCol = getCol(startLetter);
+                Integer endCol = getCol(endLetter);
+                ChessPosition startPos = new ChessPosition(startRow, startCol);
+                ChessPosition endPos = new ChessPosition(endRow, endCol);
+                ChessMove move = new ChessMove(startPos, endPos, null);
+                String moveString = startLetter + Integer.toString(startRow) + " to " + endLetter + Integer.toString(endRow);
+
+
                 ws = new WebSocketFacade(serverUrl, notificationHandler);
                 ws.makeMove(username, move, gameId, teamColor, moveString);
+
+//                return String.format(username + " moved " + startLetter + Integer.toString(startRow) + " to " + endLetter + Integer.toString(endRow));
+                return "moved";
             } catch (Exception ex) {
-                throw new DataAccessException(500, "cannot make that move");
+                throw new DataAccessException(500, "move invalid");
             }
-            return String.format(username + " moved " + startLetter + Integer.toString(startRow) + " to " + endLetter + Integer.toString(endRow));
-
-
         } else {
             throw new DataAccessException(400, "provide the correct move information");
         }
+
 
     }
 
@@ -315,27 +320,58 @@ public class ChessClient {
     private Integer getCol(char letter) {
         int col = 1;
         switch (letter) {
-            case 'b' -> {col = 2;}
-            case 'c' -> {col = 3;}
-            case 'd' -> {col = 4;}
-            case 'e' -> {col = 5;}
-            case 'f' -> {col = 6;}
-            case 'g' -> {col = 7;}
-            case 'h' -> {col = 8;}
-        };
+            case 'b' -> {
+                col = 2;
+            }
+            case 'c' -> {
+                col = 3;
+            }
+            case 'd' -> {
+                col = 4;
+            }
+            case 'e' -> {
+                col = 5;
+            }
+            case 'f' -> {
+                col = 6;
+            }
+            case 'g' -> {
+                col = 7;
+            }
+            case 'h' -> {
+                col = 8;
+            }
+        }
+        ;
         return col;
     }
+
     private Integer getRow(Integer num) {
         int row = 1;
         switch (num) {
-            case 7 -> {row = 2;}
-            case 6 -> {row = 3;}
-            case 5 -> {row = 4;}
-            case 4 -> {row = 5;}
-            case 3 -> {row = 6;}
-            case 2 -> {row = 7;}
-            case 1 -> {row = 8;}
-        };
+            case 7 -> {
+                row = 2;
+            }
+            case 6 -> {
+                row = 3;
+            }
+            case 5 -> {
+                row = 4;
+            }
+            case 4 -> {
+                row = 5;
+            }
+            case 3 -> {
+                row = 6;
+            }
+            case 2 -> {
+                row = 7;
+            }
+            case 1 -> {
+                row = 8;
+            }
+        }
+        ;
         return row;
     }
 

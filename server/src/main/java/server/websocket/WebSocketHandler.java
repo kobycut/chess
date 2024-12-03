@@ -37,18 +37,24 @@ public class WebSocketHandler {
     }
 
     private void connect(String username, Session session, String teamColor, Integer gameId) throws IOException, DataAccessException {
-        connections.add(username, session, null, gameId);
-        var message = String.format("%s joined the game as %s team", username, teamColor);
+        try {
+            connections.add(username, session, null, gameId);
+            var message = String.format("%s joined the game as %s team", username, teamColor);
 
-        if (teamColor.equals("Observer")) {
-            message = String.format("%s joined the game as an observer", username);
+            if (teamColor.equals("Observer")) {
+                message = String.format("%s joined the game as an observer", username);
+            }
+            var db = new MySqlGameDataAccess();
+            GameData gameData = db.getGame(gameId);
+
+
+            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
+            connections.broadcast(notification, username, gameId);
+        } catch (Exception ex) {
+            var errorMessage = "could not connect, provide correct information";
+            var errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, errorMessage, null);
+            connections.broadcastLoad(errorNotification, username);
         }
-        var db = new MySqlGameDataAccess();
-        GameData gameData = db.getGame(gameId);
-
-
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
-        connections.broadcast(notification, username, gameId);
     }
 
     private void makeMove(String username, ChessMove move, Integer gameId, String playerColor, String moveString) throws DataAccessException, InvalidMoveException, IOException {
@@ -88,10 +94,9 @@ public class WebSocketHandler {
 
             var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message, new GameDataPlayerColor(gameData, playerColor));
             var moveNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
-            connections.broadcast(moveNotification, username, gameId);
 
             connections.broadcast(loadGameNotification, username, gameId);
-
+            connections.broadcast(moveNotification, username, gameId);
             gameData.chessGame().setTeamTurn(oppColor);
             if (stateMessage != null) {
                 var gameStateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, stateMessage, null);
@@ -105,19 +110,25 @@ public class WebSocketHandler {
     }
 
     private void leave(String username, Session session, Integer gameId, String playerColor) throws IOException, DataAccessException {
-        connections.remove(username);
-        var message = String.format("%s left the game", username);
-        var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
-        //  update database
-        var db = new MySqlGameDataAccess();
-        GameData gameData = db.getGame(gameId);
+        try {
+            connections.remove(username);
+            var message = String.format("%s left the game", username);
+            var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
+            //  update database
+            var db = new MySqlGameDataAccess();
+            GameData gameData = db.getGame(gameId);
 
-        db.updateGame(gameData, playerColor, null);
-        var lst = new ArrayList<String>();
-        lst.add(gameData.whiteUsername());
-        lst.add(gameData.blackUsername());
-        lst.removeIf(Objects::isNull);
-        connections.broadcast(notification, username, gameId);
+            db.updateGame(gameData, playerColor, null);
+            var lst = new ArrayList<String>();
+            lst.add(gameData.whiteUsername());
+            lst.add(gameData.blackUsername());
+            lst.removeIf(Objects::isNull);
+            connections.broadcast(notification, username, gameId);
+        } catch (Exception ex) {
+            var errorMessage = "cannot leave";
+            var errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, errorMessage, null);
+            connections.broadcastLoad(errorNotification, username);
+        }
     }
 
     private void resign(String username, Session session) throws IOException {
@@ -128,19 +139,28 @@ public class WebSocketHandler {
     }
 
     public void loadGame(GameData gameData, String playerColor) throws IOException {
-        var gameDataPlayerColor = new GameDataPlayerColor(gameData, playerColor);
-        var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameDataPlayerColor);
+        try {
+            var gameDataPlayerColor = new GameDataPlayerColor(gameData, playerColor);
+            var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameDataPlayerColor);
 
-        var username = gameData.blackUsername();
-        var lst = new ArrayList<String>();
-        if (Objects.equals(playerColor, "WHITE")) {
-            lst.add(gameData.whiteUsername());
-            username = gameData.whiteUsername();
-        } else {
-            lst.add(gameData.blackUsername());
+            var username = gameData.blackUsername();
+
+            if (Objects.equals(playerColor, "WHITE")) {
+
+                username = gameData.whiteUsername();
+            }
+            connections.broadcastLoad(loadGame, username);
+        } catch (Exception ex) {
+            var username = gameData.blackUsername();
+            if (Objects.equals(playerColor, "WHITE")) {
+                username = gameData.whiteUsername();
+            }
+
+            var errorMessage = "could not load game";
+            var errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, errorMessage, null);
+
+            connections.broadcastLoad(errorNotification, username);
         }
-        connections.broadcastLoad(loadGame, username);
-
     }
 
 }
