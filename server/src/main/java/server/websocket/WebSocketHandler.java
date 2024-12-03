@@ -71,8 +71,9 @@ public class WebSocketHandler {
 
         }
 
-        var message = String.format("%s made move %s", username, move);
+        var message = String.format("%s made move %s", username, move.toString());
         String stateMessage = null;
+
         gameData.chessGame().setTeamTurn(teamColor);
         gameData.chessGame().makeMove(move);
         db.updateGame(gameData, playerColor, username);
