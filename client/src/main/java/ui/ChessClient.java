@@ -1,5 +1,6 @@
 package ui;
 
+import chess.ChessMove;
 import chess.ChessPosition;
 import facades.NotificationHandler;
 import facades.ServerFacade;
@@ -54,7 +55,7 @@ public class ChessClient {
                 case "logout" -> logout();
                 case "redrawChessBoard" -> redrawBoard();
                 case "leave" -> leave();
-                case "makeMove" -> makeMove();
+                case "makeMove" -> makeMove(params);
                 case "resign" -> resign();
                 case "highlight" -> highlight();
                 default -> help();
@@ -78,7 +79,7 @@ public class ChessClient {
             return """
                     - redrawChessBoard
                     - leave
-                    - makeMove
+                    - makeMove <START POSITION> <END POSITION> (e.g. e7 e5)
                     - resign
                     - highlight (highlights legal moves)
                     """;
@@ -263,8 +264,27 @@ public class ChessClient {
         return String.format(username + " left the game");
     }
 
-    public String makeMove() {
-        return "pass";
+    public String makeMove(String... params) throws DataAccessException {
+        if (params.length == 2) {
+            String startLet = params[0];
+            String endLet = params[1];
+            char startLetter = startLet.charAt(0);
+            char endLetter = endLet.charAt(0);
+            char startNum = startLet.charAt(1);
+            char endNum = endLet.charAt(1);
+
+            Integer startRow = Character.getNumericValue(startNum);
+            Integer endRow = Character.getNumericValue(endNum);
+            Integer startCol = getCol(startLetter);
+            Integer endCol = getCol(endLetter);
+            ChessPosition startPos = new ChessPosition(startRow, startCol);
+            ChessPosition endPos = new ChessPosition(endRow, endCol);
+            ChessMove move = new ChessMove(startPos, endPos, null);
+
+            // call websocket and stuff with move passed in hehe :)
+            return "pass";
+        }
+        throw new DataAccessException(400, "provide the correct move information");
     }
 
     public String resign() throws DataAccessException {
@@ -280,6 +300,19 @@ public class ChessClient {
         return "pass";
     }
 
+    private Integer getCol(char letter) {
+        int col = 0;
+        switch (letter) {
+            case 'b' -> {col = 1;}
+            case 'c' -> {col = 2;}
+            case 'd' -> {col = 3;}
+            case 'e' -> {col = 4;}
+            case 'f' -> {col = 5;}
+            case 'g' -> {col = 6;}
+            case 'h' -> {col = 7;}
+        };
+        return col;
+    }
 
 }
 
