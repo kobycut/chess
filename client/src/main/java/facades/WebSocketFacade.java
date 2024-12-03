@@ -70,7 +70,7 @@ public class WebSocketFacade extends Endpoint {
             throw new DataAccessException(500, "could not resign game");
         }
     }
-    public void makeMove(String username, ChessMove move, Integer gameId) throws DataAccessException {
+    public void makeMove(String username, ChessMove move, Integer gameId, String playerColor) throws DataAccessException {
         try {
             var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, null, gameId, username, null, move);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));

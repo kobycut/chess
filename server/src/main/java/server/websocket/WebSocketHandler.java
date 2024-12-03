@@ -1,5 +1,7 @@
 package server.websocket;
 
+import chess.ChessMove;
+import chess.InvalidMoveException;
 import com.google.gson.Gson;
 import dataaccess.GameDAO;
 import dataaccess.MySqlGameDataAccess;
@@ -21,11 +23,11 @@ public class WebSocketHandler {
     private final ConnectionManager connections = new ConnectionManager();
 
     @OnWebSocketMessage
-    public void onMessage(Session session, String message) throws IOException, DataAccessException {
+    public void onMessage(Session session, String message) throws IOException, DataAccessException, InvalidMoveException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getUsername(), session, command.getTeamColor(), command.getGameID());
-            case MAKE_MOVE -> makeMove(command.getUsername(), command.getMove(), command.getGameID());
+            case MAKE_MOVE -> makeMove(command.getUsername(), command.getMove(), command.getGameID(), command.getTeamColor());
             case LEAVE -> leave(command.getUsername(), session, command.getGameID(), command.getTeamColor());
             case RESIGN -> resign(command.getUsername(), session);
         }
@@ -53,7 +55,13 @@ public class WebSocketHandler {
         connections.broadcast(notification, username, gameId);
     }
 
-    private void makeMove() {
+    private void makeMove(String username, ChessMove move, Integer gameId, String playerColor) throws DataAccessException, InvalidMoveException {
+        var db = new MySqlGameDataAccess();
+        GameData gameData = db.getGame(gameId);
+        gameData.chessGame().makeMove(move);
+        db.updateGame(gameData, playerColor, username);
+
+
     }
 
     private void leave(String username, Session session, Integer gameId, String playerColor) throws IOException, DataAccessException {

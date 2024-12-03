@@ -282,7 +282,7 @@ public class ChessClient {
             ChessMove move = new ChessMove(startPos, endPos, null);
 
             ws = new WebSocketFacade(serverUrl, notificationHandler);
-            ws.makeMove(username, move, gameId);
+            ws.makeMove(username, move, gameId, teamColor);
 
             // call websocket and stuff with move passed in hehe :)
             return "pass";
