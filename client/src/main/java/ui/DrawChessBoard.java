@@ -25,38 +25,6 @@ public class DrawChessBoard {
         }
     }
 
-//    public void main() {
-//        var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-//        out.print(EscapeSequences.SET_TEXT_BOLD);
-//        boolean reverse = false;
-//        drawHeaders(out, reverse);
-//        drawBoard(out, reverse);
-//        out.println();
-//        drawHeaders(out, reverse);
-//        out.println();
-//        out.println();
-//        out.println();
-//        out.println();
-//
-//        reverse = true;
-//        pieces.clear();
-//
-//        for (int i = 0; i < 8; i++) {
-//            for (int j = 0; j < 8; j++) {
-//                ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
-//                pieces.add(piece);
-//            }
-//        }
-//
-//        counter = 0;
-//        var out2 = new PrintStream(System.out, true, StandardCharsets.UTF_8);
-//        drawHeaders(out2, reverse);
-//        drawBoard(out2, reverse);
-//        out.println();
-//        drawHeaders(out2, reverse);
-//        out.println();
-//    }
-
     public void drawBlackBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.SET_TEXT_BOLD);
@@ -67,6 +35,7 @@ public class DrawChessBoard {
         drawHeaders(out, reverse);
         out.println();
     }
+
     public void drawWhiteBoard() {
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);

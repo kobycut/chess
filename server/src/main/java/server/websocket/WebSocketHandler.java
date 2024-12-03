@@ -52,48 +52,55 @@ public class WebSocketHandler {
     }
 
     private void makeMove(String username, ChessMove move, Integer gameId, String playerColor, String moveString) throws DataAccessException, InvalidMoveException, IOException {
-        var db = new MySqlGameDataAccess();
-        GameData gameData = db.getGame(gameId);
-        ChessGame.TeamColor teamColor = ChessGame.TeamColor.BLACK;
-        ChessGame.TeamColor oppColor = ChessGame.TeamColor.WHITE;
-        var oppUsername = gameData.whiteUsername();
-        if (playerColor.equals("WHITE")) {
-            teamColor = ChessGame.TeamColor.WHITE;
-            oppColor = ChessGame.TeamColor.BLACK;
-            oppUsername = gameData.blackUsername();
+        try {
+            var db = new MySqlGameDataAccess();
+            GameData gameData = db.getGame(gameId);
+            ChessGame.TeamColor teamColor = ChessGame.TeamColor.BLACK;
+            ChessGame.TeamColor oppColor = ChessGame.TeamColor.WHITE;
+            var oppUsername = gameData.whiteUsername();
+            if (playerColor.equals("WHITE")) {
+                teamColor = ChessGame.TeamColor.WHITE;
+                oppColor = ChessGame.TeamColor.BLACK;
+                oppUsername = gameData.blackUsername();
 
-        }
+            }
 
-        var message = String.format("%s moved %s", username, moveString);
-        String stateMessage = null;
-        var pieceColor = gameData.chessGame().getBoard().getPiece(move.getStartPosition()).getTeamColor();
-        if (teamColor == pieceColor) {
-            // throw error
-        }
-        gameData.chessGame().makeMove(move);
-        db.updateGame(gameData, playerColor, username);
-        loadGame(gameData, playerColor);
+            var message = String.format("%s moved %s", username, moveString);
+            String stateMessage = null;
+            var pieceColor = gameData.chessGame().getBoard().getPiece(move.getStartPosition()).getTeamColor();
+            if (teamColor == pieceColor) {
+                // throw error
+            }
 
-        if (gameData.chessGame().isInCheck(oppColor)) {
-            stateMessage = String.format("%s is in check", oppUsername);
-        }
-        if (gameData.chessGame().isInCheckmate(teamColor)) {
-            stateMessage = String.format("%s is in checkmate", oppUsername);
-        }
-        if (gameData.chessGame().isInStalemate(teamColor)) {
-            stateMessage = "stalemate";
-        }
+            gameData.chessGame().makeMove(move);
+            db.updateGame(gameData, playerColor, username);
+            loadGame(gameData, playerColor);
 
-        var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message, new GameDataPlayerColor(gameData, playerColor));
-        var moveNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
-        connections.broadcast(moveNotification, username, gameId);
+            if (gameData.chessGame().isInCheck(oppColor)) {
+                stateMessage = String.format("%s is in check", oppUsername);
+            }
+            if (gameData.chessGame().isInCheckmate(teamColor)) {
+                stateMessage = String.format("%s is in checkmate", oppUsername);
+            }
+            if (gameData.chessGame().isInStalemate(teamColor)) {
+                stateMessage = "stalemate";
+            }
 
-        connections.broadcast(loadGameNotification, username, gameId);
+            var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message, new GameDataPlayerColor(gameData, playerColor));
+            var moveNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null);
+            connections.broadcast(moveNotification, username, gameId);
 
-        gameData.chessGame().setTeamTurn(oppColor);
-        if (stateMessage != null) {
-            var gameStateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, stateMessage, null);
-            connections.broadcast(gameStateNotification, null, gameId);
+            connections.broadcast(loadGameNotification, username, gameId);
+
+            gameData.chessGame().setTeamTurn(oppColor);
+            if (stateMessage != null) {
+                var gameStateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, stateMessage, null);
+                connections.broadcast(gameStateNotification, null, gameId);
+            }
+        } catch (Exception ex) {
+            var errorMessage = "please enter a valid move";
+            var errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, errorMessage, null);
+            connections.broadcastLoad(errorNotification, username);
         }
     }
 
