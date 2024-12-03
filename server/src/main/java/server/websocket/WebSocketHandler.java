@@ -73,6 +73,7 @@ public class WebSocketHandler {
 
             var message = String.format("%s moved %s", username, moveString);
             String stateMessage = null;
+            String winMessage = null;
             var pieceColor = gameData.chessGame().getBoard().getPiece(move.getStartPosition()).getTeamColor();
             if (teamColor == pieceColor) {
                 // throw error
@@ -87,9 +88,11 @@ public class WebSocketHandler {
             }
             if (gameData.chessGame().isInCheckmate(teamColor)) {
                 stateMessage = String.format("%s is in checkmate", oppUsername);
+                winMessage = String.format("%s WON!", username);
             }
             if (gameData.chessGame().isInStalemate(teamColor)) {
                 stateMessage = "stalemate";
+                winMessage = "STALEMATE";
             }
 
             var loadGameNotification = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, message, new GameDataPlayerColor(gameData, playerColor));
@@ -101,6 +104,10 @@ public class WebSocketHandler {
             if (stateMessage != null) {
                 var gameStateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, stateMessage, null);
                 connections.broadcast(gameStateNotification, null, gameId);
+            }
+            if (winMessage != null) {
+                var winStateNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, winMessage, null);
+                connections.broadcast(winStateNotification, null, gameId);
             }
         } catch (Exception ex) {
             var errorMessage = "please enter a valid move";

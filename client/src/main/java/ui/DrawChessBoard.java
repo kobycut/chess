@@ -1,9 +1,6 @@
 package ui;
 
-import chess.ChessBoard;
-import chess.ChessGame;
-import chess.ChessPiece;
-import chess.ChessPosition;
+import chess.*;
 
 import java.io.PrintStream;
 import java.nio.charset.StandardCharsets;
@@ -14,6 +11,7 @@ public class DrawChessBoard {
     private ChessBoard board;
     private List<ChessPiece> pieces = new ArrayList<>();
     private int counter = 0;
+    private List<ChessMove> validMoves;
 
     public DrawChessBoard(ChessBoard board) {
         this.board = board;
@@ -23,20 +21,21 @@ public class DrawChessBoard {
                 pieces.add(piece);
             }
         }
+
     }
 
-    public void drawBlackBoard() {
+    public void drawBlackBoard(Boolean highlight) {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.SET_TEXT_BOLD);
         boolean reverse = false;
         drawHeaders(out, reverse);
-        drawBoard(out, reverse);
+        drawBoard(out, reverse, highlight);
         out.println();
         drawHeaders(out, reverse);
         out.println();
     }
 
-    public void drawWhiteBoard() {
+    public void drawWhiteBoard(Boolean highlight) {
 
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.SET_TEXT_BOLD);
@@ -53,7 +52,7 @@ public class DrawChessBoard {
         counter = 0;
         var out2 = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         drawHeaders(out2, reverse);
-        drawBoard(out2, reverse);
+        drawBoard(out2, reverse, highlight);
         out.println();
         drawHeaders(out2, reverse);
         out.println();
@@ -89,28 +88,29 @@ public class DrawChessBoard {
         }
     }
 
-    private void drawBoard(PrintStream out, boolean reverse) {
+    private void drawBoard(PrintStream out, boolean reverse, boolean highlight) {
         int bgNum = 1;
         for (int i = 0; i < 8; i++) {
             out.println();
-            drawSquare(out, i, 1, bgNum, reverse);
+            drawSquare(out, i, 1, bgNum, reverse, highlight);
             bgNum += 1;
             for (int j = 0; j < 8; j++) {
-                drawSquare(out, i, 0, bgNum, reverse);
+                drawSquare(out, i, 0, bgNum, reverse, highlight);
                 bgNum += 1;
             }
-            drawSquare(out, i, 1, bgNum, reverse);
+            drawSquare(out, i, 1, bgNum, reverse, highlight);
         }
 
     }
 
-    private void drawSquare(PrintStream out, int index, int bool, int bgNum, boolean reverse) {
+    private void drawSquare(PrintStream out, int index, int bool, int bgNum, boolean reverse, boolean highlight) {
 
         String[] sideHeaders = {"1", "2", "3", "4", "5", "6", "7", "8"};
         if (reverse) {
             sideHeaders = new String[]{"8", "7", "6", "5", "4", "3", "2", "1"};
         }
         out.print(EscapeSequences.SET_BG_COLOR_BLACK);
+
         if (bgNum % 2 == 0) {
             out.print(EscapeSequences.SET_BG_COLOR_WHITE);
         }

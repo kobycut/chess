@@ -226,11 +226,11 @@ public class ChessClient {
     private void drawBoard(ChessBoard board, String playerColor) {
         DrawChessBoard drawChessBoard = new DrawChessBoard(board);
         if (observing == Observing.OBSERVING) {
-            drawChessBoard.drawWhiteBoard();
+            drawChessBoard.drawWhiteBoard(false);
         } else if (playerColor.equals("WHITE")) {
-            drawChessBoard.drawWhiteBoard();
+            drawChessBoard.drawWhiteBoard(false);
         } else if (playerColor.equals("BLACK")) {
-            drawChessBoard.drawBlackBoard();
+            drawChessBoard.drawBlackBoard(false);
         }
     }
 
@@ -250,7 +250,7 @@ public class ChessClient {
             drawBoard(board, teamColor);
             return "redrew the board";
         } else {
-            throw new DataAccessException(400, "please play or observe a game to view to complete this action");
+            throw new DataAccessException(400, "please play or observe a game to complete this action");
         }
     }
 
@@ -313,8 +313,19 @@ public class ChessClient {
         return String.format(username + " resigned");
     }
 
-    public String highlight() {
-        return "pass";
+    public String highlight() throws DataAccessException {
+        var board = chessBoard;
+        if (board == null) {
+            board = new ChessBoard();
+            board.resetBoard();
+        }
+        if (playing == Playing.PLAYING || observing == Observing.OBSERVING) {
+
+            highlightBoard(board, teamColor);
+            return "highlighted the board";
+        } else {
+            throw new DataAccessException(400, "please play or observe a game to complete this action");
+        }
     }
 
     private Integer getCol(char letter) {
@@ -375,5 +386,15 @@ public class ChessClient {
         return row;
     }
 
+    private void highlightBoard(ChessBoard board, String playerColor) {
+        DrawChessBoard drawChessBoard = new DrawChessBoard(board);
+        if (observing == Observing.OBSERVING) {
+            drawChessBoard.drawWhiteBoard(true);
+        } else if (playerColor.equals("WHITE")) {
+            drawChessBoard.drawWhiteBoard(true);
+        } else if (playerColor.equals("BLACK")) {
+            drawChessBoard.drawBlackBoard(true);
+        }
+    }
 }
 
