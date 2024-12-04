@@ -184,8 +184,8 @@ public class WebSocketHandler {
             }
 
 
-            db.updateGame(gameData, playerColor, username);
-
+            db.updateGame(gameData, playerColor, null);
+            GameData gameData1 = db.getGame(gameId);
             connections.broadcast(notification, username, gameId);
         } catch (Exception ex) {
             var errorMessage = "cannot leave";
