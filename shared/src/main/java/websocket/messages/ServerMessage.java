@@ -1,6 +1,5 @@
 package websocket.messages;
 
-import chess.ChessBoard;
 import com.google.gson.Gson;
 import model.GameData;
 import model.GameDataPlayerColor;
@@ -16,7 +15,7 @@ import java.util.Objects;
 public class ServerMessage {
     ServerMessageType serverMessageType;
     public String message;
-    public GameDataPlayerColor gameData;
+    public GameData game;
     public String errorMessage;
 
     public enum ServerMessageType {
@@ -25,10 +24,10 @@ public class ServerMessage {
         NOTIFICATION
     }
 
-    public ServerMessage(ServerMessageType type, String message, GameDataPlayerColor gameData, String errorMessage) {
+    public ServerMessage(ServerMessageType type, String message, GameData game, String errorMessage) {
         this.serverMessageType = type;
         this.message = message;
-        this.gameData = gameData;
+        this.game = game;
         this.errorMessage = errorMessage;
     }
 

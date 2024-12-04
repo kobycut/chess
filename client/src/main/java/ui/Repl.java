@@ -6,6 +6,7 @@ import chess.ChessBoard;
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
 import facades.NotificationHandler;
+import model.GameData;
 import model.GameDataPlayerColor;
 import ui.EscapeSequences.*;
 import websocket.messages.ServerMessage;
@@ -54,11 +55,11 @@ public class Repl implements NotificationHandler {
         }
         if (notification.getServerMessageType() == ServerMessage.ServerMessageType.LOAD_GAME) {
             System.out.println("\n");
-            GameDataPlayerColor obj = (GameDataPlayerColor) notification.gameData;
-            var board = obj.getGameData().chessGame().getBoard();
+            GameData obj = notification.game;
+            var board = obj.chessGame().getBoard();
             client.chessBoard = board;
 
-            var playerColor = obj.getPlayerColor();
+            var playerColor = client.teamColor;
             var drawBoard = new DrawChessBoard(board);
             if (playerColor.equals("WHITE")) {
                 drawBoard.drawWhiteBoard(false);

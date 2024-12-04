@@ -157,7 +157,7 @@ public class Server {
             playerColor = obj.get("playerColor").getAsString();
         }
 
-//        GameData gameDataServer = joinGameService.join(authToken, gameData, playerColor);
+        joinGameService.join(authToken, gameData, playerColor);
 //        webSocketHandler.loadGame(gameDataServer, playerColor);
 
         res.status(200);

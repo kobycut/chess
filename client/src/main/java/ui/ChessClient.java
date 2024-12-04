@@ -22,7 +22,7 @@ public class ChessClient {
     private AuthData authData;
     private Playing playing = Playing.NOTPLAYING;
     private Observing observing = Observing.NOTOBSERVING;
-    private String teamColor;
+    public String teamColor;
     private Integer gameId;
     public ChessBoard chessBoard;
     private final String serverUrl;
@@ -185,10 +185,10 @@ public class ChessClient {
             gameId = id;
             String playerColor = params[1];
             teamColor = playerColor;
-
+            server.joinGame(id, playerColor, authData);
             ws = new WebSocketFacade(serverUrl, notificationHandler);
             ws.joinGame(username, playerColor, id, authData.authToken());
-            server.joinGame(id, playerColor, authData);
+
 
             playing = Playing.PLAYING; // new
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
@@ -276,9 +276,7 @@ public class ChessClient {
                 char endNum = endLet.charAt(1);
 
                 int startRow = Character.getNumericValue(startNum);
-                startRow = getRow(startRow);
                 int endRow = Character.getNumericValue(endNum);
-                endRow = getRow(endRow);
                 Integer startCol = getCol(startLetter);
                 Integer endCol = getCol(endLetter);
                 ChessPosition startPos = new ChessPosition(startRow, startCol);
@@ -316,9 +314,9 @@ public class ChessClient {
         String stringWrongPos = params[0];
         var charCol = stringWrongPos.charAt(0);
         var charRow = stringWrongPos.charAt(1);
-        int row = getRow(Character.getNumericValue(charRow));
+//        int row = getRow(Character.getNumericValue(charRow));
         int col = getCol(charCol);
-        ChessPosition position = new ChessPosition(row, col);
+        ChessPosition position = new ChessPosition(Character.getNumericValue(charRow), col);
 
 
         if (board == null) {
@@ -363,34 +361,34 @@ public class ChessClient {
         return col;
     }
 
-    private Integer getRow(Integer num) {
-        int row = 1;
-        switch (num) {
-            case 7 -> {
-                row = 2;
-            }
-            case 6 -> {
-                row = 3;
-            }
-            case 5 -> {
-                row = 4;
-            }
-            case 4 -> {
-                row = 5;
-            }
-            case 3 -> {
-                row = 6;
-            }
-            case 2 -> {
-                row = 7;
-            }
-            case 1 -> {
-                row = 8;
-            }
-        }
-        ;
-        return row;
-    }
+//    private Integer getRow(Integer num) {
+//        int row = 1;
+//        switch (num) {
+//            case 7 -> {
+//                row = 2;
+//            }
+//            case 6 -> {
+//                row = 3;
+//            }
+//            case 5 -> {
+//                row = 4;
+//            }
+//            case 4 -> {
+//                row = 5;
+//            }
+//            case 3 -> {
+//                row = 6;
+//            }
+//            case 2 -> {
+//                row = 7;
+//            }
+//            case 1 -> {
+//                row = 8;
+//            }
+//        }
+//        ;
+//        return row;
+//    }
 
     private void highlightBoard(ChessBoard board, String playerColor) {
         DrawChessBoard drawChessBoard = new DrawChessBoard(board);
