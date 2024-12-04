@@ -38,7 +38,8 @@ public class WebSocketHandler {
             case CONNECT -> connect(command.getUsername(), session, command.getGameID(), command.getAuthToken());
             case MAKE_MOVE ->
                     makeMove(command.getUsername(), command.getMove(), command.getGameID(), command.getTeamColor(), command.getMoveString(), command.getAuthToken());
-            case LEAVE -> leave(command.getUsername(), session, command.getGameID(), command.getTeamColor());
+            case LEAVE ->
+                    leave(command.getUsername(), session, command.getGameID(), command.getTeamColor(), command.getAuthToken());
             case RESIGN -> resign(command.getUsername(), session, command.getGameID(), command.getAuthToken());
         }
     }
@@ -164,19 +165,27 @@ public class WebSocketHandler {
         }
     }
 
-    private void leave(String username, Session session, Integer gameId, String playerColor) throws IOException, DataAccessException {
+    private void leave(String username, Session session, Integer gameId, String playerColor, String authToken) throws IOException, DataAccessException {
         try {
+            var authdb = new MySqlAuthDataAccess();
+            if (username == null) {
+                var authData = authdb.getAuthData(authToken);
+                username = authData.username();
+            }
             connections.remove(username);
             var message = String.format("%s left the game", username);
             var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null, null);
             var db = new MySqlGameDataAccess();
             GameData gameData = db.getGame(gameId);
+            playerColor = "WHITE";
 
-            db.updateGame(gameData, playerColor, null);
-            var lst = new ArrayList<String>();
-            lst.add(gameData.whiteUsername());
-            lst.add(gameData.blackUsername());
-            lst.removeIf(Objects::isNull);
+            if (Objects.equals(gameData.blackUsername(), username)) {
+                playerColor = "BLACK";
+            }
+
+
+            db.updateGame(gameData, playerColor, username);
+
             connections.broadcast(notification, username, gameId);
         } catch (Exception ex) {
             var errorMessage = "cannot leave";
@@ -193,15 +202,22 @@ public class WebSocketHandler {
             AuthData authData = authdb.getAuthData(authToken);
             username = authData.username();
             if (!Objects.equals(username, gameData.whiteUsername()) && !Objects.equals(username, gameData.blackUsername())) {
-                throw new DataAccessException(400, "not allowed to resign");
+                throw new DataAccessException(400, "not allowed to resign, not a player in game");
+            }
+            if (gameData.chessGame().getTeamTurn() == ChessGame.TeamColor.OVER) {
+                throw new DataAccessException(400, "not allowed to resign, game already over");
             }
 
             var message = String.format("%s resigned", username);
             var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null, null);
             gameData.chessGame().setTeamTurn(ChessGame.TeamColor.OVER);
-            connections.broadcast(notification, username, gameId);
+            db.updateGame(gameData, "WHITE", username);
+            connections.broadcast(notification, null, gameId);
         } catch (Exception ex) {
             var errorMessage = "could not resign";
+            if (ex.getMessage() != null) {
+                errorMessage = ex.getMessage();
+            }
             var errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, null, null, errorMessage);
             connections.broadcastLoad(errorNotification, username);
         }
@@ -260,6 +276,7 @@ public class WebSocketHandler {
         ;
         return row;
     }
+
     private char getCol(Integer num) {
         char col = 'a';
         switch (num) {
