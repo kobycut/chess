@@ -121,9 +121,9 @@ public class WebSocketHandler {
 
 
 
-            if (teamColor != pieceColor) {
-                throw new DataAccessException(400, "move was not valid");
-            }
+//            if (teamColor != pieceColor) {
+//                throw new DataAccessException(400, "move was not valid");
+//            }
 
 
             gameData.chessGame().setTeamTurn(oppColor);
