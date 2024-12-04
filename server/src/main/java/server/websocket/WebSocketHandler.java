@@ -84,12 +84,12 @@ public class WebSocketHandler {
             var db = new MySqlGameDataAccess();
             var authdb = new MySqlAuthDataAccess();
             GameData gameData = db.getGame(gameId);
-            if (gameData.chessGame().getTeamTurn() == ChessGame.TeamColor.OVER) {
-                throw new DataAccessException(400, "cannot move when game is over");
-            }
             if (username == null) {
                 var authData = authdb.getAuthData(authToken);
                 username = authData.username();
+            }
+            if (gameData.chessGame().getTeamTurn() == ChessGame.TeamColor.OVER) {
+                throw new DataAccessException(400, "cannot move when game is over");
             }
             playerColor = "BLACK";
             if (Objects.equals(username, gameData.whiteUsername())) {
@@ -116,19 +116,22 @@ public class WebSocketHandler {
             }
             gameData.chessGame().makeMove(move);
             db.updateGame(gameData, playerColor, username);
-            loadGame(gameData, playerColor);
+            var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameData, null);
+
+//            loadGame(gameData, username);
+            connections.broadcast(loadGame, null, gameId);
 
             if (gameData.chessGame().isInCheck(oppColor)) {
                 stateMessage = String.format("%s is in check", oppUsername);
             }
             if (gameData.chessGame().isInCheckmate(teamColor)) {
                 stateMessage = String.format("%s is in checkmate", oppUsername);
-                winMessage = String.format("%s WON!", username);
+//                winMessage = String.format("%s WON!", username);
                 gameData.chessGame().setTeamTurn(ChessGame.TeamColor.OVER);
             }
             if (gameData.chessGame().isInStalemate(teamColor)) {
                 stateMessage = "stalemate";
-                winMessage = "STALEMATE";
+//                winMessage = "STALEMATE";
             }
 
 
@@ -160,7 +163,7 @@ public class WebSocketHandler {
             if (ex.getMessage() != null) {
                 errorMessage = ex.getMessage();
             }
-            var errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, errorMessage, null, null);
+            var errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, null, null, errorMessage);
             connections.broadcastLoad(errorNotification, username);
         }
     }

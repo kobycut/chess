@@ -30,7 +30,7 @@ public class DrawChessBoard {
         out.print(EscapeSequences.SET_TEXT_BOLD);
         boolean reverse = false;
         drawHeaders(out, reverse);
-        drawBoard(out, reverse);
+        drawBoard(out, reverse, validMoves);
         out.println();
         drawHeaders(out, reverse);
         out.println();
@@ -53,7 +53,7 @@ public class DrawChessBoard {
         counter = 0;
         var out2 = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         drawHeaders(out2, reverse);
-        drawBoard(out2, reverse);
+        drawBoard(out2, reverse, validMoves);
         out.println();
         drawHeaders(out2, reverse);
         out.println();
@@ -89,22 +89,22 @@ public class DrawChessBoard {
         }
     }
 
-    private void drawBoard(PrintStream out, boolean reverse) {
+    private void drawBoard(PrintStream out, boolean reverse, Collection<ChessMove> validMoves) {
         int bgNum = 1;
         for (int i = 0; i < 8; i++) {
             out.println();
-            drawSquare(out, i, 1, bgNum, reverse);
+            drawSquare(out, i, 1, bgNum, reverse, validMoves);
             bgNum += 1;
             for (int j = 0; j < 8; j++) {
-                drawSquare(out, i, 0, bgNum, reverse);
+                drawSquare(out, i, 0, bgNum, reverse, validMoves);
                 bgNum += 1;
             }
-            drawSquare(out, i, 1, bgNum, reverse);
+            drawSquare(out, i, 1, bgNum, reverse, validMoves);
         }
 
     }
 
-    private void drawSquare(PrintStream out, int index, int bool, int bgNum, boolean reverse) {
+    private void drawSquare(PrintStream out, int index, int bool, int bgNum, boolean reverse, Collection<ChessMove> validMoves) {
 
         String[] sideHeaders = {"1", "2", "3", "4", "5", "6", "7", "8"};
         if (reverse) {
@@ -135,6 +135,8 @@ public class DrawChessBoard {
                     }
                     out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
                     ChessPiece piece = pieces.get(counter);
+
+
                     if (piece == null) {
                         out.print(" ");
 
