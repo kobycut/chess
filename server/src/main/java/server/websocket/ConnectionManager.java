@@ -51,12 +51,33 @@ public class ConnectionManager {
             connections.remove(c.visitorName);
         }
     }
+
     public void broadcastLoad(ServerMessage notification, String includeUser) throws IOException {
         var removeList = new ArrayList<Connection>();
 
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (Objects.equals(c.visitorName, includeUser)) {
+                    c.send(notification.toString());
+                    break;
+                }
+            } else {
+                removeList.add(c);
+            }
+        }
+
+        // Clean up any connections that were left open.
+        for (var c : removeList) {
+            connections.remove(c.visitorName);
+        }
+    }
+
+    public void broadcastSession(ServerMessage notification, Session session) throws IOException {
+        var removeList = new ArrayList<Connection>();
+
+        for (var c : connections.values()) {
+            if (c.session.isOpen()) {
+                if (c.session == session) {
                     c.send(notification.toString());
                     break;
                 }

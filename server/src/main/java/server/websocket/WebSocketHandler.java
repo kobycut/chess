@@ -31,13 +31,13 @@ public class WebSocketHandler {
     @OnWebSocketMessage
     public void onMessage(Session session, String message) throws IOException, DataAccessException, InvalidMoveException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
-        if (command.getCommandType() == UserGameCommand.CommandType.CONNECT) {
-
-        }
+//        if (command.getCommandType() == UserGameCommand.CommandType.CONNECT) {
+//
+//        }
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getUsername(), session, command.getGameID(), command.getAuthToken());
             case MAKE_MOVE ->
-                    makeMove(command.getUsername(), command.getMove(), command.getGameID(), command.getTeamColor(), command.getMoveString(), command.getAuthToken());
+                    makeMove(command.getUsername(), command.getMove(), command.getGameID(), command.getTeamColor(), command.getMoveString(), command.getAuthToken(), session);
             case LEAVE ->
                     leave(command.getUsername(), session, command.getGameID(), command.getTeamColor(), command.getAuthToken());
             case RESIGN -> resign(command.getUsername(), session, command.getGameID(), command.getAuthToken());
@@ -79,13 +79,17 @@ public class WebSocketHandler {
         }
     }
 
-    private void makeMove(String username, ChessMove move, Integer gameId, String playerColor, String moveString, String authToken) throws DataAccessException, InvalidMoveException, IOException {
+    private void makeMove(String username, ChessMove move, Integer gameId, String playerColor, String moveString, String authToken, Session session) throws DataAccessException, InvalidMoveException, IOException {
         try {
             var db = new MySqlGameDataAccess();
             var authdb = new MySqlAuthDataAccess();
             GameData gameData = db.getGame(gameId);
+            var authData = authdb.getAuthData(authToken);
+
+            if (authData == null) {
+                throw new DataAccessException(400, "bad auth token");
+            }
             if (username == null) {
-                var authData = authdb.getAuthData(authToken);
                 username = authData.username();
             }
             if (gameData.chessGame().getTeamTurn() == ChessGame.TeamColor.OVER) {
@@ -164,6 +168,10 @@ public class WebSocketHandler {
                 errorMessage = ex.getMessage();
             }
             var errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, null, null, errorMessage);
+
+            if (errorMessage == "bad auth token") {
+                connections.broadcastSession(errorNotification, session);
+            }
             connections.broadcastLoad(errorNotification, username);
         }
     }
