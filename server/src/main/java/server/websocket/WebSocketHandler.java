@@ -10,6 +10,7 @@ import dataaccess.MySqlAuthDataAccess;
 import dataaccess.MySqlGameDataAccess;
 import dataaccess.MySqlUserDataAccess;
 import exceptions.DataAccessException;
+import model.AuthData;
 import model.GameData;
 import model.GameDataPlayerColor;
 import org.eclipse.jetty.websocket.api.Session;
@@ -31,14 +32,14 @@ public class WebSocketHandler {
     public void onMessage(Session session, String message) throws IOException, DataAccessException, InvalidMoveException {
         UserGameCommand command = new Gson().fromJson(message, UserGameCommand.class);
         if (command.getCommandType() == UserGameCommand.CommandType.CONNECT) {
-            System.out.println("recieved connect command");
+
         }
         switch (command.getCommandType()) {
             case CONNECT -> connect(command.getUsername(), session, command.getGameID(), command.getAuthToken());
             case MAKE_MOVE ->
                     makeMove(command.getUsername(), command.getMove(), command.getGameID(), command.getTeamColor(), command.getMoveString(), command.getAuthToken());
             case LEAVE -> leave(command.getUsername(), session, command.getGameID(), command.getTeamColor());
-            case RESIGN -> resign(command.getUsername(), session, command.getGameID());
+            case RESIGN -> resign(command.getUsername(), session, command.getGameID(), command.getAuthToken());
         }
     }
 
@@ -184,17 +185,24 @@ public class WebSocketHandler {
         }
     }
 
-    private void resign(String username, Session session, Integer gameId) throws IOException {
+    private void resign(String username, Session session, Integer gameId, String authToken) throws IOException {
         try {
             var db = new MySqlGameDataAccess();
+            var authdb = new MySqlAuthDataAccess();
             GameData gameData = db.getGame(gameId);
+            AuthData authData = authdb.getAuthData(authToken);
+            username = authData.username();
+            if (!Objects.equals(username, gameData.whiteUsername()) && !Objects.equals(username, gameData.blackUsername())) {
+                throw new DataAccessException(400, "not allowed to resign");
+            }
+
             var message = String.format("%s resigned", username);
             var notification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message, null, null);
             gameData.chessGame().setTeamTurn(ChessGame.TeamColor.OVER);
             connections.broadcast(notification, username, gameId);
         } catch (Exception ex) {
             var errorMessage = "could not resign";
-            var errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, errorMessage, null, null);
+            var errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, null, null, errorMessage);
             connections.broadcastLoad(errorNotification, username);
         }
     }

@@ -39,7 +39,7 @@ public class ConnectionManager {
 //                        }
 //                    }
                     c.send(notification.toString());
-                    System.out.println("Sent notification");
+
                 }
             } else {
                 removeList.add(c);
