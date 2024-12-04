@@ -29,7 +29,6 @@ public class UserGameCommand {
         this.teamColor = teamColor;
         this.move = move;
         this.moveString = moveString;
-
     }
 
     public enum CommandType {

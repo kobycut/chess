@@ -13,7 +13,7 @@ import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
 public class ConnectionManager {
-    public final ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
+    public ConcurrentHashMap<String, Connection> connections = new ConcurrentHashMap<>();
 
     public void add(String username, Session session, ChessBoard board, Integer gameId) {
         var connection = new Connection(username, session, board, gameId);
@@ -39,6 +39,7 @@ public class ConnectionManager {
                         }
                     }
                     c.send(notification.toString());
+                    System.out.println("Sent notification");
                 }
             } else {
                 removeList.add(c);
@@ -57,6 +58,7 @@ public class ConnectionManager {
             if (c.session.isOpen()) {
                 if (Objects.equals(c.visitorName, includeUser)) {
                     c.send(notification.toString());
+                    break;
                 }
             } else {
                 removeList.add(c);

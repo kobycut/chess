@@ -1,10 +1,8 @@
 package ui;
 
-import chess.ChessMove;
-import chess.ChessPosition;
+import chess.*;
 import facades.NotificationHandler;
 import facades.ServerFacade;
-import chess.ChessBoard;
 import com.google.gson.Gson;
 import exceptions.*;
 import facades.WebSocketFacade;
@@ -58,7 +56,7 @@ public class ChessClient {
                 case "leave" -> leave();
                 case "makeMove" -> makeMove(params);
                 case "resign" -> resign();
-                case "highlight" -> highlight();
+                case "highlight" -> highlight(params);
                 default -> help();
             };
         } catch (Exception ex) {
@@ -308,13 +306,21 @@ public class ChessClient {
         if (playing == Playing.NOTPLAYING) {
             throw new DataAccessException(400, "Can't resign if you are not in a game");
         }
-        ws.resign(username);
+        ws.resign(username, gameId);
         playing = Playing.NOTPLAYING;
         return String.format(username + " resigned");
     }
 
-    public String highlight() throws DataAccessException {
+    public String highlight(String... params) throws DataAccessException {
         var board = chessBoard;
+        String stringWrongPos = params[0];
+        var charCol = stringWrongPos.charAt(0);
+        var charRow = stringWrongPos.charAt(1);
+        int row = getRow(Character.getNumericValue(charRow));
+        int col = getCol(charCol);
+        ChessPosition position = new ChessPosition(row, col);
+
+
         if (board == null) {
             board = new ChessBoard();
             board.resetBoard();
