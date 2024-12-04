@@ -53,6 +53,8 @@ public class WebSocketHandler {
                 var authdb = new MySqlAuthDataAccess();
                 var authData = authdb.getAuthData(authToken);
                 username = authData.username();
+
+
             }
             if (Objects.equals(gameData.blackUsername(), username)) {
                 teamColor = "BLACK";
@@ -115,9 +117,16 @@ public class WebSocketHandler {
             var endRow = getRow(move.getEndPosition().getRow());
             move = new ChessMove(new ChessPosition(startRow, move.getStartPosition().getColumn()), new ChessPosition(endRow, move.getEndPosition().getColumn()), null);
             var pieceColor = gameData.chessGame().getBoard().getPiece(move.getStartPosition()).getTeamColor();
-            if (teamColor == pieceColor) {
+
+
+
+
+            if (teamColor != pieceColor) {
                 throw new DataAccessException(400, "move was not valid");
             }
+
+
+            gameData.chessGame().setTeamTurn(oppColor);
             gameData.chessGame().makeMove(move);
             db.updateGame(gameData, playerColor, username);
             var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameData, null);

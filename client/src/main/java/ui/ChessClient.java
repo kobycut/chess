@@ -287,7 +287,8 @@ public class ChessClient {
 
 
                 ws = new WebSocketFacade(serverUrl, notificationHandler);
-                ws.makeMove(username, move, gameId, teamColor, moveString);
+
+                ws.makeMove(username, move, gameId, teamColor, moveString, authData);
 
 //                return String.format(username + " moved " + startLetter + Integer.toString(startRow) + " to " + endLetter + Integer.toString(endRow));
                 return "moved";

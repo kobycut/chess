@@ -3,6 +3,7 @@ package facades;
 import chess.ChessMove;
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
+import model.AuthData;
 import ui.ChessClient;
 import ui.DrawChessBoard;
 import websocket.commands.UserGameCommand;
@@ -10,6 +11,7 @@ import websocket.messages.ServerMessage;
 
 import javax.websocket.*;
 import java.io.IOException;
+import java.net.Authenticator;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -70,9 +72,9 @@ public class WebSocketFacade extends Endpoint {
             throw new DataAccessException(500, "could not resign game");
         }
     }
-    public void makeMove(String username, ChessMove move, Integer gameId, String playerColor, String moveString) throws DataAccessException {
+    public void makeMove(String username, ChessMove move, Integer gameId, String playerColor, String moveString, AuthData authData) throws DataAccessException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, null, gameId, username, playerColor, move, moveString);
+            var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authData.authToken(), gameId, username, playerColor, move, moveString);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         }catch (Exception ex) {
             throw new DataAccessException(500, "could not make move");

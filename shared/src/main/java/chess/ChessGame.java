@@ -113,7 +113,7 @@ public class ChessGame {
         var validMoves = validMoves(move.getStartPosition());
         TeamColor teamTurn = getTeamTurn();
 
-        if (chessBoard.getPiece(move.getStartPosition()).getTeamColor() == teamTurn) {
+        if (chessBoard.getPiece(move.getStartPosition()).getTeamColor() != teamTurn) {
             throw new InvalidMoveException("No valid moves");
         }
 
