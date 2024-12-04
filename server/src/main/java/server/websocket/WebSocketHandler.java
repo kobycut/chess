@@ -112,21 +112,21 @@ public class WebSocketHandler {
 
             String stateMessage = null;
             String winMessage = null;
-
-            var startRow = getRow(move.getStartPosition().getRow());
-            var endRow = getRow(move.getEndPosition().getRow());
-            move = new ChessMove(new ChessPosition(startRow, move.getStartPosition().getColumn()), new ChessPosition(endRow, move.getEndPosition().getColumn()), null);
             var pieceColor = gameData.chessGame().getBoard().getPiece(move.getStartPosition()).getTeamColor();
 
 
 
 
-//            if (teamColor != pieceColor) {
-//                throw new DataAccessException(400, "move was not valid");
-//            }
+            if (teamColor != pieceColor) {
+                throw new DataAccessException(400, "move was not valid");
+            }
 
 
-            gameData.chessGame().setTeamTurn(oppColor);
+//            gameData.chessGame().setTeamTurn(oppColor);
+//            var startRow = getRow(move.getStartPosition().getRow());
+//            var endRow = getRow(move.getEndPosition().getRow());
+//            move = new ChessMove(new ChessPosition(startRow, move.getStartPosition().getColumn()), new ChessPosition(endRow, move.getEndPosition().getColumn()), null);
+
             gameData.chessGame().makeMove(move);
             db.updateGame(gameData, playerColor, username);
             var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameData, null);
