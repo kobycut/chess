@@ -11,6 +11,7 @@ import model.GameData;
 import model.GameDataCollection;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 
 import static java.lang.Integer.parseInt;
@@ -224,11 +225,11 @@ public class ChessClient {
     private void drawBoard(ChessBoard board, String playerColor) {
         DrawChessBoard drawChessBoard = new DrawChessBoard(board);
         if (observing == Observing.OBSERVING) {
-            drawChessBoard.drawWhiteBoard(false);
+            drawChessBoard.drawWhiteBoard(null);
         } else if (playerColor.equals("WHITE")) {
-            drawChessBoard.drawWhiteBoard(false);
+            drawChessBoard.drawWhiteBoard(null);
         } else if (playerColor.equals("BLACK")) {
-            drawChessBoard.drawBlackBoard(false);
+            drawChessBoard.drawBlackBoard(null);
         }
     }
 
@@ -310,22 +311,26 @@ public class ChessClient {
     }
 
     public String highlight(String... params) throws DataAccessException {
-        var board = chessBoard;
-        String stringWrongPos = params[0];
-        var charCol = stringWrongPos.charAt(0);
-        var charRow = stringWrongPos.charAt(1);
-//        int row = getRow(Character.getNumericValue(charRow));
-        int col = getCol(charCol);
-        ChessPosition position = new ChessPosition(Character.getNumericValue(charRow), col);
 
-
-        if (board == null) {
-            board = new ChessBoard();
-            board.resetBoard();
-        }
         if (playing == Playing.PLAYING || observing == Observing.OBSERVING) {
+            var board = chessBoard;
 
-            highlightBoard(board, teamColor);
+            if (board == null) {
+                board = new ChessBoard();
+                board.resetBoard();
+            }
+
+            String stringWrongPos = params[0];
+            var charCol = stringWrongPos.charAt(0);
+            var charRow = stringWrongPos.charAt(1);
+//        int row = getRow(Character.getNumericValue(charRow));
+            int col = getCol(charCol);
+            ChessPosition position = new ChessPosition(Character.getNumericValue(charRow), col);
+            var pieceAtPos = board.getPiece(position);
+            ChessPiece piece = new ChessPiece(pieceAtPos.getTeamColor(), pieceAtPos.getPieceType());
+            Collection<ChessMove> validMoves = piece.pieceMoves(board, position);
+
+            highlightBoard(board, teamColor, validMoves);
             return "highlighted the board";
         } else {
             throw new DataAccessException(400, "please play or observe a game to complete this action");
@@ -390,14 +395,14 @@ public class ChessClient {
 //        return row;
 //    }
 
-    private void highlightBoard(ChessBoard board, String playerColor) {
+    private void highlightBoard(ChessBoard board, String playerColor, Collection<ChessMove> validMoves) {
         DrawChessBoard drawChessBoard = new DrawChessBoard(board);
         if (observing == Observing.OBSERVING) {
-            drawChessBoard.drawWhiteBoard(true);
+            drawChessBoard.drawWhiteBoard(validMoves);
         } else if (playerColor.equals("WHITE")) {
-            drawChessBoard.drawWhiteBoard(true);
+            drawChessBoard.drawWhiteBoard(validMoves);
         } else if (playerColor.equals("BLACK")) {
-            drawChessBoard.drawBlackBoard(true);
+            drawChessBoard.drawBlackBoard(validMoves);
         }
     }
 }
