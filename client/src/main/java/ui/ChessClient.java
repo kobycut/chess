@@ -224,13 +224,13 @@ public class ChessClient {
     }
 
     private void drawBoard(ChessBoard board, String playerColor) {
-        DrawChessBoard drawChessBoard = new DrawChessBoard(board);
+        DrawChessBoard drawChessBoard = new DrawChessBoard(board, null);
         if (observing == Observing.OBSERVING) {
-            drawChessBoard.drawWhiteBoard(null);
+            drawChessBoard.drawWhiteBoard();
         } else if (playerColor.equals("WHITE")) {
-            drawChessBoard.drawWhiteBoard(null);
+            drawChessBoard.drawWhiteBoard();
         } else if (playerColor.equals("BLACK")) {
-            drawChessBoard.drawBlackBoard(null);
+            drawChessBoard.drawBlackBoard();
         }
     }
 
@@ -369,13 +369,13 @@ public class ChessClient {
 
 
     private void highlightBoard(ChessBoard board, String playerColor, Collection<ChessMove> validMoves) {
-        DrawChessBoard drawChessBoard = new DrawChessBoard(board);
+        DrawChessBoard drawChessBoard = new DrawChessBoard(board, validMoves);
         if (observing == Observing.OBSERVING) {
-            drawChessBoard.drawWhiteBoard(validMoves);
+            drawChessBoard.drawWhiteBoard();
         } else if (playerColor.equals("WHITE")) {
-            drawChessBoard.drawWhiteBoard(validMoves);
+            drawChessBoard.drawWhiteBoard();
         } else if (playerColor.equals("BLACK")) {
-            drawChessBoard.drawBlackBoard(validMoves);
+            drawChessBoard.drawBlackBoard();
         }
     }
 }

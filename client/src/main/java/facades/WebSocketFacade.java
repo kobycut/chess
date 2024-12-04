@@ -4,14 +4,10 @@ import chess.ChessMove;
 import com.google.gson.Gson;
 import exceptions.DataAccessException;
 import model.AuthData;
-import ui.ChessClient;
-import ui.DrawChessBoard;
 import websocket.commands.UserGameCommand;
 import websocket.messages.ServerMessage;
-
 import javax.websocket.*;
 import java.io.IOException;
-import java.net.Authenticator;
 import java.net.URI;
 import java.net.URISyntaxException;
 
@@ -28,8 +24,6 @@ public class WebSocketFacade extends Endpoint {
 
             WebSocketContainer container = ContainerProvider.getWebSocketContainer();
             this.session = container.connectToServer(this, socketURI);
-
-            //set message handler
             this.session.addMessageHandler(new MessageHandler.Whole<String>() {
                 @Override
                 public void onMessage(String message) {

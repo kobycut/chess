@@ -7,25 +7,43 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 
 public class DrawChessBoard {
-    private ChessBoard board;
-    private List<ChessPiece> pieces = new ArrayList<>();
+    private final ChessBoard board;
+    private final List<ChessPiece> pieces = new ArrayList<>();
     private int counter = 0;
-    private List<ChessMove> validMoves;
+    private List<Integer> validMoveList = new ArrayList<>();
+    private final Collection<ChessMove> validMoves;
 
-    public DrawChessBoard(ChessBoard board) {
+    public DrawChessBoard(ChessBoard board, Collection<ChessMove> validMoves) {
         this.board = board;
+        this.validMoves = validMoves;
+
         for (int i = 7; i > -1; i--) {
             for (int j = 7; j > -1; j--) {
+                var ifValid = 0;
                 ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
+                if (validMoves != null) {
+                    for (ChessMove validMove : validMoves) {
+                        if (Objects.equals(validMove.getEndPosition(), new ChessPosition(i + 1, j + 1))) {
+                            ifValid = 1;
+                            break;
+                        }
+                    }
+                }
+
                 pieces.add(piece);
+                if (validMoves != null) {
+                    validMoveList.add(ifValid);
+                }
+
             }
         }
 
     }
 
-    public void drawBlackBoard(Collection<ChessMove> validMoves) {
+    public void drawBlackBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.SET_TEXT_BOLD);
         boolean reverse = false;
@@ -36,8 +54,7 @@ public class DrawChessBoard {
         out.println();
     }
 
-    public void drawWhiteBoard(Collection<ChessMove> validMoves) {
-
+    public void drawWhiteBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.SET_TEXT_BOLD);
         boolean reverse = true;
@@ -135,7 +152,13 @@ public class DrawChessBoard {
                     }
                     out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
                     ChessPiece piece = pieces.get(counter);
-
+                    if (!validMoveList.isEmpty()) {
+                        if (validMoveList.size() >= counter) {
+                            if (validMoveList.get(counter) == 1) {
+                                out.print(EscapeSequences.SET_BG_COLOR_MAGENTA);
+                            }
+                        }
+                    }
 
                     if (piece == null) {
                         out.print(" ");
@@ -144,12 +167,12 @@ public class DrawChessBoard {
                         continue;
                     }
                     if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
+
                         out.print(EscapeSequences.SET_TEXT_COLOR_RED);
 
 
                         out.print(piece.toString().toUpperCase());
                     } else {
-
 
                         out.print(piece.toString().toUpperCase());
                     }

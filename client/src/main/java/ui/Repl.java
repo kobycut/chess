@@ -61,16 +61,16 @@ public class Repl implements NotificationHandler {
             client.chessBoard = board;
 
             var playerColor = client.teamColor;
-            var drawBoard = new DrawChessBoard(board);
+            var drawBoard = new DrawChessBoard(board, null);
             if (playerColor.equals("WHITE")) {
-                drawBoard.drawWhiteBoard(null);
+                drawBoard.drawWhiteBoard();
 
             } else if (playerColor.equals("BLACK")) {
-                drawBoard.drawBlackBoard(null);
+                drawBoard.drawBlackBoard();
 
             }
             else {
-                drawBoard.drawWhiteBoard(null);
+                drawBoard.drawWhiteBoard();
             }
 
             printPrompt();
