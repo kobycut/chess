@@ -43,7 +43,8 @@ public class Repl implements NotificationHandler {
     }
 
     private void printPrompt() {
-        System.out.print("\n" + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + ">>> " + EscapeSequences.SET_TEXT_COLOR_MAGENTA);
+        System.out.print("\n" + EscapeSequences.RESET_BG_COLOR + EscapeSequences.RESET_TEXT_COLOR + ">>> " +
+                EscapeSequences.SET_TEXT_COLOR_MAGENTA);
     }
 
     @Override
@@ -75,7 +76,8 @@ public class Repl implements NotificationHandler {
             printPrompt();
             return;
         }
-        System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA + notification.getServerMessageType() + " " + EscapeSequences.SET_TEXT_COLOR_BLUE + notification.message);
+        System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA + notification.getServerMessageType() + " " +
+                EscapeSequences.SET_TEXT_COLOR_BLUE + notification.message);
         printPrompt();
     }
 }

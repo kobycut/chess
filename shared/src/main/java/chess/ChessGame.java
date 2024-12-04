@@ -116,7 +116,6 @@ public class ChessGame {
         if (chessBoard.getPiece(move.getStartPosition()).getTeamColor() != teamTurn) {
             throw new InvalidMoveException("No valid moves");
         }
-
         if (validMoves == null) {
             throw new InvalidMoveException("No valid moves");
         }
@@ -138,8 +137,6 @@ public class ChessGame {
                 setTeamTurn(teamColor);
                 return;
             }
-
-
         }
         throw new InvalidMoveException("Invalid Moves");
     }

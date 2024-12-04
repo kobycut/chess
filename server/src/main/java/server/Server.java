@@ -148,7 +148,8 @@ public class Server {
         return (new Gson().toJson(game));
     }
 
-    private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException, BadRequestException, AlreadyTakenException, IOException {
+    private String joinGame(Request req, Response res) throws UnauthorizedException, DataAccessException,
+            BadRequestException, AlreadyTakenException, IOException {
         String playerColor = null;
         String authToken = req.headers("authorization");
         GameData gameData = new Gson().fromJson(req.body(), GameData.class);

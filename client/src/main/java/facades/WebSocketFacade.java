@@ -42,41 +42,49 @@ public class WebSocketFacade extends Endpoint {
         }
 
 
-
     }
+
     @Override
     public void onOpen(Session session, EndpointConfig endpointConfig) {
     }
+
     public void joinGame(String username, String teamColor, Integer gameId, String authToken) throws DataAccessException {
-       try {
-           var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId, username, teamColor, null, null);
-           this.session.getBasicRemote().sendText(new Gson().toJson(command));
-       } catch (Exception ex) {
-           throw new DataAccessException(500, "could not join game");
-       }
+        try {
+            var command = new UserGameCommand(UserGameCommand.CommandType.CONNECT, authToken, gameId, username,
+                    teamColor, null, null);
+            this.session.getBasicRemote().sendText(new Gson().toJson(command));
+        } catch (Exception ex) {
+            throw new DataAccessException(500, "could not join game");
+        }
 
     }
+
     public void leaveGame(String username, Integer gameId, String teamColor) throws DataAccessException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, null, gameId, username, teamColor, null, null);
+            var command = new UserGameCommand(UserGameCommand.CommandType.LEAVE, null, gameId, username,
+                    teamColor, null, null);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception ex) {
             throw new DataAccessException(500, "could not leave game");
         }
     }
+
     public void resign(String username, Integer gameId) throws DataAccessException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, null, gameId, username, null, null, null);
+            var command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, null, gameId, username,
+                    null, null, null);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception ex) {
             throw new DataAccessException(500, "could not resign game");
         }
     }
-    public void makeMove(String username, ChessMove move, Integer gameId, String playerColor, String moveString, AuthData authData) throws DataAccessException {
+
+    public void makeMove(String username, ChessMove move, Integer gameId, String playerColor, String moveString,
+                         AuthData authData) throws DataAccessException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.MAKE_MOVE, authData.authToken(), gameId, username, playerColor, move, moveString);
+            var command = new UserGameCmand(UserGameCommand.CommandType.MAKE_MOVE, authData.authToken(), gameId, username, playerColor, move, moveString);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
-        }catch (Exception ex) {
+        } catch (Exception ex) {
             throw new DataAccessException(500, "could not make move");
         }
     }

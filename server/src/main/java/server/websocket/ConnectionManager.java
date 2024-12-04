@@ -1,14 +1,13 @@
 package server.websocket;
 
 import chess.ChessBoard;
-import chess.ChessGame;
-import model.GameData;
+
 import org.eclipse.jetty.websocket.api.Session;
 import websocket.messages.ServerMessage;
 
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.List;
+
 import java.util.Objects;
 import java.util.concurrent.ConcurrentHashMap;
 
@@ -30,14 +29,7 @@ public class ConnectionManager {
         for (var c : connections.values()) {
             if (c.session.isOpen()) {
                 if (!Objects.equals(c.visitorName, excludeUser) && Objects.equals(c.gameId, gameId)) {
-//                    if (notification.gameData != null) {
-//                        if (Objects.equals(c.visitorName, notification.gameData.getGameData().blackUsername())) {
-//                            notification.gameData.setPlayerColor("BLACK");
-//                        }
-//                        if (Objects.equals(c.visitorName, notification.gameData.getGameData().whiteUsername())) {
-//                            notification.gameData.setPlayerColor("WHITE");
-//                        }
-//                    }
+
                     c.send(notification.toString());
 
                 }
@@ -46,7 +38,6 @@ public class ConnectionManager {
             }
         }
 
-        // Clean up any connections that were left open.
         for (var c : removeList) {
             connections.remove(c.visitorName);
         }
@@ -66,7 +57,6 @@ public class ConnectionManager {
             }
         }
 
-        // Clean up any connections that were left open.
         for (var c : removeList) {
             connections.remove(c.visitorName);
         }
@@ -86,7 +76,6 @@ public class ConnectionManager {
             }
         }
 
-        // Clean up any connections that were left open.
         for (var c : removeList) {
             connections.remove(c.visitorName);
         }
