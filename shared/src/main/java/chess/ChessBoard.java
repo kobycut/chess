@@ -22,7 +22,7 @@ public class ChessBoard {
         if (this == o) {
             return true;
         }
-        if (o == null || getClass() != o.getClass()){
+        if (o == null || getClass() != o.getClass()) {
             return false;
         }
         ChessBoard that = (ChessBoard) o;
@@ -68,7 +68,7 @@ public class ChessBoard {
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                ChessPosition position = new ChessPosition(i+1, j+1);
+                ChessPosition position = new ChessPosition(i + 1, j + 1);
                 if (this.getPiece(position) == null) {
                     continue;
                 }
@@ -137,4 +137,23 @@ public class ChessBoard {
         }
         return string.toString();
     }
+
+    public void mirrorBoard() {
+        for (int i = 0; i < board.length; i++) {
+            reverseRow(board[i]);
+        }
+
+    }
+
+    private void reverseRow(ChessPiece[] row) {
+        int left = 0, right = row.length - 1;
+        while (left < right) {
+            ChessPiece temp = row[left]; // Fix: Use ChessPiece instead of char
+            row[left] = row[right];
+            row[right] = temp;
+            left++;
+            right--;
+        }
+    }
+
 }

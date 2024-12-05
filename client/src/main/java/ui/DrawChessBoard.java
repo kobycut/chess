@@ -17,7 +17,9 @@ public class DrawChessBoard {
     private final Collection<ChessMove> validMoves;
 
     public DrawChessBoard(ChessBoard board, Collection<ChessMove> validMoves) {
+        board.mirrorBoard();
         this.board = board;
+
         this.validMoves = validMoves;
 
         for (int i = 7; i > -1; i--) {
@@ -43,10 +45,10 @@ public class DrawChessBoard {
 
     }
 
-    public void drawBlackBoard() {
+    public void drawWhiteBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.SET_TEXT_BOLD);
-        boolean reverse = false;
+        boolean reverse = true;
         drawHeaders(out, reverse);
         drawBoard(out, reverse, validMoves);
         out.println();
@@ -54,10 +56,10 @@ public class DrawChessBoard {
         out.println();
     }
 
-    public void drawWhiteBoard() {
+    public void drawBlackBoard() {
         var out = new PrintStream(System.out, true, StandardCharsets.UTF_8);
         out.print(EscapeSequences.SET_TEXT_BOLD);
-        boolean reverse = true;
+        boolean reverse = false;
         pieces.clear();
 
         for (int i = 0; i < 8; i++) {
@@ -150,7 +152,7 @@ public class DrawChessBoard {
                         out.print(sideHeaders[index]);
                         continue;
                     }
-                    out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
+                    out.print(EscapeSequences.SET_TEXT_COLOR_RED);
                     ChessPiece piece = pieces.get(counter);
                     if (!validMoveList.isEmpty()) {
                         if (validMoveList.size() >= counter) {
@@ -168,7 +170,7 @@ public class DrawChessBoard {
                     }
                     if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
 
-                        out.print(EscapeSequences.SET_TEXT_COLOR_RED);
+                        out.print(EscapeSequences.SET_TEXT_COLOR_BLUE);
 
 
                         out.print(piece.toString().toUpperCase());

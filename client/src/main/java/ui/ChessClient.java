@@ -321,7 +321,7 @@ public class ChessClient {
                 board = new ChessBoard();
                 board.resetBoard();
             }
-
+            board.mirrorBoard();
             String stringWrongPos = params[0];
             var charCol = stringWrongPos.charAt(0);
             var charRow = stringWrongPos.charAt(1);
