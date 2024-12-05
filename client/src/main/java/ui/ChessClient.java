@@ -294,13 +294,14 @@ public class ChessClient {
 
                 ws.makeMove(username, move, gameId, teamColor, moveString, authData);
 
-                return "moved";
+
             } catch (Exception ex) {
                 throw new DataAccessException(500, "move invalid");
             }
         } else {
             throw new DataAccessException(400, "provide the correct move information");
         }
+        return "NONE";
 
 
     }
@@ -309,8 +310,8 @@ public class ChessClient {
         if (playing == Playing.NOTPLAYING) {
             throw new DataAccessException(400, "Can't resign if you are not in a game");
         }
-        ws.resign(username, gameId);
-        playing = Playing.NOTPLAYING;
+        ws.resign(username, gameId, authData.authToken());
+//        playing = Playing.NOTPLAYING;
         return String.format(username + " resigned");
     }
 

@@ -114,6 +114,9 @@ public class WebSocketHandler {
             }
             String stateMessage = null;
             String winMessage = null;
+            if (gameData.chessGame().getBoard().getPiece(move.getStartPosition()) == null) {
+                throw new DataAccessException(400, "invalid move, no piece at that location");
+            }
             var pieceColor = gameData.chessGame().getBoard().getPiece(move.getStartPosition()).getTeamColor();
             if (teamColor != pieceColor) {
                 throw new DataAccessException(400, "move was not valid");

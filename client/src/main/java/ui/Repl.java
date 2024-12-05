@@ -1,5 +1,6 @@
 package ui;
 
+import java.util.Objects;
 import java.util.Scanner;
 
 import chess.ChessBoard;
@@ -33,10 +34,14 @@ public class Repl implements NotificationHandler {
 
             try {
                 result = client.eval(line);
-                System.out.print(result);
+                if (!Objects.equals(result, "NONE")) {
+                    System.out.print(result);
+                }
             } catch (Throwable e) {
                 var msg = e.toString();
+
                 System.out.print(msg);
+
             }
         }
         System.out.println();
@@ -67,13 +72,15 @@ public class Repl implements NotificationHandler {
             } else if (playerColor.equals("BLACK")) {
                 drawBoard.drawBlackBoard();
 
-            }
-            else {
+            } else {
                 drawBoard.drawWhiteBoard();
             }
 
             printPrompt();
             return;
+        }
+        if (notification.message == null && notification.errorMessage != null) {
+            notification.message = notification.errorMessage;
         }
         System.out.println(EscapeSequences.SET_TEXT_COLOR_MAGENTA + notification.getServerMessageType() + " " +
                 EscapeSequences.SET_TEXT_COLOR_BLUE + notification.message);

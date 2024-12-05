@@ -63,9 +63,9 @@ public class WebSocketFacade extends Endpoint {
         }
     }
 
-    public void resign(String username, Integer gameId) throws DataAccessException {
+    public void resign(String username, Integer gameId, String authToken) throws DataAccessException {
         try {
-            var command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, null, gameId, username,
+            var command = new UserGameCommand(UserGameCommand.CommandType.RESIGN, authToken, gameId, username,
                     null, null, null);
             this.session.getBasicRemote().sendText(new Gson().toJson(command));
         } catch (Exception ex) {
