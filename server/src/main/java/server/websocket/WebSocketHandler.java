@@ -127,25 +127,27 @@ public class WebSocketHandler {
                     null);
             connections.broadcast(loadGame, null, gameId);
             boolean imreallytired = true;
-            if (gameData.chessGame().isInStalemate(oppColor)) {
+            if (gameData.chessGame().isInStalemate(oppColor) || gameData.chessGame().isInStalemate(teamColor) ) {
                 stateMessage = "stalemate";
                 gameData.chessGame().setTeamTurn(ChessGame.TeamColor.OVER);
                 db.updateGame(gameData, "WHITE", username);
                 imreallytired = false;
 
             }
-            if (imreallytired == true) {
-                if (gameData.chessGame().isInCheckmate(oppColor)) {
+            if (imreallytired) {
+                if (gameData.chessGame().isInCheck(oppColor) || gameData.chessGame().isInCheck(teamColor) ) {
+                    stateMessage = String.format("%s is in check", oppUsername);
+
+                }
+
+                if (gameData.chessGame().isInCheckmate(oppColor) || gameData.chessGame().isInCheckmate(teamColor) ) {
                     stateMessage = String.format("%s is in checkmate", oppUsername);
                     gameData.chessGame().setTeamTurn(ChessGame.TeamColor.OVER);
                     db.updateGame(gameData, "WHITE", username);
-                    imreallytired = false;
-                }
+
+
             }
-            if (imreallytired == true) {
-                if (gameData.chessGame().isInCheck(oppColor)) {
-                    stateMessage = String.format("%s is in check", oppUsername);
-                }
+
             }
 
 
@@ -171,9 +173,9 @@ public class WebSocketHandler {
             }
         } catch (Exception ex) {
             var errorMessage = "please enter a valid move";
-            if (ex.getMessage() != null) {
-                errorMessage = ex.getMessage();
-            }
+//            if (ex.getMessage() != null) {
+//                errorMessage = ex.getMessage();
+//            }
             var errorNotification = new ServerMessage(ServerMessage.ServerMessageType.ERROR, null,
                     null, errorMessage);
             if (Objects.equals(errorMessage, "bad auth token")) {
@@ -202,7 +204,12 @@ public class WebSocketHandler {
             if (Objects.equals(gameData.blackUsername(), username)) {
                 playerColor = "BLACK";
             }
-            db.updateGame(gameData, playerColor, null);
+            if (!Objects.equals(gameData.whiteUsername(), username) && !Objects.equals(gameData.blackUsername(), username)) {
+                playerColor = "OBSERVER";
+            }
+            if (!playerColor.equals("OBSERVER")) {
+                db.updateGame(gameData, playerColor, null);
+            }
             connections.broadcast(notification, username, gameId);
         } catch (Exception ex) {
             var errorMessage = "cannot leave";
@@ -261,7 +268,6 @@ public class WebSocketHandler {
     }
 
 
-
     private char getCol(Integer num) {
         char col = 'a';
         switch (num) {
@@ -290,6 +296,7 @@ public class WebSocketHandler {
 
         return col;
     }
+
     private char getRow(Integer num) {
         char col = '1';
         switch (num) {

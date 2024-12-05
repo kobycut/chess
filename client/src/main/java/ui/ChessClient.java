@@ -77,6 +77,7 @@ public class ChessClient {
 
         if (playing == Playing.PLAYING) {
             return """
+                    - help
                     - redraw
                     - leave
                     - makeMove <START POSITION> <END POSITION> (e.g. e7 e5)
@@ -86,12 +87,14 @@ public class ChessClient {
         }
         if (state == State.SIGNEDOUT) {
             return """
+                    - help
                     - register <USERNAME> <PASSWORD> <EMAIL>
                     - login <USERNAME> <PASSWORD>
                     - quit
                     """;
         }
         return """
+                - help
                 - createGame <GAME NAME>
                 - listGames
                 - playGame <ID> [WHITE|BLACK]
@@ -202,6 +205,7 @@ public class ChessClient {
         checkSignedIn();
         if (params.length == 1) {
             Integer id = parseInt(params[0]);
+            gameId = id;
             observing = Observing.OBSERVING;
             ws = new WebSocketFacade(serverUrl, notificationHandler);
             ws.joinGame(username, "Observer", id, authData.authToken());
