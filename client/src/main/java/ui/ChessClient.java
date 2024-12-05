@@ -12,6 +12,8 @@ import model.GameDataCollection;
 
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 
 import static java.lang.Integer.parseInt;
@@ -321,16 +323,23 @@ public class ChessClient {
                 board = new ChessBoard();
                 board.resetBoard();
             }
-            board.mirrorBoard();
+//            board.mirrorBoard();
             String stringWrongPos = params[0];
             var charCol = stringWrongPos.charAt(0);
             var charRow = stringWrongPos.charAt(1);
             int col = getCol(charCol);
             ChessPosition position = new ChessPosition(Character.getNumericValue(charRow), col);
+//            if (Objects.equals(teamColor, "WHITE")) {
+                position = findMirroredPosition(position);
+//            }
+//            if (Objects.equals(teamColor, "BLACK")) {
+//                position = findMirroredPositionVert(position);
+//            }
             var pieceAtPos = board.getPiece(position);
             ChessPiece piece = new ChessPiece(pieceAtPos.getTeamColor(), pieceAtPos.getPieceType());
             Collection<ChessMove> validMoves = piece.pieceMoves(board, position);
-
+//            Collection<ChessMove> mirroredValidMoves = findMirrorValidMoves(validMoves);
+            board.mirrorBoard();
             highlightBoard(board, teamColor, validMoves);
             return "highlighted the board";
         } else {
@@ -370,6 +379,7 @@ public class ChessClient {
 
     private void highlightBoard(ChessBoard board, String playerColor, Collection<ChessMove> validMoves) {
         DrawChessBoard drawChessBoard = new DrawChessBoard(board, validMoves);
+
         if (observing == Observing.OBSERVING) {
             drawChessBoard.drawWhiteBoard();
         } else if (playerColor.equals("WHITE")) {
@@ -378,5 +388,34 @@ public class ChessClient {
             drawChessBoard.drawBlackBoard();
         }
     }
+
+    private Collection<ChessMove> findMirrorValidMoves(Collection<ChessMove> validMoves) {
+        Collection<ChessMove> mirroredMoves = new CopyOnWriteArrayList<>();
+
+        for (ChessMove move : validMoves) {
+            ChessPosition start = move.getStartPosition();
+            ChessPosition end = move.getEndPosition();
+
+            ChessPosition mirroredStart = new ChessPosition(start.getRow(), 8 - start.getColumn() + 1);
+            ChessPosition mirroredEnd = new ChessPosition(end.getRow(), 8 - end.getColumn() + 1);
+
+            ChessMove mirroredMove = new ChessMove(mirroredStart, mirroredEnd, move.getPromotionPiece());
+            mirroredMoves.add(mirroredMove);
+        }
+        return mirroredMoves;
+
+    }
+
+    private ChessPosition findMirroredPosition(ChessPosition position) {
+        int mirroredRow = position.getRow(); // Mirror the row
+        int mirroredCol = 9 - position.getColumn();     // Column stays the same
+        return new ChessPosition(mirroredRow, mirroredCol);
+    }
+    private ChessPosition findMirroredPositionVert(ChessPosition position) {
+        int mirroredRow = 9 - position.getRow(); // Mirror the row
+        int mirroredCol = position.getColumn();     // Column stays the same
+        return new ChessPosition(mirroredRow, mirroredCol);
+    }
+
 }
 

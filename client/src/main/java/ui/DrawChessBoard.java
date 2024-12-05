@@ -61,11 +61,24 @@ public class DrawChessBoard {
         out.print(EscapeSequences.SET_TEXT_BOLD);
         boolean reverse = false;
         pieces.clear();
+        validMoveList.clear();
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
+                var ifValid = 0;
                 ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
+                if (validMoves != null) {
+                    for (ChessMove validMove : validMoves) {
+                        if (Objects.equals(validMove.getEndPosition(), new ChessPosition(i + 1, j + 1))) {
+                            ifValid = 1;
+                            break;
+                        }
+                    }
+                }
                 pieces.add(piece);
+                if (validMoves != null) {
+                    validMoveList.add(ifValid);
+                }
             }
         }
 
@@ -145,7 +158,14 @@ public class DrawChessBoard {
                 if (i == 0 && j == 0 || i == 2 && j == 2 || i == 0 && j == 1 || i == 2 && j == 1 || i == 1 && j == 2 || i == 1 && j == 0) {
                     continue;
                 }
+                if (!validMoveList.isEmpty()) {
+                    if (validMoveList.size() > counter) {
+                        if (validMoveList.get(counter) == 1 && i != 2) {
+                            out.print(EscapeSequences.SET_BG_COLOR_MAGENTA);
+                        }
 
+                    }
+                }
                 if (i == 1) {
                     if (bool == 1) {
                         out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
@@ -154,13 +174,7 @@ public class DrawChessBoard {
                     }
                     out.print(EscapeSequences.SET_TEXT_COLOR_RED);
                     ChessPiece piece = pieces.get(counter);
-                    if (!validMoveList.isEmpty()) {
-                        if (validMoveList.size() >= counter) {
-                            if (validMoveList.get(counter) == 1) {
-                                out.print(EscapeSequences.SET_BG_COLOR_MAGENTA);
-                            }
-                        }
-                    }
+
 
                     if (piece == null) {
                         out.print(" ");
@@ -178,6 +192,7 @@ public class DrawChessBoard {
 
                         out.print(piece.toString().toUpperCase());
                     }
+
                     counter++;
                     continue;
                 }
