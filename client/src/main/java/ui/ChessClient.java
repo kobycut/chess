@@ -71,7 +71,7 @@ public class ChessClient {
             return """
                     - redraw
                     - leave
-                    - highlight (highlights legal moves)
+                    - highlight <MOVE> (highlights legal moves)
                     """;
         }
 
@@ -81,7 +81,7 @@ public class ChessClient {
                     - leave
                     - makeMove <START POSITION> <END POSITION> (e.g. e7 e5)
                     - resign
-                    - highlight (highlights legal moves)
+                    - highlight <MOVE> (highlights legal moves)
                     """;
         }
         if (state == State.SIGNEDOUT) {
