@@ -15,11 +15,12 @@ public class DrawChessBoard {
     private int counter = 0;
     private List<Integer> validMoveList = new ArrayList<>();
     private final Collection<ChessMove> validMoves;
+    private final ChessPosition position;
 
-    public DrawChessBoard(ChessBoard board, Collection<ChessMove> validMoves) {
+    public DrawChessBoard(ChessBoard board, Collection<ChessMove> validMoves, ChessPosition position) {
         board.mirrorBoard();
         this.board = board;
-
+        this.position = position;
         this.validMoves = validMoves;
 
         for (int i = 7; i > -1; i--) {
@@ -27,6 +28,9 @@ public class DrawChessBoard {
                 var ifValid = 0;
                 ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
                 if (validMoves != null) {
+                    if (Objects.equals(position, new ChessPosition(i + 1, j + 1))) {
+                        ifValid = 2;
+                    }
                     for (ChessMove validMove : validMoves) {
                         if (Objects.equals(validMove.getEndPosition(), new ChessPosition(i + 1, j + 1))) {
                             ifValid = 1;
@@ -68,6 +72,9 @@ public class DrawChessBoard {
                 var ifValid = 0;
                 ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
                 if (validMoves != null) {
+                    if (Objects.equals(position, new ChessPosition(i + 1, j + 1))) {
+                        ifValid = 2;
+                    }
                     for (ChessMove validMove : validMoves) {
                         if (Objects.equals(validMove.getEndPosition(), new ChessPosition(i + 1, j + 1))) {
                             ifValid = 1;
@@ -137,39 +144,50 @@ public class DrawChessBoard {
     }
 
     private void drawSquare(PrintStream out, int index, int bool, int bgNum, boolean reverse, Collection<ChessMove> validMoves) {
-
+        var tileColor = "BLACK";
         String[] sideHeaders = {"1", "2", "3", "4", "5", "6", "7", "8"};
         if (reverse) {
             sideHeaders = new String[]{"8", "7", "6", "5", "4", "3", "2", "1"};
         }
         out.print(EscapeSequences.SET_BG_COLOR_BLACK);
 
+
         if (bgNum % 2 == 0) {
             out.print(EscapeSequences.SET_BG_COLOR_WHITE);
+            tileColor = "WHITE";
         }
 
         for (int i = 0; i < 3; i++) {
             for (int j = 0; j < 3; j++) {
-
+                boolean skip = false;
                 if (bool == 1) {
                     out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
+                    skip = true;
                     out.print(EscapeSequences.SET_TEXT_COLOR_BLACK);
                 }
                 if (i == 0 && j == 0 || i == 2 && j == 2 || i == 0 && j == 1 || i == 2 && j == 1 || i == 1 && j == 2 || i == 1 && j == 0) {
                     continue;
                 }
-                if (!validMoveList.isEmpty()) {
+                if (!validMoveList.isEmpty() && skip == false) {
                     if (validMoveList.size() > counter) {
                         if (validMoveList.get(counter) == 1 && i != 2) {
-                            out.print(EscapeSequences.SET_BG_COLOR_MAGENTA);
+                            if (tileColor.equals("BLACK")) {
+                                out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
+                            } else {
+                                out.print(EscapeSequences.SET_BG_COLOR_GREEN);
+                            }
                         }
-
+                        if (validMoveList.get(counter) == 2 && i != 2) {
+                            out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+                        }
                     }
                 }
                 if (i == 1) {
                     if (bool == 1) {
                         out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                         out.print(sideHeaders[index]);
+//                        out.print(EscapeSequences.RESET_BG_COLOR);
+
                         continue;
                     }
                     out.print(EscapeSequences.SET_TEXT_COLOR_RED);
@@ -180,6 +198,7 @@ public class DrawChessBoard {
                         out.print(" ");
 
                         counter++;
+//                        out.print(EscapeSequences.RESET_BG_COLOR);
                         continue;
                     }
                     if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
@@ -194,6 +213,7 @@ public class DrawChessBoard {
                     }
 
                     counter++;
+//                    out.print(EscapeSequences.RESET_BG_COLOR);
                     continue;
                 }
                 out.print(" ");

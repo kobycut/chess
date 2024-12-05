@@ -226,7 +226,7 @@ public class ChessClient {
     }
 
     private void drawBoard(ChessBoard board, String playerColor) {
-        DrawChessBoard drawChessBoard = new DrawChessBoard(board, null);
+        DrawChessBoard drawChessBoard = new DrawChessBoard(board, null, null);
         if (observing == Observing.OBSERVING) {
             drawChessBoard.drawWhiteBoard();
         } else if (playerColor.equals("WHITE")) {
@@ -340,7 +340,7 @@ public class ChessClient {
             Collection<ChessMove> validMoves = piece.pieceMoves(board, position);
 //            Collection<ChessMove> mirroredValidMoves = findMirrorValidMoves(validMoves);
             board.mirrorBoard();
-            highlightBoard(board, teamColor, validMoves);
+            highlightBoard(board, teamColor, validMoves, position);
             return "highlighted the board";
         } else {
             throw new DataAccessException(400, "please play or observe a game to complete this action");
@@ -377,8 +377,8 @@ public class ChessClient {
     }
 
 
-    private void highlightBoard(ChessBoard board, String playerColor, Collection<ChessMove> validMoves) {
-        DrawChessBoard drawChessBoard = new DrawChessBoard(board, validMoves);
+    private void highlightBoard(ChessBoard board, String playerColor, Collection<ChessMove> validMoves, ChessPosition position) {
+        DrawChessBoard drawChessBoard = new DrawChessBoard(board, validMoves, position);
 
         if (observing == Observing.OBSERVING) {
             drawChessBoard.drawWhiteBoard();
