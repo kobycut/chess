@@ -240,10 +240,12 @@ public class ChessClient {
     public String redrawBoard() throws DataAccessException {
 
         var board = chessBoard;
+
         if (board == null) {
             board = new ChessBoard();
             board.resetBoard();
         }
+        board.mirrorBoard();
         if (playing == Playing.PLAYING || observing == Observing.OBSERVING) {
             if (observing == Observing.OBSERVING) {
                 drawBoard(board, "WHITE");
