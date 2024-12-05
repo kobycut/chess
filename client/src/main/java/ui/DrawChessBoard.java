@@ -25,14 +25,7 @@ public class DrawChessBoard {
 
         for (int i = 7; i > -1; i--) {
             for (int j = 7; j > -1; j--) {
-                var ifValid = 0;
-                ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
-                ifValid = func(i, j, ifValid);
-                pieces.add(piece);
-                if (validMoves != null) {
-                    validMoveList.add(ifValid);
-                }
-
+                func2(i, j);
             }
         }
 
@@ -73,13 +66,7 @@ public class DrawChessBoard {
 
         for (int i = 0; i < 8; i++) {
             for (int j = 0; j < 8; j++) {
-                var ifValid = 0;
-                ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
-                ifValid = func(i, j, ifValid);
-                pieces.add(piece);
-                if (validMoves != null) {
-                    validMoveList.add(ifValid);
-                }
+                func2(i, j);
             }
         }
 
@@ -91,7 +78,15 @@ public class DrawChessBoard {
         drawHeaders(out2, reverse);
         out.println();
     }
-
+    private void func2(int i, int j) {
+        var ifValid = 0;
+        ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
+        ifValid = func(i, j, ifValid);
+        pieces.add(piece);
+        if (validMoves != null) {
+            validMoveList.add(ifValid);
+        }
+    }
     private void drawHeaders(PrintStream out, boolean reverse) {
         String[] headers = {" ", "h", "g", "f", "e", "d", "c", "b", "a", " "};
         if (reverse) {
@@ -162,13 +157,12 @@ public class DrawChessBoard {
                 if (i == 0 && j == 0 || i == 2 && j == 2 || i == 0 && j == 1 || i == 2 && j == 1 || i == 1 && j == 2 || i == 1 && j == 0) {
                     continue;
                 }
-                if (!validMoveList.isEmpty() && skip == false && validMoveList.size() > counter) {
-                    if (validMoveList.get(counter) == 1 && i != 2) {
-                        if (tileColor.equals("BLACK")) {
-                            out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
-                        } else {
-                            out.print(EscapeSequences.SET_BG_COLOR_GREEN);
-                        }
+                if (!validMoveList.isEmpty() && !skip && validMoveList.size() > counter) {
+                    if (validMoveList.get(counter) == 1 && i != 2 && tileColor.equals("BLACK")) {
+                        out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
+                    }
+                    if (validMoveList.get(counter) == 1 && i != 2 && !tileColor.equals("BLACK")) {
+                        out.print(EscapeSequences.SET_BG_COLOR_GREEN);
                     }
                     if (validMoveList.get(counter) == 2 && i != 2) {
                         out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
@@ -179,10 +173,10 @@ public class DrawChessBoard {
                     if (bool == 1) {
                         out.print(EscapeSequences.SET_BG_COLOR_LIGHT_GREY);
                         out.print(sideHeaders[index]);
-//                        out.print(EscapeSequences.RESET_BG_COLOR);
 
                         continue;
                     }
+
                     out.print(EscapeSequences.SET_TEXT_COLOR_RED);
                     ChessPiece piece = pieces.get(counter);
 
@@ -191,7 +185,6 @@ public class DrawChessBoard {
                         out.print(" ");
 
                         counter++;
-//                        out.print(EscapeSequences.RESET_BG_COLOR);
                         continue;
                     }
                     if (piece.getTeamColor() == ChessGame.TeamColor.BLACK) {
@@ -200,13 +193,12 @@ public class DrawChessBoard {
 
 
                         out.print(piece.toString().toUpperCase());
-                    } else {
-
+                    }
+                    if (piece.getTeamColor() != ChessGame.TeamColor.BLACK) {
                         out.print(piece.toString().toUpperCase());
                     }
 
                     counter++;
-//                    out.print(EscapeSequences.RESET_BG_COLOR);
                     continue;
                 }
                 out.print(" ");
