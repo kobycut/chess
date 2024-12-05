@@ -2,17 +2,10 @@ package ui;
 
 import java.util.Objects;
 import java.util.Scanner;
-
-import chess.ChessBoard;
-import com.google.gson.Gson;
-import exceptions.DataAccessException;
 import facades.NotificationHandler;
 import model.GameData;
-import model.GameDataPlayerColor;
-import ui.EscapeSequences.*;
 import websocket.messages.ServerMessage;
 
-import javax.xml.crypto.Data;
 
 public class Repl implements NotificationHandler {
     private final ChessClient client;

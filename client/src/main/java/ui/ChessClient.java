@@ -12,8 +12,6 @@ import model.GameDataCollection;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Objects;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 
 import static java.lang.Integer.parseInt;
@@ -194,7 +192,7 @@ public class ChessClient {
             ws.joinGame(username, playerColor, id, authData.authToken());
 
 
-            playing = Playing.PLAYING; // new
+            playing = Playing.PLAYING;
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "joined game %s as %s player", id, playerColor);
         }
         throw new DataAccessException(400, "provide the correct playGame information");
@@ -204,7 +202,7 @@ public class ChessClient {
         checkSignedIn();
         if (params.length == 1) {
             Integer id = parseInt(params[0]);
-            observing = Observing.OBSERVING; // new
+            observing = Observing.OBSERVING;
             ws = new WebSocketFacade(serverUrl, notificationHandler);
             ws.joinGame(username, "Observer", id, authData.authToken());
             return String.format(EscapeSequences.SET_TEXT_COLOR_BLUE + "observing game %s", id);
@@ -313,7 +311,6 @@ public class ChessClient {
             throw new DataAccessException(400, "Can't resign if you are not in a game");
         }
         ws.resign(username, gameId, authData.authToken());
-//        playing = Playing.NOTPLAYING;
         return String.format(username + " resigned");
     }
 
@@ -326,22 +323,15 @@ public class ChessClient {
                 board = new ChessBoard();
                 board.resetBoard();
             }
-//            board.mirrorBoard();
             String stringWrongPos = params[0];
             var charCol = stringWrongPos.charAt(0);
             var charRow = stringWrongPos.charAt(1);
             int col = getCol(charCol);
             ChessPosition position = new ChessPosition(Character.getNumericValue(charRow), col);
-//            if (Objects.equals(teamColor, "WHITE")) {
-                position = findMirroredPosition(position);
-//            }
-//            if (Objects.equals(teamColor, "BLACK")) {
-//                position = findMirroredPositionVert(position);
-//            }
+            position = findMirroredPosition(position);
             var pieceAtPos = board.getPiece(position);
             ChessPiece piece = new ChessPiece(pieceAtPos.getTeamColor(), pieceAtPos.getPieceType());
             Collection<ChessMove> validMoves = piece.pieceMoves(board, position);
-//            Collection<ChessMove> mirroredValidMoves = findMirrorValidMoves(validMoves);
             board.mirrorBoard();
             highlightBoard(board, teamColor, validMoves, position);
             return "highlighted the board";
@@ -392,33 +382,13 @@ public class ChessClient {
         }
     }
 
-    private Collection<ChessMove> findMirrorValidMoves(Collection<ChessMove> validMoves) {
-        Collection<ChessMove> mirroredMoves = new CopyOnWriteArrayList<>();
-
-        for (ChessMove move : validMoves) {
-            ChessPosition start = move.getStartPosition();
-            ChessPosition end = move.getEndPosition();
-
-            ChessPosition mirroredStart = new ChessPosition(start.getRow(), 8 - start.getColumn() + 1);
-            ChessPosition mirroredEnd = new ChessPosition(end.getRow(), 8 - end.getColumn() + 1);
-
-            ChessMove mirroredMove = new ChessMove(mirroredStart, mirroredEnd, move.getPromotionPiece());
-            mirroredMoves.add(mirroredMove);
-        }
-        return mirroredMoves;
-
-    }
 
     private ChessPosition findMirroredPosition(ChessPosition position) {
-        int mirroredRow = position.getRow(); // Mirror the row
-        int mirroredCol = 9 - position.getColumn();     // Column stays the same
+        int mirroredRow = position.getRow();
+        int mirroredCol = 9 - position.getColumn();
         return new ChessPosition(mirroredRow, mirroredCol);
     }
-    private ChessPosition findMirroredPositionVert(ChessPosition position) {
-        int mirroredRow = 9 - position.getRow(); // Mirror the row
-        int mirroredCol = position.getColumn();     // Column stays the same
-        return new ChessPosition(mirroredRow, mirroredCol);
-    }
+
 
 }
 

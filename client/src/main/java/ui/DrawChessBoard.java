@@ -27,18 +27,7 @@ public class DrawChessBoard {
             for (int j = 7; j > -1; j--) {
                 var ifValid = 0;
                 ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
-                if (validMoves != null) {
-                    if (Objects.equals(position, new ChessPosition(i + 1, j + 1))) {
-                        ifValid = 2;
-                    }
-                    for (ChessMove validMove : validMoves) {
-                        if (Objects.equals(validMove.getEndPosition(), new ChessPosition(i + 1, j + 1))) {
-                            ifValid = 1;
-                            break;
-                        }
-                    }
-                }
-
+                ifValid = func(i, j, ifValid);
                 pieces.add(piece);
                 if (validMoves != null) {
                     validMoveList.add(ifValid);
@@ -47,6 +36,21 @@ public class DrawChessBoard {
             }
         }
 
+    }
+
+    private int func(int i, int j, int ifValid) {
+        if (validMoves != null) {
+            if (Objects.equals(position, new ChessPosition(i + 1, j + 1))) {
+                ifValid = 2;
+            }
+            for (ChessMove validMove : validMoves) {
+                if (Objects.equals(validMove.getEndPosition(), new ChessPosition(i + 1, j + 1))) {
+                    ifValid = 1;
+                    break;
+                }
+            }
+        }
+        return ifValid;
     }
 
     public void drawWhiteBoard() {
@@ -71,17 +75,7 @@ public class DrawChessBoard {
             for (int j = 0; j < 8; j++) {
                 var ifValid = 0;
                 ChessPiece piece = board.getPiece(new ChessPosition(i + 1, j + 1));
-                if (validMoves != null) {
-                    if (Objects.equals(position, new ChessPosition(i + 1, j + 1))) {
-                        ifValid = 2;
-                    }
-                    for (ChessMove validMove : validMoves) {
-                        if (Objects.equals(validMove.getEndPosition(), new ChessPosition(i + 1, j + 1))) {
-                            ifValid = 1;
-                            break;
-                        }
-                    }
-                }
+                ifValid = func(i, j, ifValid);
                 pieces.add(piece);
                 if (validMoves != null) {
                     validMoveList.add(ifValid);
@@ -168,18 +162,17 @@ public class DrawChessBoard {
                 if (i == 0 && j == 0 || i == 2 && j == 2 || i == 0 && j == 1 || i == 2 && j == 1 || i == 1 && j == 2 || i == 1 && j == 0) {
                     continue;
                 }
-                if (!validMoveList.isEmpty() && skip == false) {
-                    if (validMoveList.size() > counter) {
-                        if (validMoveList.get(counter) == 1 && i != 2) {
-                            if (tileColor.equals("BLACK")) {
-                                out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
-                            } else {
-                                out.print(EscapeSequences.SET_BG_COLOR_GREEN);
-                            }
+                if (!validMoveList.isEmpty() && skip == false && validMoveList.size() > counter) {
+                    if (validMoveList.get(counter) == 1 && i != 2) {
+                        if (tileColor.equals("BLACK")) {
+                            out.print(EscapeSequences.SET_BG_COLOR_DARK_GREEN);
+                        } else {
+                            out.print(EscapeSequences.SET_BG_COLOR_GREEN);
                         }
-                        if (validMoveList.get(counter) == 2 && i != 2) {
-                            out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
-                        }
+                    }
+                    if (validMoveList.get(counter) == 2 && i != 2) {
+                        out.print(EscapeSequences.SET_BG_COLOR_YELLOW);
+
                     }
                 }
                 if (i == 1) {

@@ -260,34 +260,7 @@ public class WebSocketHandler {
         }
     }
 
-    private Integer getRow(Integer num) {
-        int row = 1;
-        switch (num) {
-            case 7 -> {
-                row = 2;
-            }
-            case 6 -> {
-                row = 3;
-            }
-            case 5 -> {
-                row = 4;
-            }
-            case 4 -> {
-                row = 5;
-            }
-            case 3 -> {
-                row = 6;
-            }
-            case 2 -> {
-                row = 7;
-            }
-            case 1 -> {
-                row = 8;
-            }
-        }
-        ;
-        return row;
-    }
+
 
     private char getCol(Integer num) {
         char col = 'a';
