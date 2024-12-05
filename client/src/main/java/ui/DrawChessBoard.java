@@ -55,6 +55,8 @@ public class DrawChessBoard {
         out.println();
         drawHeaders(out, reverse);
         out.println();
+        out.print(EscapeSequences.RESET_BG_COLOR);
+        out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
     }
 
     public void drawBlackBoard() {
@@ -77,6 +79,9 @@ public class DrawChessBoard {
         out.println();
         drawHeaders(out2, reverse);
         out.println();
+
+        out.print(EscapeSequences.RESET_BG_COLOR);
+        out.print(EscapeSequences.SET_TEXT_COLOR_MAGENTA);
     }
     private void func2(int i, int j) {
         var ifValid = 0;

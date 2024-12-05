@@ -149,11 +149,11 @@ public class WebSocketHandler {
             }
 
 
-            char firstChar = getCol(move.getStartPosition().getRow());
-            String secondChar = Integer.toString(move.getStartPosition().getColumn());
-            char thirdChar = getCol(move.getEndPosition().getRow());
-            String fourthChar = Integer.toString(move.getEndPosition().getColumn());
-            moveString = firstChar + secondChar + " to " + thirdChar + fourthChar;
+            char firstChar = getCol(move.getStartPosition().getColumn());
+            char secondChar = getRow(move.getStartPosition().getRow());
+            char thirdChar = getCol(move.getEndPosition().getColumn());
+            char fourthChar = getRow(move.getEndPosition().getRow());
+            moveString = "" + firstChar + secondChar + " to " + thirdChar + fourthChar;
             var message = String.format("%s moved %s", username, moveString);
             var moveNotification = new ServerMessage(ServerMessage.ServerMessageType.NOTIFICATION, message,
                     null, null);
@@ -285,6 +285,34 @@ public class WebSocketHandler {
             }
             case 8 -> {
                 col = 'h';
+            }
+        }
+
+        return col;
+    }
+    private char getRow(Integer num) {
+        char col = '1';
+        switch (num) {
+            case 2 -> {
+                col = '2';
+            }
+            case 3 -> {
+                col = '3';
+            }
+            case 4 -> {
+                col = '4';
+            }
+            case 5 -> {
+                col = '5';
+            }
+            case 6 -> {
+                col = '6';
+            }
+            case 7 -> {
+                col = '7';
+            }
+            case 8 -> {
+                col = '8';
             }
         }
 

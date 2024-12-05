@@ -2,6 +2,7 @@ package ui;
 
 import java.util.Objects;
 import java.util.Scanner;
+
 import facades.NotificationHandler;
 import model.GameData;
 import websocket.messages.ServerMessage;
@@ -48,7 +49,7 @@ public class Repl implements NotificationHandler {
     @Override
     public void notify(ServerMessage notification) {
         try {
-            Thread.sleep(100);
+            Thread.sleep(200);
         } catch (InterruptedException e) {
             return;
         }
@@ -71,6 +72,7 @@ public class Repl implements NotificationHandler {
             } else {
                 drawBoard.drawWhiteBoard();
             }
+
 
             printPrompt();
             return;
