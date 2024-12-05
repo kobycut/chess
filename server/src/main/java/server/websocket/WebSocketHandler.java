@@ -126,16 +126,29 @@ public class WebSocketHandler {
             var loadGame = new ServerMessage(ServerMessage.ServerMessageType.LOAD_GAME, null, gameData,
                     null);
             connections.broadcast(loadGame, null, gameId);
-            if (gameData.chessGame().isInCheck(oppColor)) {
-                stateMessage = String.format("%s is in check", oppUsername);
-            }
-            if (gameData.chessGame().isInCheckmate(teamColor)) {
-                stateMessage = String.format("%s is in checkmate", oppUsername);
-                gameData.chessGame().setTeamTurn(ChessGame.TeamColor.OVER);
-            }
-            if (gameData.chessGame().isInStalemate(teamColor)) {
+            boolean imreallytired = true;
+            if (gameData.chessGame().isInStalemate(oppColor)) {
                 stateMessage = "stalemate";
+                gameData.chessGame().setTeamTurn(ChessGame.TeamColor.OVER);
+                db.updateGame(gameData, "WHITE", username);
+                imreallytired = false;
+
             }
+            if (imreallytired == true) {
+                if (gameData.chessGame().isInCheckmate(oppColor)) {
+                    stateMessage = String.format("%s is in checkmate", oppUsername);
+                    gameData.chessGame().setTeamTurn(ChessGame.TeamColor.OVER);
+                    db.updateGame(gameData, "WHITE", username);
+                    imreallytired = false;
+                }
+            }
+            if (imreallytired == true) {
+                if (gameData.chessGame().isInCheck(oppColor)) {
+                    stateMessage = String.format("%s is in check", oppUsername);
+                }
+            }
+
+
             char firstChar = getCol(move.getStartPosition().getRow());
             String secondChar = Integer.toString(move.getStartPosition().getColumn());
             char thirdChar = getCol(move.getEndPosition().getRow());
